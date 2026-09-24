@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>归墟共识网络白皮书 v1.1</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Microsoft YaHei', 'Segoe UI', sans-serif; background: #f0f2f5; color: #1a1a2e; line-height: 1.9; }
+.hero { background: linear-gradient(135deg, #0d1b2a, #1b263b, #415a77); color: #e0e1dd; padding: 60px 20px; text-align: center; }
+.hero h1 { font-size: 2.8em; letter-spacing: 2px; margin-bottom: 15px; }
+.hero .version { font-size: 1em; opacity: 0.7; }
+.hero .tagline { font-size: 1.2em; margin-top: 10px; color: #a3bffa; }
+.container { max-width: 920px; margin: 0 auto; padding: 20px 30px; }
+.section { background: white; margin: 30px 0; padding: 35px 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+.section h2 { color: #1b263b; font-size: 1.6em; border-bottom: 3px solid #a3bffa; padding-bottom: 12px; margin-bottom: 20px; }
+.section h3 { color: #415a77; font-size: 1.2em; margin-top: 25px; margin-bottom: 12px; }
+.section p { margin-bottom: 14px; text-align: justify; }
+table { width: 100%; border-collapse: collapse; margin: 18px 0; }
+th, td { padding: 12px 14px; text-align: left; border-bottom: 1px solid #e0e0e0; }
+th { background: #f0f4f8; color: #1b263b; font-weight: 600; }
+tr:hover td { background: #f7f9fc; }
+.card { background: #f7f9fc; border-left: 4px solid #415a77; padding: 16px 20px; margin: 15px 0; border-radius: 0 8px 8px 0; }
+.card strong { color: #1b263b; }
+.flow-box { background: linear-gradient(135deg, #1b263b, #415a77); color: #e0e1dd; padding: 25px 30px; margin: 18px 0; border-radius: 10px; text-align: center; font-size: 1.1em; }
+.flow-box .arrow { color: #a3bffa; font-size: 1.5em; margin: 0 8px; }
+.name-box { background: linear-gradient(135deg, #0d1b2a, #1b263b); color: #e0e1dd; padding: 25px 30px; margin: 18px 0; border-radius: 10px; text-align: center; }
+.name-box h3 { color: #a3bffa; margin-bottom: 10px; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>归墟共识</h1>
+  <p class="version">白皮书 v1.1 · 基础理念版</p>
+  <p class="tagline">万流归一，共筑共识</p>
+</div>
+
+<div class="container">
+
+<!-- ========== 第一章 ========== -->
+<div class="section">
+  <h2>第一章 项目背景与愿景</h2>
+
+  <p>2026年，算力仍在矿场集中，节点仍在服务器集群中沉默运转。普通人的闲置电脑、手机、宽带上限与存储空间，从未被纳入区块链的共识网络。算力与网络的集中化，让去中心化的口号在现实中变得苍白。</p>
+
+  <p>归墟共识网络，诞生于这样一个朴素的信念：<strong>真正的去中心化，不应该要求任何人放弃自己的设备。每个人手头的闲置资源，本身就是区块链最需要的共识力量。</strong></p>
+
+  <h3>命名释义</h3>
+
+  <div class="name-box">
+    <h3>归墟 (Guixu) · The Great Abyss</h3>
+    <p><strong>归墟</strong>是中国古代神话概念，最早见于《列子·汤问》。归墟指海水汇聚的无底之渊，所有江河最终汇入归墟，但归墟的水量却永不增加。</p>
+    <p><strong>英文释义：</strong>Guixu (The Great Abyss) / Oceanic Abyss / The Great Sinkhole</p>
+    <p><strong>命名寓意：</strong>归墟的万物归一、永不枯竭，象征着各终端设备汇聚成统一共识网络，资源持续利用、生生不息。如同江河百川终归大海，每一位拥有闲置设备的人，都是构建去中心化世界的参与者。</p>
+  </div>
+
+  <h3>核心理念</h3>
+
+  <div class="card">
+    <strong>「资源即算力，贡献即共识。」</strong><br>
+    不再需要昂贵的矿机和服务器集群。每一台闲置电脑、每一部闲置手机，只要保持在线、贡献带宽、提供存储、稳定运行，就是区块链共识网络的一个有效节点。
+  </div>
+
+  <h3>项目愿景</h3>
+  <p>构建一个真正基于分布式终端资源的区块链共识系统，让每一位拥有闲置设备的人，都能平等地参与区块链网络的建设并获得回报。零门槛、无私募、不公募、去中心化。</p>
+</div>
+
+<!-- ========== 第二章 ========== -->
+<div class="section">
+  <h2>第二章 系统设计理念</h2>
+
+  <h3>核心思路</h3>
+
+  <div class="flow-box">
+    闲置终端设备 <span class="arrow">→</span> 贡献带宽/存储/算力 <span class="arrow">→</span> 贡献值计算 <span class="arrow">→</span> 通证奖励分配
+  </div>
+
+  <h3>资源类型与贡献模型</h3>
+  <p>系统根据终端设备实际贡献的资源类型，分别记录贡献值。每种资源类型有不同的贡献系数：</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>资源类型</th>
+        <th>贡献描述</th>
+        <th>采集方式</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>网络带宽</td><td>利用闲置带宽参与节点间通信、数据同步、网络转发</td><td>流量计量器 + 连通性检测</td></tr>
+      <tr><td>存储空间</td><td>为网络提供分布式存储节点，存储区块数据、应用数据</td><td>磁盘使用量 + 可用性检测</td></tr>
+      <tr><td>计算能力</td><td>闲置CPU/GPU算力参与共识计算、数据验证、智能合约执行</td><td>CPU周期检测 + GPU占用监控</td></tr>
+      <tr><td>稳定性</td><td>设备在线时长、连续运行时间、网络波动容忍度</td><td>心跳检测 + 在线日志</td></tr>
+      <tr><td>地理位置</td><td>多终端分布于不同地理区域，提升网络抗单点故障能力</td><td>IP地理位置标注</td></tr>
+    </tbody>
+  </table>
+
+  <h3>终端角色分类</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>终端类型</th>
+        <th>PC电脑端</th>
+        <th>手机端</th>
+        <th>主要贡献</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>家用电脑</td><td>✅ 主端</td><td>—</td><td>存储 + 带宽 + 算力</td></tr>
+      <tr><td>手机</td><td>—</td><td>✅ 轻端</td><td>带宽 + 轻量存储 + 移动节点</td></tr>
+      <tr><td>服务器/NAS</td><td>✅ 重端</td><td>—</td><td>高带宽 + 大存储 + 高算力</td></tr>
+      <tr><td>移动设备（车载/穿戴）</td><td>—</td><td>✅ 轻端</td><td>移动带宽 + 位置贡献</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ========== 新增：资源对接与商业闭环 ========== -->
+<div class="section">
+  <h3>资源对接与商业闭环</h3>
+  <p>归墟共识网络聚合的闲置资源并非仅在网络内部记账，而是通过标准化接口直接对接真实需求方的实体平台，形成"贡献 — 聚合 — 对接 — 变现 — 反哺"的完整商业闭环。这是归墟区别于纯概念型网络的核心生存能力：资源始终有真实买家。</p>
+  <table>
+    <thead>
+      <tr><th>资源类型</th><th>对接需求方实体平台</th><th>变现路径</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>磁盘存储</td><td>专业存储服务商、分布式云存储与备份归档服务商</td><td>企业级备份、冷数据归档、对象存储容量租赁</td></tr>
+      <tr><td>带宽资源</td><td>CDN 服务商、边缘计算网络、矿业资源运营商</td><td>流量分发、节点加速、带宽资源租赁（含挖矿相关用途）</td></tr>
+      <tr><td>终端算力</td><td>AI 训练与推理服务商、渲染及科学计算平台</td><td>GPU / CPU 算力租赁、模型推理托管</td></tr>
+      <tr><td>流量与网络效应</td><td>通证持有者、生态应用方、通证二级市场</td><td>流量聚合本身即形成通证经济效益</td></tr>
+    </tbody>
+  </table>
+  <p>除三类实体资源的直接变现外，网络规模的增长本身即构成独立的商业价值。随着接入终端与活跃地址持续增加，平台所积聚的流量、用户注意力与交易活跃度本身就可以形成通证经济效益：交易税与转账税持续注入运维基金，网络活跃度提升带动通证需求，最终形成"资源贡献者 — 需求方 — 通证持有者"三方正向循环。</p>
+</div>
+
+<!-- ========== 第三章 ========== -->
+<div class="section">
+  <h2>第三章 通证经济模型</h2>
+
+  <h3>通证基础信息</h3>
+  <p>归墟共识网络通证（以下简称「归墟代币」），是社区成员参与共识网络建设并获得贡献奖励的唯一凭证。该通证通过合约内置的「交易税」和「转账税」机制，持续为运维基金提供资金支持。</p>
+
+  <h3>通证发行规则</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>项目</th>
+        <th>规则</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>发行总量</td><td>按需铸造，无固定总量上限，由系统贡献值动态决定发行速度</td></tr>
+      <tr><td>发行方式</td><td>无私募、无公募，全部通过终端资源贡献自动铸造</td></tr>
+      <tr><td>分配机制</td><td>按终端资源贡献值比例分配，贡献越多，奖励越多</td></tr>
+      <tr><td>铸造触发条件</td><td>终端持续贡献资源达一定阈值时，自动铸造并分配</td></tr>
+      <tr><td>铸造冷却</td><td>每次铸造间隔1小时，防止频繁小额铸造</td></tr>
+    </tbody>
+  </table>
+
+  <h3>税务机制 — 运维基金</h3>
+  <div class="card">
+    <strong>交易税：</strong>每笔交易（Transfer）收取 1% 的归墟代币作为交易税。<br>
+    <strong>转账税：</strong>每笔转账收取 0.5% 的归墟代币作为转账税。<br>
+    <strong>防机器人策略：</strong>税率刻意设定较高，大幅提高自动化脚本批量刷量、薅羊毛的成本，保护真实持币用户的权益。<br>
+    <strong>税率说明：</strong>税率可在社区治理中投票调整，确保费率既能提供足够的运维资金，又不会过高影响用户体验。<br>
+    <strong>基金去向：</strong>所有税费收入自动转入运维基金池，用于节点奖励发放、网络维护、安全审计和系统升级。
+  </div>
+
+  <h3>贡献值计算模型</h3>
+  <p>贡献值 = ∑(资源类型 × 贡献系数 × 贡献时长 × 稳定性权重 × 防作弊系数)</p>
+
+  <h3>防薅羊毛与反作弊</h3>
+  <p>为防止自动化脚本、AI代理和恶意用户大量制造虚假终端进行薅羊毛，系统内置多层防御机制：</p>
+
+  <table>
+    <thead>
+      <tr><th>防御策略</th><th>实现方式</th><th>目的</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>设备指纹</td><td>终端唯一识别码（设备ID + 网络环境指纹），同一设备重复贡献不叠加</td><td>防止单设备多账号</td></tr>
+      <tr><td>贡献衰减曲线</td><td>新设备贡献值初始系数为1.0，连续在线超过30天后系数逐步提升至1.5，防止短期刷量</td><td>防止短期大量刷取</td></tr>
+      <tr><td>行为分析</td><td>异常行为检测：非人类规律的操作频率、异常贡献曲线、自动化脚本模式识别</td><td>检测自动化脚本</td></tr>
+      <tr><td>资源真实性验证</td><td>带宽使用量与设备性能匹配度验证，异常贡献值触发人工审核</td><td>防止性能不匹配</td></tr>
+      <tr><td>地理位置校验</td><td>同一IP段多终端注册触发限流，异地IP频繁变更触发警告</td><td>防止分布式虚假节点</td></tr>
+      <tr><td>社区举报机制</td><td>用户可举报异常贡献者，经社区投票确认后可扣除贡献值</td><td>社区共治</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ========== 第四章 ========== -->
+<div class="section">
+  <h2>第四章 技术架构</h2>
+
+  <h3>架构概览</h3>
+  <p>系统采用「去中心化节点 + 链上记账 + 链下验证」三层架构，确保系统安全与可扩展性。</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>层级</th>
+        <th>功能</th>
+        <th>技术</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>终端层</td><td>终端设备资源贡献、数据采集、本地验证</td><td>PC客户端 / 手机App / 浏览器插件</td></tr>
+      <tr><td>共识层</td><td>贡献值计算、节点权重评估、通证铸造</td><td>分布式共识算法（资源贡献加权的PoR）</td></tr>
+      <tr><td>链上账本</td><td>贡献记录存储、通证分配、税务征收、链上治理</td><td>智能合约 + 链上账本</td></tr>
+      <tr><td>应用层</td><td>贡献面板、通证钱包、社区投票、运维基金查询</td><td>Web前端 + 移动端App</td></tr>
+    </tbody>
+  </table>
+
+  <h3>共识算法 — PoR (Proof of Resource)</h3>
+  <p>传统PoW消耗大量电力，PoS依赖资金锁定。归墟共识网络采用<strong>PoR（资源证明，Proof of Resource）</strong>共识机制：<strong>以资源贡献替代资本质押与算力竞赛，是区别于PoW/PoS的独立路径；技术实现借鉴PoS的权益加权思路，但权重来源是资源贡献而非代币质押。</strong></p>
+  <ul>
+    <li>终端通过持续贡献闲置资源（带宽、存储、算力）来证明其贡献价值</li>
+    <li>系统实时计算各终端的贡献值排名</li>
+    <li>贡献值排名靠前的终端，优先获得通证铸造权</li>
+    <li>所有资源贡献记录在链上，不可篡改</li>
+  </ul>
+</div>
+
+<!-- ========== 第五章 ========== -->
+<div class="section">
+  <h2>第五章 运营与治理</h2>
+
+  <h3>社区治理</h3>
+  <p>系统完全去中心化治理，所有重大决策由归墟代币持有者投票决定：</p>
+  <ul>
+    <li>税率调整（交易税1%、转账税0.5%的修改）</li>
+    <li>贡献系数调整（各资源类型权重的变更）</li>
+    <li>运维基金使用审批</li>
+    <li>技术升级与协议变更</li>
+    <li>恶意节点处罚</li>
+  </ul>
+
+  <h3>运维基金</h3>
+  <div class="card">
+    <strong>资金来源：</strong>交易税（1%）+ 转账税（0.5%），持续流入。<br>
+    <strong>资金用途：</strong><br>
+    &nbsp;&nbsp;• 节点奖励发放（40%）<br>
+    &nbsp;&nbsp;• 网络维护与安全审计（30%）<br>
+    &nbsp;&nbsp;• 系统升级与开发（20%）<br>
+    &nbsp;&nbsp;• 社区建设与市场推广（10%）<br>
+    <strong>资金监管：</strong>所有资金流动全链上透明可查，定期发布基金报告。
+  </div>
+
+  <h3>终端接入</h3>
+  <table>
+    <thead>
+      <tr><th>接入方式</th><th>平台</th><th>功能</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>PC客户端</td><td>Windows / macOS / Linux</td><td>完整资源贡献、高带宽利用、大存储节点</td></tr>
+      <tr><td>手机App</td><td>iOS / Android</td><td>轻量级资源贡献、移动带宽、位置贡献</td></tr>
+      <tr><td>浏览器插件</td><td>Chrome / Firefox / Edge</td><td>浏览器内资源贡献、网页加速节点</td></tr>
+      <tr><td>API接口</td><td>开发者平台</td><td>第三方设备接入、企业级节点支持</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ========== 第六章 ========== -->
+<div class="section">
+  <h2>第六章 实施路线图</h2>
+
+  <h3>第一阶段：基础网络建设（2027 Q1 - Q2）</h3>
+  <ul>
+    <li>完成终端贡献数据采集系统开发</li>
+    <li>部署PoR共识算法原型</li>
+    <li>发布PC端beta测试版</li>
+    <li>建立通证合约（1%交易税 + 0.5%转账税）</li>
+    <li>启动内测社区</li>
+  </ul>
+
+  <h3>第二阶段：主网上线（2027 Q3）</h3>
+  <ul>
+    <li>主网正式发布</li>
+    <li>移动端App上线</li>
+    <li>社区治理投票机制启动</li>
+    <li>开放公开接入</li>
+  </ul>
+
+  <h3>第三阶段：生态扩展（2027 Q4 - 2028）</h3>
+  <ul>
+    <li>接入更多设备类型（路由器、IoT设备、车载终端）</li>
+    <li>引入跨链桥接能力</li>
+    <li>扩展DeFi生态（流动性挖矿、借贷）</li>
+    <li>全球节点网络扩张</li>
+  </ul>
+
+  <h3>第四阶段：成熟网络（2028+）</h3>
+  <ul>
+    <li>成为全球最大的分布式共识网络</li>
+    <li>实现完全去中心化治理</li>
+    <li>构建完整的归墟共识生态系统</li>
+  </ul>
+</div>
+
+<!-- ========== 第七章 ========== -->
+<div class="section">
+  <h2>第七章 风险与挑战</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>风险类型</th>
+        <th>风险描述</th>
+        <th>应对策略</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>设备碎片化</td><td>不同终端性能差异大，贡献值难以统一衡量</td><td>采用贡献系数加权模型，按设备性能动态调整权重</td></tr>
+      <tr><td>网络安全</td><td>终端设备安全性无法完全保证</td><td>定期安全审计、端点保护、异常行为监控</td></tr>
+      <tr><td>法律合规</td><td>各国对区块链通证的法律监管差异</td><td>分区域合规运营、本地化法律顾问团队</td></tr>
+      <tr><td>技术成熟度</td><td>PoR共识算法需要实际验证</td><td>分阶段测试、学术合作、白皮书公开</td></tr>
+      <tr><td>社区增长</td><td>需要足够多终端用户才能形成有效网络</td><td>早期激励、社区推广、合作伙伴计划</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ========== 第八章 ========== -->
+<div class="section">
+  <h2>第八章 结语</h2>
+
+  <p>归墟共识网络不是一个关于未来的概念，而是关于现实的思考：在数字时代，每个人的闲置资源都是一种被浪费的财富。当这些资源汇聚在一起，足以支撑一个去中心化的区块链网络。</p>
+
+  <p>我们相信，真正的去中心化不是口号，而是实践。不需要昂贵的矿机，不需要巨大的资金门槛，只需要你的闲置设备、你的闲置带宽、你的闲置存储。这些资源，就是你的筹码，就是你的贡献，就是你对去中心化世界的投票。</p>
+
+  <p>归墟共识网络——万流归一，共筑共识。</p>
+</div>
+
+<!-- ========== 附录 ========== -->
+<div class="section">
+  <h2>附录：术语表</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>术语</th>
+        <th>定义</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>归墟 (Guixu)</td><td>中国古代神话概念，指海水汇聚的无底之渊，象征万物归一</td></tr>
+      <tr><td>The Great Abyss</td><td>归墟的英文释义，指海洋中最深的深渊</td></tr>
+      <tr><td>PoR</td><td>Proof of Resource，资源证明共识机制</td></tr>
+      <tr><td>贡献值</td><td>终端资源贡献的量化指标，决定通证分配比例</td></tr>
+      <tr><td>运维基金</td><td>由交易税和转账税形成的系统运维资金池</td></tr>
+      <tr><td>通证</td><td>归墟共识网络代币，链上价值交换凭证</td></tr>
+      <tr><td>节点</td><td>参与归墟共识网络的终端设备</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ========== 页脚 ========== -->
+<div class="footer">
+  <p><strong>归墟共识网络白皮书 v1.1</strong> · 基础理念版</p>
+  <p>文档版本：2026-09-20 v1.1</p>
+  <p>版权所有 © 2026 归墟共识社区</p>
+</div>
+
+</div>
+
+</body>
+</html>

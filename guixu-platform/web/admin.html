@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title data-i18n="ad.title">Admin Console · Guixu Consensus Platform</title>
+<link rel="stylesheet" href="../shared/guixu-theme.css">
+<style>
+  .panel { display: none; animation: gxFadeIn .35s ease both; }
+  .panel.active { display: block; }
+  #ovChart, #tkChart { width: 100%; height: 200px; display: block; }
+  .alert-row { display: flex; gap: 12px; padding: 11px 0; border-bottom: 1px solid rgba(163,191,250,.07); align-items: flex-start; }
+  .alert-row:last-child { border-bottom: none; }
+  .alert-row .tm { font-size: .76em; color: var(--gx-faint); font-variant-numeric: tabular-nums; flex: 0 0 42px; padding-top: 2px; }
+  .alert-row .tx { font-size: .86em; flex: 1; }
+  .res-card { background: rgba(255,255,255,.04); border: 1px solid var(--gx-line); border-radius: var(--gx-radius); padding: 20px; }
+  .res-card .rt { font-size: .78em; letter-spacing: 1.2px; color: var(--gx-faint); text-transform: uppercase; }
+  .res-card .rv { font-size: 1.5em; font-weight: 700; color: var(--gx-accent); margin: 6px 0 2px; font-variant-numeric: tabular-nums; }
+  .res-card .rd { font-size: .8em; color: var(--gx-dim); }
+  .res-card .rline { display: flex; justify-content: space-between; font-size: .8em; padding: 5px 0; border-top: 1px solid rgba(163,191,250,.08); }
+  .setting-row { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 15px 0; border-bottom: 1px solid rgba(163,191,250,.07); }
+  .setting-row:last-child { border-bottom: none; }
+  .setting-row .sl { font-size: .92em; }
+  .setting-row .sd { font-size: .8em; color: var(--gx-faint); margin-top: 2px; }
+  .setting-row .sr { flex: 0 0 auto; }
+  .flow-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; }
+  .flow-row .fn { width: 132px; font-size: .87em; flex: 0 0 auto; }
+  .flow-row .fb { flex: 1; min-width: 50px; }
+  .flow-row .fv { width: 84px; text-align: right; font-size: .85em; font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body>
+
+<div class="gx-shell">
+  <aside class="gx-side">
+    <div class="brand">
+      <span class="mark" data-i18n="brand.mark">归</span>
+      <span><b data-i18n="brand.name">Guixu Consensus</b><small data-i18n="ad.brand.sub">ADMIN CONSOLE</small></span>
+    </div>
+
+    <div class="nav-label" data-i18n="ad.side.ops">运营</div>
+    <a class="nav-item active" data-panel="overview">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="5" rx="1.5"/><rect x="13" y="10" width="8" height="11" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/></svg>
+      <span data-i18n="ad.nav.overview">运营总览</span>
+    </a>
+    <a class="nav-item" data-panel="nodes">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3.5" width="18" height="7" rx="1.5"/><rect x="3" y="13.5" width="18" height="7" rx="1.5"/><path d="M7 7h.01M7 17h.01"/></svg>
+      <span data-i18n="ad.nav.nodes">终端管理</span>
+    </a>
+    <a class="nav-item" data-panel="market">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h16l-1.4 12H5.4L4 8z"/><path d="M8.5 8V6a3.5 3.5 0 017 0v2"/></svg>
+      <span data-i18n="ad.nav.market">资源市场</span>
+    </a>
+
+    <div class="nav-label" data-i18n="ad.side.eco">经济</div>
+    <a class="nav-item" data-panel="token">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v9M14.6 9.6c-.6-.9-1.6-1.4-2.6-1.4-1.4 0-2.5.8-2.5 2s1.1 1.9 2.5 1.9 2.6.7 2.6 2-1.2 2-2.6 2c-1.1 0-2.1-.5-2.7-1.5"/></svg>
+      <span data-i18n="ad.nav.token">通证结算</span>
+    </a>
+    <a class="nav-item" data-panel="biz">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="3"/><circle cx="16.5" cy="9.5" r="2.5"/><path d="M2.5 19c0-3 2.5-5 5.5-5s5.5 2 5.5 5M14 14.6c1-.7 2-1.1 3-1.1 2.5 0 4.5 1.7 4.5 4.5"/></svg>
+      <span data-i18n="ad.nav.biz">商业对接</span>
+    </a>
+    <a class="nav-item" data-panel="fund">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18M5 20V10M10 20V5M15 20v-7M20 20V8"/></svg>
+      <span data-i18n="ad.nav.fund">运维基金</span>
+    </a>
+
+    <div class="nav-label" data-i18n="ad.side.sys">系统</div>
+    <a class="nav-item" data-panel="settings">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2.5v2.6M12 18.9v2.6M2.5 12h2.6M18.9 12h2.6M5.2 5.2l1.9 1.9M16.9 16.9l1.9 1.9M18.8 5.2l-1.9 1.9M7.1 16.9l-1.9 1.9"/></svg>
+      <span data-i18n="ad.nav.settings">系统设置</span>
+    </a>
+
+    <div class="side-foot">
+      <a href="index.html" style="color:var(--gx-dim)" data-i18n="back.home">← 返回平台首页</a><br>
+      <span data-i18n="tag.frameworkVer">框架版本 v0.1</span>
+      <div style="margin-top:10px"><span data-gx-lang-switch></span></div>
+    </div>
+  </aside>
+
+  <main class="gx-main">
+    <div class="gx-topbar">
+      <div>
+        <div class="gx-crumb" id="crumb">Admin / Overview</div>
+        <h2 style="font-size:1.3em;font-weight:700;margin-top:3px" id="panelTitle">Overview</h2>
+      </div>
+      <div class="gx-row">
+        <span class="gx-live-badge"><i class="gx-dot gx-dot-pulse"></i> <span data-i18n="ad.sync">数据同步正常</span></span>
+        <a class="gx-btn gx-btn-ghost gx-btn-sm" href="network.html" data-i18n="ad.link.network">查看全球网络</a>
+      </div>
+    </div>
+
+    <!-- ============ 运营总览 ============ -->
+    <section class="panel active" data-panel="overview">
+      <div class="gx-grid gx-grid-4">
+        <div class="gx-card gx-kpi">
+          <div class="kpi-label" data-i18n="ad.kpi.online">在线终端</div>
+          <div class="kpi-value"><span id="k1">0</span></div>
+          <div class="kpi-foot" id="k1foot">--</div>
+        </div>
+        <div class="gx-card gx-kpi">
+          <div class="kpi-label" data-i18n="ad.kpi.storage">存储贡献</div>
+          <div class="kpi-value"><span id="k2">0</span><span class="kpi-unit">TB</span></div>
+          <div class="kpi-foot" data-i18n="ad.kpi.storage.foot">已签约承接 1,240 TB</div>
+        </div>
+        <div class="gx-card gx-kpi">
+          <div class="kpi-label" data-i18n="ad.kpi.reward">日发放代币</div>
+          <div class="kpi-value"><span id="k3">0</span><span class="kpi-unit">x</span></div>
+          <div class="kpi-foot" data-i18n="ad.kpi.reward.foot">按 PoR 贡献权重分配</div>
+        </div>
+        <div class="gx-card gx-kpi">
+          <div class="kpi-label" data-i18n="ad.kpi.fund">运维基金余额</div>
+          <div class="kpi-value"><span id="k4">0</span><span class="kpi-unit">x</span></div>
+          <div class="kpi-foot" data-i18n="ad.kpi.fund.foot">来源：交易税 1% + 转账税 0.5%</div>
+        </div>
+      </div>
+
+      <div class="gx-grid gx-grid-2 gx-mt">
+        <div class="gx-card">
+          <div class="gx-card-head">
+            <h3 data-i18n="ad.ov.chart.h3">24 小时网络负载</h3>
+            <span class="gx-sub" data-i18n="ad.ov.chart.sub">带宽 / 存储 / 算力</span>
+          </div>
+          <canvas id="ovChart"></canvas>
+        </div>
+        <div class="gx-card">
+          <div class="gx-card-head">
+            <h3 data-i18n="ad.ov.alert.h3">系统告警</h3>
+            <span class="gx-sub" data-i18n="ad.ov.alert.sub">近 12 小时</span>
+          </div>
+          <div id="alertList"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 终端管理 ============ -->
+    <section class="panel" data-panel="nodes">
+      <div class="gx-card">
+        <div class="gx-card-head">
+          <div>
+            <h3 data-i18n="ad.nodes.h3">终端节点台账</h3>
+            <div class="gx-sub" id="nodeSub">--</div>
+          </div>
+          <div class="gx-row">
+            <input class="gx-input" id="nodeSearch" placeholder="Search city / node ID" data-i18n-attr="placeholder:ad.nodes.search" style="width:210px">
+            <button class="gx-btn gx-btn-ghost gx-btn-sm" id="btnExport" data-i18n="ad.nodes.export">导出 CSV</button>
+          </div>
+        </div>
+        <div class="gx-table-scroll gx-tbl-scroll">
+          <table class="gx-table">
+            <thead>
+              <tr>
+                <th data-i18n="ad.nodes.th.id">节点 ID</th>
+                <th data-i18n="ad.nodes.th.loc">位置</th>
+                <th data-i18n="ad.nodes.th.type">类型</th>
+                <th data-i18n="ad.nodes.th.status">状态</th>
+                <th data-i18n="ad.nodes.th.storage">存储</th>
+                <th data-i18n="ad.nodes.th.bw">带宽</th>
+                <th data-i18n="ad.nodes.th.compute">算力</th>
+                <th data-i18n="ad.nodes.th.score">信用分</th>
+                <th data-i18n="ad.nodes.th.ops">操作</th>
+              </tr>
+            </thead>
+            <tbody id="nodeBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 资源市场 ============ -->
+    <section class="panel" data-panel="market">
+      <div class="gx-grid gx-grid-3">
+        <div class="res-card">
+          <div class="rt" data-i18n="ad.rt.storage">STORAGE</div>
+          <div class="rv">384,200 TB</div>
+          <div class="rd" data-i18n="ad.market.rd.storage">可调度存储总量</div>
+          <div style="margin-top:14px">
+            <div class="rline"><span class="gx-dim" data-i18n="ad.market.l.contracted">已签约</span><span>1,240 TB</span></div>
+            <div class="rline"><span class="gx-dim" data-i18n="ad.market.l.range">报价区间</span><span data-i18n="ad.market.storage.quote">0.015 – 0.018 x/GB·月</span></div>
+            <div class="rline"><span class="gx-dim" data-i18n="ad.market.l.buyers">对接需求方</span><span data-i18n="ad.market.buyers.two">2 家</span></div>
+            <div class="rline"><span class="gx-dim" data-i18n="ad.market.l.use">主要去向</span><span data-i18n="ad.market.storage.use">冷数据归档 / 副本冗余</span></div>
+          </div>
+        </div>
+        <div class="res-card">
+          <div class="rt" data-i18n="ad.rt.bw">BANDWIDTH</div>
+          <div class="rv">2,140 Gbps</div>
+          <div class="rd" data-i18n="ad.market.rd.bw">可调度上行带宽总量</div>
+          <div style="margin-top:14px">
+            <div class="rline"><span class="gx-dim" data-i18n="ad.market.l.contracted">已签约</span><span>500 Gbps</span></div>
+            <div class="rline"><span class="gx-dim" data-i18n="ad.market.l.range">报价区间</span><span data-i18n="ad.market.bw.quote">0.36 – 0.42 x/Mbps·月</span></div>
+            <div class="rline"><span class="gx-dim" data-i18n="ad.market.l.buyers">对接需求方</span><span data-i18n="ad.market.buyers.two">2 家</span></div>
+            <div class="rline"><span class="gx-dim" data-i18n="ad.market.l.use">主要去向</span><span data-i18n="ad.market.bw.use">边缘分发 / 矿业带宽</span></div>
+          </div>
+        </div>
+        <div class="res-card">
+          <div class="rt" data-i18n="ad.rt.cpu">COMPUTE</div>
+          <div class="rv">1,860 TFLOPS</div>
+          <div class="rd" data-i18n="ad.market.rd.cpu">可调度算力总量</div>
+          <div style="margin-top:14px">
+            <div class="rline"><span class="gx-dim" data-i18n="ad.market.l.contracted">已签约</span><span>260 TFLOPS</span></div>
+            <div class="rline"><span class="gx-dim" data-i18n="ad.market.l.range">报价区间</span><span data-i18n="ad.market.cpu.quote">1.35 x/TFLOPS·天</span></div>
+            <div class="rline"><span class="gx-dim" data-i18n="ad.market.l.buyers">对接需求方</span><span data-i18n="ad.market.buyers.one">1 家</span></div>
+            <div class="rline"><span class="gx-dim" data-i18n="ad.market.l.use">主要去向</span><span data-i18n="ad.market.cpu.use">模型推理 / 渲染批次</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="gx-card gx-mt">
+        <div class="gx-card-head">
+          <h3 data-i18n="ad.market.order.h3">需求方订单</h3>
+          <span class="gx-sub" id="orderSub">--</span>
+        </div>
+        <div class="gx-table-scroll">
+          <table class="gx-table">
+            <thead>
+              <tr>
+                <th data-i18n="ad.market.th.id">编号</th>
+                <th data-i18n="ad.market.th.name">需求方</th>
+                <th data-i18n="ad.market.th.type">类型</th>
+                <th data-i18n="ad.market.th.demand">需求内容</th>
+                <th data-i18n="ad.market.th.region">区域</th>
+                <th data-i18n="ad.market.th.quote">报价</th>
+                <th data-i18n="ad.market.th.status">状态</th>
+              </tr>
+            </thead>
+            <tbody id="orderBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 通证结算 ============ -->
+    <section class="panel" data-panel="token">
+      <div class="gx-grid gx-grid-4">
+        <div class="gx-card gx-kpi">
+          <div class="kpi-label" data-i18n="ad.token.kpi.issue">日发放</div>
+          <div class="kpi-value"><span id="t1">0</span><span class="kpi-unit">x</span></div>
+          <div class="kpi-foot" data-i18n="ad.token.kpi.issue.foot">PoR 贡献分配</div>
+        </div>
+        <div class="gx-card gx-kpi">
+          <div class="kpi-label" data-i18n="ad.token.kpi.trade">交易税收入</div>
+          <div class="kpi-value"><span id="t2">0</span><span class="kpi-unit">x</span></div>
+          <div class="kpi-foot" data-i18n="ad.token.kpi.trade.foot">税率 1%，计入运维基金</div>
+        </div>
+        <div class="gx-card gx-kpi">
+          <div class="kpi-label" data-i18n="ad.token.kpi.transfer">转账税收入</div>
+          <div class="kpi-value"><span id="t3">0</span><span class="kpi-unit">x</span></div>
+          <div class="kpi-foot" data-i18n="ad.token.kpi.transfer.foot">税率 0.5%，计入运维基金</div>
+        </div>
+        <div class="gx-card gx-kpi">
+          <div class="kpi-label" data-i18n="ad.token.kpi.pending">待结算</div>
+          <div class="kpi-value"><span id="t4">0</span><span class="kpi-unit">x</span></div>
+          <div class="kpi-foot" data-i18n="ad.token.kpi.pending.foot">T+1 结算周期</div>
+        </div>
+      </div>
+
+      <div class="gx-grid gx-grid-2 gx-mt">
+        <div class="gx-card">
+          <div class="gx-card-head">
+            <h3 data-i18n="ad.token.chart.h3">代币发放趋势</h3>
+            <span class="gx-sub" data-i18n="ad.token.chart.sub">近 15 日</span>
+          </div>
+          <canvas id="tkChart"></canvas>
+        </div>
+        <div class="gx-card">
+          <div class="gx-card-head">
+            <h3 data-i18n="ad.token.rules.h3">税费规则</h3>
+            <span class="gx-sub" data-i18n="ad.token.rules.sub">不可篡改参数</span>
+          </div>
+          <div class="setting-row">
+            <div><div class="sl" data-i18n="ad.token.rule.trade">交易税</div><div class="sd" data-i18n="ad.token.rule.trade.desc">每次资源交易结算自动计提</div></div>
+            <div class="sr gx-accent" style="font-weight:700">1.0%</div>
+          </div>
+          <div class="setting-row">
+            <div><div class="sl" data-i18n="ad.token.rule.transfer">转账税</div><div class="sd" data-i18n="ad.token.rule.transfer.desc">链上转账按金额计提</div></div>
+            <div class="sr gx-accent" style="font-weight:700">0.5%</div>
+          </div>
+          <div class="setting-row">
+            <div><div class="sl" data-i18n="ad.token.rule.fundUse">运维基金用途</div><div class="sd" data-i18n="ad.token.rule.fundUse.desc">基础设施、安全审计、研发与生态激励</div></div>
+            <div class="sr gx-tag" data-i18n="ad.token.rule.fundUse.tag">专款专用</div>
+          </div>
+          <div class="setting-row">
+            <div><div class="sl" data-i18n="ad.token.rule.sale">私募 / 公募</div><div class="sd" data-i18n="ad.token.rule.sale.desc">平台不设任何私募、公募环节</div></div>
+            <div class="sr gx-tag gx-tag-ok" data-i18n="ad.token.rule.sale.tag">无</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 商业对接 ============ -->
+    <section class="panel" data-panel="biz">
+      <div class="gx-card">
+        <div class="gx-card-head">
+          <div>
+            <h3 data-i18n="ad.biz.h3">商业需求方对接</h3>
+            <div class="gx-sub" data-i18n="ad.biz.sub">闲置资源直连专业需求方实体平台，待审条目需人工复核后放行</div>
+          </div>
+          <div class="gx-filters">
+            <button class="active" data-biz="all" data-i18n="ad.biz.filter.all">全部</button>
+            <button data-biz="pending" data-i18n="ad.biz.filter.pending">待审</button>
+            <button data-biz="review" data-i18n="ad.biz.filter.review">复核中</button>
+            <button data-biz="active" data-i18n="ad.biz.filter.active">已签约</button>
+          </div>
+        </div>
+        <div class="gx-table-scroll">
+          <table class="gx-table">
+            <thead>
+              <tr>
+                <th data-i18n="ad.biz.th.id">编号</th>
+                <th data-i18n="ad.biz.th.name">需求方</th>
+                <th data-i18n="ad.biz.th.type">类型</th>
+                <th data-i18n="ad.biz.th.demand">需求内容</th>
+                <th data-i18n="ad.biz.th.region">区域</th>
+                <th data-i18n="ad.biz.th.quote">报价</th>
+                <th data-i18n="ad.biz.th.score">评分</th>
+                <th data-i18n="ad.biz.th.status">状态</th>
+                <th data-i18n="ad.biz.th.ops">操作</th>
+              </tr>
+            </thead>
+            <tbody id="bizBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 运维基金 ============ -->
+    <section class="panel" data-panel="fund">
+      <div class="gx-grid gx-grid-3">
+        <div class="gx-card gx-kpi">
+          <div class="kpi-label" data-i18n="ad.fund.kpi.balance">基金余额</div>
+          <div class="kpi-value"><span id="f1">0</span><span class="kpi-unit">x</span></div>
+          <div class="kpi-foot" data-i18n="ad.fund.kpi.balance.foot">持续累积中</div>
+        </div>
+        <div class="gx-card gx-kpi">
+          <div class="kpi-label" data-i18n="ad.fund.kpi.income">本期收入</div>
+          <div class="kpi-value"><span id="f2">0</span><span class="kpi-unit">x</span></div>
+          <div class="kpi-foot" data-i18n="ad.fund.kpi.income.foot">税费 + 对接服务费</div>
+        </div>
+        <div class="gx-card gx-kpi">
+          <div class="kpi-label" data-i18n="ad.fund.kpi.cost">本期支出</div>
+          <div class="kpi-value"><span id="f3">0</span><span class="kpi-unit">x</span></div>
+          <div class="kpi-foot" id="f3foot" data-i18n="ad.fund.kpi.cost.foot">基础设施 / 安全 / 生态 / 研发</div>
+        </div>
+      </div>
+
+      <div class="gx-grid gx-grid-2 gx-mt">
+        <div class="gx-card">
+          <div class="gx-card-head"><h3 data-i18n="ad.fund.income.h3">收入构成</h3><span class="gx-sub" id="incTotal"></span></div>
+          <div id="incomeList"></div>
+        </div>
+        <div class="gx-card">
+          <div class="gx-card-head"><h3 data-i18n="ad.fund.cost.h3">支出构成</h3><span class="gx-sub" id="costTotal"></span></div>
+          <div id="costList"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 系统设置 ============ -->
+    <section class="panel" data-panel="settings">
+      <div class="gx-card">
+        <div class="gx-card-head"><h3 data-i18n="ad.set.h3">网络参数</h3><span class="gx-sub" data-i18n="ad.set.sub">框架阶段为演示态，暂未绑定写接口</span></div>
+        <div class="setting-row">
+          <div><div class="sl" data-i18n="ad.set.admit">节点准入审核</div><div class="sd" data-i18n="ad.set.admit.desc">新节点注册需通过实名与信用前置校验</div></div>
+          <div class="sr"><button class="gx-switch on" data-switch="admit"></button></div>
+        </div>
+        <div class="setting-row">
+          <div><div class="sl" data-i18n="ad.set.freeze">异常凭证自动冻结</div><div class="sd" data-i18n="ad.set.freeze.desc">检测到重复提交 PoR 凭证时自动冻结账户</div></div>
+          <div class="sr"><button class="gx-switch on" data-switch="freeze"></button></div>
+        </div>
+        <div class="setting-row">
+          <div><div class="sl" data-i18n="ad.set.gray">新节点灰度放量</div><div class="sd" data-i18n="ad.set.gray.desc">按区域分批放行，避免网络抖动</div></div>
+          <div class="sr"><button class="gx-switch" data-switch="gray"></button></div>
+        </div>
+        <div class="setting-row">
+          <div><div class="sl" data-i18n="ad.set.night">夜间加速时段单价上浮</div><div class="sd" data-i18n="ad.set.night.desc">时段 00:00 – 07:00</div></div>
+          <div class="sr gx-accent" style="font-weight:700" data-i18n="ad.set.night.val">+15%</div>
+        </div>
+        <div class="setting-row">
+          <div><div class="sl" data-i18n="ad.set.mobileCompute">手机端算力共享</div><div class="sd" data-i18n="ad.set.mobileCompute.desc">为保障续航与温度，策略上永久关闭</div></div>
+          <div class="sr gx-tag gx-tag-bad" data-i18n="ad.set.mobileCompute.val">已禁用</div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="../shared/world-dots.js"></script>
+<script src="../shared/mock-data.js"></script>
+<script src="../shared/guixu-core.js"></script>
+<script src="../shared/guixu-i18n.js"></script>
+<script>
+(function () {
+  var D = window.GX_DATA;
+  GX.i18n.init();
+
+  var curPanel = 'overview';
+  var PANELS = ['overview', 'nodes', 'market', 'token', 'biz', 'fund', 'settings'];
+
+  function panelKey(p) { return 'ad.nav.' + p; }
+
+  function updateHead() {
+    var k = panelKey(curPanel);
+    GX.qs('#panelTitle').textContent = GX.t(k);
+    GX.qs('#crumb').textContent = GX.t('ad.crumb', { panel: GX.t(k) });
+  }
+
+  function switchPanel(key) {
+    curPanel = key;
+    GX.qsa('.panel').forEach(function (p) { p.classList.toggle('active', p.dataset.panel === key); });
+    GX.qsa('.gx-side a.nav-item').forEach(function (a) { a.classList.toggle('active', a.dataset.panel === key); });
+    updateHead();
+    if (key === 'overview') drawOvChart();
+    if (key === 'token') drawTkChart();
+  }
+  GX.qsa('.gx-side a.nav-item').forEach(function (a) {
+    GX.on(a, 'click', function (e) { e.preventDefault(); switchPanel(a.dataset.panel); });
+  });
+
+  /* ---------- 总览 ---------- */
+  function renderOverview() {
+    GX.countUp(GX.qs('#k1'), D.global.onlineNodes, { decimals: 0 });
+    GX.countUp(GX.qs('#k2'), D.global.storageTB, { decimals: 0 });
+    GX.countUp(GX.qs('#k3'), D.global.dailyReward, { decimals: 0 });
+    GX.countUp(GX.qs('#k4'), D.global.opsFund, { decimals: 0 });
+    GX.qs('#k1foot').textContent = GX.t('ad.kpi.online.foot', {
+      total: GX.num(D.global.totalNodes),
+      rate: ((D.global.onlineNodes / D.global.totalNodes) * 100).toFixed(1)
+    });
+  }
+
+  function drawOvChart() {
+    GX.lineChart(GX.qs('#ovChart'), [
+      { data: D.load24h.bandwidth, color: '#a3bffa' },
+      { data: D.load24h.storage, color: '#7ee0c8' },
+      { data: D.load24h.compute, color: '#ffb86b' }
+    ], { min: 0, max: 100 });
+  }
+
+  var LEVEL = { warn: 'gx-warn', info: 'gx-dim', bad: 'gx-bad' };
+  function renderAlerts() {
+    GX.qs('#alertList').innerHTML = D.alerts.map(function (a) {
+      return '<div class="alert-row">' +
+        '<span class="tm">' + a.time + '</span>' +
+        '<span class="tx ' + (LEVEL[a.level] || '') + '">' + GX.t(a.textKey) + '</span></div>';
+    }).join('');
+  }
+
+  /* ---------- 终端管理 ---------- */
+  function renderNodes() {
+    var nodes = GX.parseNodes(D.nodes);
+    var kw = (GX.qs('#nodeSearch').value || '').trim().toLowerCase();
+    var list = nodes.filter(function (n) {
+      return !kw || (n.city + n.country + n.cityKey + n.countryKey + n.id + n.type).toLowerCase().indexOf(kw) >= 0;
+    });
+    GX.qs('#nodeBody').innerHTML = list.map(function (n) {
+      return '<tr>' +
+        '<td class="gx-mono" style="font-size:.94em">' + n.id + '</td>' +
+        '<td>' + n.city + ' <span class="gx-dim">· ' + n.country + '</span></td>' +
+        '<td>' + GX.typeLabel(n.type) + '</td>' +
+        '<td>' + (n.online ? '<span class="gx-ok"><i class="gx-dot gx-dot-pulse"></i> ' + GX.t('ad.nodes.online') + '</span>'
+                           : '<span class="gx-bad">' + GX.t('ad.nodes.offline') + '</span>') + '</td>' +
+        '<td>' + GX.cap(n.storageGB) + '</td>' +
+        '<td>' + GX.bw(n.bwMbps) + '</td>' +
+        '<td>' + (n.tflops ? n.tflops.toFixed(1) + ' TF' : '<span class="gx-dim">—</span>') + '</td>' +
+        '<td class="gx-accent">' + n.score + '</td>' +
+        '<td><a href="#" class="gx-dim" style="font-size:.92em">' + GX.t('ad.nodes.act.detail') + '</a> · ' +
+        '<a href="#" class="gx-dim" style="font-size:.92em">' + GX.t('ad.nodes.act.limit') + '</a></td>' +
+        '</tr>';
+    }).join('') || '<tr><td colspan="9" class="gx-dim" style="text-align:center;padding:24px">' + GX.t('ad.nodes.empty') + '</td></tr>';
+    GX.qs('#nodeSub').textContent = GX.t('ad.nodes.sub', { n: list.length });
+  }
+  GX.on(GX.qs('#nodeSearch'), 'input', renderNodes);
+  GX.on(GX.qs('#btnExport'), 'click', function () {
+    var head = [
+      GX.t('ad.nodes.th.id'), GX.t('ad.nodes.th.loc'), GX.t('ad.nodes.th.type'),
+      GX.t('ad.nodes.th.status'), GX.t('ad.nodes.th.storage'), GX.t('ad.nodes.th.bw'),
+      GX.t('ad.nodes.th.compute'), GX.t('ad.nodes.th.score')
+    ];
+    var rows = [head];
+    GX.parseNodes(D.nodes).forEach(function (n) {
+      rows.push([n.id, n.city + ' / ' + n.country, GX.typeLabel(n.type),
+        n.online ? GX.t('ad.nodes.online') : GX.t('ad.nodes.offline'),
+        n.storageGB, n.bwMbps, n.tflops, n.score]);
+    });
+    var csv = '\ufeff' + rows.map(function (r) { return r.join(','); }).join('\r\n');
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+    a.download = 'guixu-nodes.csv';
+    a.click();
+  });
+
+  /* ---------- 资源市场 / 商业对接 ---------- */
+  function stTag(s) { return '<span class="gx-tag' +
+    (s === 'pending' ? ' gx-tag-warn' : s === 'active' ? ' gx-tag-ok' : '') + '">' +
+    GX.t('ad.biz.st.' + s) + '</span>'; }
+
+  function bizRow(m, withOps) {
+    return '<tr>' +
+      '<td class="gx-mono" style="font-size:.94em">' + m.id + '</td>' +
+      '<td>' + GX.t(m.nameKey) + '</td>' +
+      '<td class="gx-dim">' + GX.t(m.typeKey) + '</td>' +
+      '<td>' + GX.t(m.demandKey) + '</td>' +
+      '<td class="gx-dim">' + GX.t(m.regionKey) + '</td>' +
+      '<td class="gx-accent">' + GX.t(m.quoteKey) + '</td>' +
+      '<td>' + m.score + '</td>' +
+      '<td>' + stTag(m.status) + '</td>' +
+      (withOps ? '<td><a href="#" class="gx-dim" style="font-size:.92em">' + GX.t('ad.biz.act.pass') + '</a> · <a href="#" class="gx-dim" style="font-size:.92em">' + GX.t('ad.biz.act.reject') + '</a></td>'
+               : '<td class="gx-dim">—</td>') +
+      '</tr>';
+  }
+
+  function renderOrders() {
+    GX.qs('#orderSub').textContent = GX.t('ad.market.order.sub', { n: D.merchants.length });
+    GX.qs('#orderBody').innerHTML = D.merchants.map(function (m) {
+      return '<tr>' +
+        '<td class="gx-mono" style="font-size:.94em">' + m.id + '</td>' +
+        '<td>' + GX.t(m.nameKey) + '</td>' +
+        '<td class="gx-dim">' + GX.t(m.typeKey) + '</td>' +
+        '<td>' + GX.t(m.demandKey) + '</td>' +
+        '<td class="gx-dim">' + GX.t(m.regionKey) + '</td>' +
+        '<td class="gx-accent">' + GX.t(m.quoteKey) + '</td>' +
+        '<td>' + stTag(m.status) + '</td></tr>';
+    }).join('');
+  }
+
+  var bizFilter = 'all';
+  function renderBiz() {
+    var list = D.merchants.filter(function (m) { return bizFilter === 'all' || m.status === bizFilter; });
+    GX.qs('#bizBody').innerHTML = list.map(function (m) { return bizRow(m, true); }).join('') ||
+      '<tr><td colspan="9" class="gx-dim" style="text-align:center;padding:24px">' + GX.t('ad.biz.empty') + '</td></tr>';
+  }
+  GX.qsa('[data-biz]').forEach(function (b) {
+    GX.on(b, 'click', function () {
+      GX.qsa('[data-biz]').forEach(function (x) { x.classList.remove('active'); });
+      b.classList.add('active'); bizFilter = b.dataset.biz; renderBiz();
+    });
+  });
+
+  /* ---------- 通证结算 ---------- */
+  function renderToken() {
+    GX.countUp(GX.qs('#t1'), D.global.dailyReward, { decimals: 0 });
+    GX.countUp(GX.qs('#t2'), D.fundFlow.income[0].value, { decimals: 0 });
+    GX.countUp(GX.qs('#t3'), D.fundFlow.income[1].value, { decimals: 0 });
+    GX.countUp(GX.qs('#t4'), 86420, { decimals: 0 });
+  }
+  function drawTkChart() {
+    GX.lineChart(GX.qs('#tkChart'), [
+      { data: D.earnings.series.map(function (v) { return v * 14800; }), color: '#a3bffa' }
+    ], { grid: true });
+  }
+
+  /* ---------- 运维基金 ---------- */
+  function renderFund() {
+    var inc = D.fundFlow.income.reduce(function (a, b) { return a + b.value; }, 0);
+    var cst = D.fundFlow.cost.reduce(function (a, b) { return a + b.value; }, 0);
+    GX.countUp(GX.qs('#f1'), D.global.opsFund, { decimals: 0 });
+    GX.countUp(GX.qs('#f2'), inc, { decimals: 0 });
+    GX.countUp(GX.qs('#f3'), cst, { decimals: 0 });
+    GX.qs('#f3foot').textContent = GX.t('ad.fund.kpi.cost.footBal', { v: (inc - cst >= 0 ? '+' : '') + GX.num(inc - cst) });
+    GX.qs('#incTotal').textContent = GX.t('ad.fund.total', { v: GX.num(inc) });
+    GX.qs('#costTotal').textContent = GX.t('ad.fund.total', { v: GX.num(cst) });
+    GX.qs('#incomeList').innerHTML = flowRows(D.fundFlow.income, 'gx-bar-ok');
+    GX.qs('#costList').innerHTML = flowRows(D.fundFlow.cost, '');
+  }
+  function flowRows(list, cls) {
+    var max = Math.max.apply(null, list.map(function (i) { return i.value; }));
+    return list.map(function (i) {
+      return '<div class="flow-row">' +
+        '<span class="fn">' + GX.t(i.labelKey) + '</span>' +
+        '<span class="fb"><span class="gx-bar ' + cls + '"><i style="width:' + (i.value / max * 100).toFixed(1) + '%"></i></span></span>' +
+        '<span class="fv">' + GX.num(i.value) + '</span></div>';
+    }).join('');
+  }
+
+  /* ---------- 系统设置 ---------- */
+  GX.qsa('[data-switch]').forEach(function (s) { GX.bindSwitch(s); });
+
+  /* ---------- 渲染编排 ---------- */
+  function renderAll() {
+    updateHead();
+    renderOverview();
+    renderAlerts();
+    renderNodes();
+    renderOrders();
+    renderBiz();
+    renderToken();
+    renderFund();
+    if (curPanel === 'overview') drawOvChart();
+    if (curPanel === 'token') drawTkChart();
+  }
+
+  renderAll();
+  GX.i18n.onChange(renderAll);
+})();
+</script>
+</body>
+</html>

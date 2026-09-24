@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title data-i18n="net.title">Global Terminals · Guixu Consensus Platform</title>
+<link rel="stylesheet" href="../shared/guixu-theme.css">
+<style>
+  #map { border-radius: 10px; }
+  #loadChart { width: 100%; height: 190px; display: block; }
+  .region-row { display: flex; align-items: center; gap: 12px; padding: 9px 0; border-bottom: 1px solid rgba(163,191,250,.07); }
+  .region-row:last-child { border-bottom: none; }
+  .region-row .rname { width: 96px; font-size: .86em; flex: 0 0 auto; }
+  .region-row .rbar { flex: 1; min-width: 60px; }
+  .region-row .rnum { width: 66px; text-align: right; font-size: .84em; color: var(--gx-accent); font-variant-numeric: tabular-nums; }
+  .type-row { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid rgba(163,191,250,.07); }
+  .type-row:last-child { border-bottom: none; }
+  .type-row .tmark { width: 9px; height: 9px; border-radius: 50%; flex: 0 0 auto; }
+  .type-row .tname { flex: 1; font-size: .88em; }
+  .type-row .tprov { font-size: .74em; color: var(--gx-faint); }
+  .type-row .tcnt { font-size: .88em; font-variant-numeric: tabular-nums; width: 60px; text-align: right; }
+  .legend-chip { display: inline-flex; align-items: center; gap: 6px; }
+</style>
+</head>
+<body>
+
+<nav class="gx-nav">
+  <div class="nav-inner">
+    <a class="nav-brand" href="index.html"><span class="mark" data-i18n="brand.mark">归</span><span data-i18n="brand.name">Guixu Consensus</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html" data-i18n="nav.home">Portal</a></li>
+      <li><a href="network.html" class="active" data-i18n="nav.network">Global Network</a></li>
+      <li><a href="admin.html" data-i18n="nav.admin">Admin</a></li>
+      <li><a href="../desktop/index.html" data-i18n="nav.pc">PC Client</a></li>
+      <li><a href="../mobile/index.html" data-i18n="nav.mobile">Mobile App</a></li>
+      <li><a href="https://www.guixu.club/" target="_blank" rel="noopener" data-i18n="nav.site">Brand Site</a></li>
+    </ul>
+    <span data-gx-lang-switch></span>
+    <a class="gx-btn gx-btn-ghost gx-btn-sm" href="admin.html" data-i18n="nav.console">Console</a>
+  </div>
+</nav>
+
+<div class="gx-page">
+
+  <div class="gx-page-head">
+    <div>
+      <h1 data-i18n="net.h1">Global Terminals</h1>
+      <p data-i18n="net.sub">Real-time aggregation of storage, bandwidth and compute contributed by nodes worldwide · Proof of Resource</p>
+    </div>
+    <span class="gx-live-badge"><i class="gx-dot gx-dot-pulse"></i> <span data-i18n="net.live">Live sync · Last updated</span> <b class="gx-mono" id="lastUpdate">--:--:--</b></span>
+  </div>
+
+  <!-- KPI -->
+  <div class="gx-grid" style="grid-template-columns: repeat(auto-fit, minmax(196px, 1fr));" id="kpiRow"></div>
+
+  <!-- 地图 -->
+  <div class="gx-card gx-mt">
+    <div class="gx-card-head">
+      <div>
+        <h3 data-i18n="net.map.h3">Global node distribution</h3>
+        <div class="gx-sub" id="mapSub">--</div>
+      </div>
+      <div class="gx-filters" id="mapFilter">
+        <button class="active" data-type="all" data-i18n="net.filter.all">All</button>
+        <button data-type="pc" data-i18n="d.nodetype.pc">PC Client</button>
+        <button data-type="mobile" data-i18n="d.nodetype.mobile">Mobile App</button>
+        <button data-type="nas" data-i18n="d.nodetype.nas">NAS Storage Box</button>
+        <button data-type="server" data-i18n="d.nodetype.server">Server Node</button>
+      </div>
+    </div>
+    <div class="gx-map-wrap">
+      <canvas id="map"></canvas>
+      <div class="gx-map-legend" id="legend"></div>
+    </div>
+  </div>
+
+  <!-- 区域 / 类型 -->
+  <div class="gx-grid gx-grid-2 gx-mt">
+    <div class="gx-card">
+      <div class="gx-card-head">
+        <h3 data-i18n="net.region.h3">Regional resource distribution</h3>
+        <span class="gx-sub" data-i18n="net.region.sub">Sorted by node count</span>
+      </div>
+      <div id="regionList"></div>
+    </div>
+    <div class="gx-card">
+      <div class="gx-card-head">
+        <h3 data-i18n="net.type.h3">Terminal type composition</h3>
+        <span class="gx-sub" data-i18n="net.type.sub">Different terminals share different resource types</span>
+      </div>
+      <div id="typeList"></div>
+    </div>
+  </div>
+
+  <!-- 24h 负载 -->
+  <div class="gx-card gx-mt">
+    <div class="gx-card-head">
+      <h3 data-i18n="net.load.h3">24-hour resource load</h3>
+      <div class="gx-row" style="gap:16px; font-size:.78em; color: var(--gx-dim);">
+        <span class="legend-chip"><i style="width:8px;height:8px;border-radius:50%;background:#a3bffa;display:inline-block"></i><span data-i18n="net.load.bw">Bandwidth</span></span>
+        <span class="legend-chip"><i style="width:8px;height:8px;border-radius:50%;background:#7ee0c8;display:inline-block"></i><span data-i18n="net.load.storage">Storage</span></span>
+        <span class="legend-chip"><i style="width:8px;height:8px;border-radius:50%;background:#ffb86b;display:inline-block"></i><span data-i18n="net.load.compute">Compute</span></span>
+      </div>
+    </div>
+    <canvas id="loadChart"></canvas>
+  </div>
+
+  <!-- 明细 -->
+  <div class="gx-card gx-mt">
+    <div class="gx-card-head">
+      <div>
+        <h3 data-i18n="net.tbl.h3">Terminal ledger</h3>
+        <div class="gx-sub" id="tblSub">--</div>
+      </div>
+      <input class="gx-input" id="search" data-i18n-attr="placeholder:net.tbl.search" placeholder="Search city / country / node ID" style="width:240px">
+    </div>
+    <div class="gx-table-scroll gx-tbl-scroll">
+      <table class="gx-table">
+        <thead>
+          <tr>
+            <th data-i18n="net.tbl.th.id">Node ID</th><th data-i18n="net.tbl.th.loc">Location</th><th data-i18n="net.tbl.th.type">Terminal type</th><th data-i18n="net.tbl.th.status">Status</th>
+            <th data-i18n="net.tbl.th.storage">Storage</th><th data-i18n="net.tbl.th.bw">Bandwidth</th><th data-i18n="net.tbl.th.compute">Compute</th><th data-i18n="net.tbl.th.uptime">Uptime</th><th data-i18n="net.tbl.th.score">Credit score</th>
+          </tr>
+        </thead>
+        <tbody id="tblBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="gx-foot" data-i18n="net.foot">
+    Guixu Consensus Platform · Global terminals overview  |  This page uses framework-stage mock data, replaced automatically once the real reporting pipeline is connected
+  </div>
+</div>
+
+<script src="../shared/guixu-i18n.js"></script>
+<script src="../shared/world-dots.js"></script>
+<script src="../shared/mock-data.js"></script>
+<script src="../shared/guixu-core.js"></script>
+<script>
+(function () {
+  GX.i18n.init();
+
+  var D = window.GX_DATA;
+  var allNodes = GX.parseNodes(D.nodes);
+  var filterType = 'all';
+
+  /* ---------- KPI ---------- */
+  var kpis = [
+    { key: 'online',  labelKey: 'net.kpi.online',  value: D.global.onlineNodes, dec: 0,
+      footKey: 'net.kpi.online.foot',
+      footVars: { total: GX.num(D.global.totalNodes), rate: (D.global.onlineNodes / D.global.totalNodes * 100).toFixed(1) } },
+    { key: 'storage', labelKey: 'net.kpi.storage', value: D.global.storageTB, dec: 0, suffix: ' TB',
+      footKey: 'net.kpi.storage.foot' },
+    { key: 'bw',      labelKey: 'net.kpi.bw',      value: D.global.bandwidthGbps, dec: 0, suffix: ' Gbps',
+      footKey: 'net.kpi.bw.foot' },
+    { key: 'cpu',     labelKey: 'net.kpi.cpu',     value: D.global.computeTflops, dec: 0, suffix: ' TFLOPS',
+      footKey: 'net.kpi.cpu.foot' },
+    { key: 'geo',     labelKey: 'net.kpi.geo',     value: D.global.countries, dec: 0,
+      footKey: 'net.kpi.geo.foot', footVars: { cities: GX.num(D.global.cities) } },
+    { key: 'uptime',  labelKey: 'net.kpi.uptime',  value: D.global.uptimePct, dec: 1, suffix: ' %',
+      footKey: 'net.kpi.uptime.foot' }
+  ];
+
+  function renderKpis(animate) {
+    GX.qs('#kpiRow').innerHTML = kpis.map(function (k) {
+      return '<div class="gx-card gx-kpi">' +
+        '<div class="kpi-label">' + GX.t(k.labelKey) + '</div>' +
+        '<div class="kpi-value"><span data-kpi="' + k.key + '" data-v="0">0</span></div>' +
+        '<div class="kpi-foot">' + GX.t(k.footKey, k.footVars) + '</div></div>';
+    }).join('');
+    kpis.forEach(function (k) {
+      var el = GX.qs('[data-kpi="' + k.key + '"]');
+      if (animate) {
+        setTimeout(function () { GX.countUp(el, k.value, { decimals: k.dec, suffix: k.suffix || '' }); }, 120);
+      } else if (el) {
+        el.textContent = GX.num(k.value, k.dec) + (k.suffix || '');
+      }
+    });
+  }
+
+  /* ---------- 地图 ---------- */
+  var mapCanvas = GX.qs('#map');
+  function filtered() {
+    return filterType === 'all' ? allNodes : allNodes.filter(function (n) { return n.type === filterType; });
+  }
+  function renderMap() {
+    var list = filtered();
+    GX.drawWorldMap(mapCanvas, { nodes: list, showNodes: true, animate: true });
+    GX.qs('#mapSub').textContent = GX.t('net.map.sub', { n: GX.num(list.length) });
+  }
+  GX.qsa('#mapFilter button').forEach(function (b) {
+    GX.on(b, 'click', function () {
+      GX.qsa('#mapFilter button').forEach(function (x) { x.classList.remove('active'); });
+      b.classList.add('active');
+      filterType = b.dataset.type;
+      renderMap();
+      renderTable();
+    });
+  });
+
+  function renderLegend() {
+    GX.qs('#legend').innerHTML = D.nodeTypes.map(function (t) {
+      return '<span class="legend-chip"><i style="background:' + t.color + '"></i>' + GX.t(t.labelKey) + '</span>';
+    }).join('') + '<span class="legend-chip"><i style="background:#ff8080"></i>' + GX.t('net.legend.offline') + '</span>';
+  }
+
+  /* ---------- 区域 ---------- */
+  function renderRegions() {
+    var maxRegion = Math.max.apply(null, D.regions.map(function (r) { return r.nodes; }));
+    GX.qs('#regionList').innerHTML = D.regions.map(function (r) {
+      return '<div class="region-row">' +
+        '<span class="rname">' + GX.t(r.nameKey) + '</span>' +
+        '<span class="rbar"><span class="gx-bar"><i style="width:' + (r.nodes / maxRegion * 100).toFixed(1) + '%"></i></span></span>' +
+        '<span class="rnum">' + GX.num(r.nodes) + '</span></div>';
+    }).join('');
+  }
+
+  /* ---------- 类型 ---------- */
+  function renderTypes() {
+    GX.qs('#typeList').innerHTML = D.nodeTypes.map(function (t) {
+      var prov = (t.provideKeys || []).map(function (k) { return GX.t(k); }).join(' / ');
+      return '<div class="type-row">' +
+        '<span class="tmark" style="background:' + t.color + '"></span>' +
+        '<span class="tname">' + GX.t(t.labelKey) + '<br><span class="tprov">' + GX.t('net.type.provides') + prov + '</span></span>' +
+        '<span class="tcnt">' + GX.num(t.count) + '</span></div>';
+    }).join('');
+  }
+
+  /* ---------- 24h 曲线 ---------- */
+  GX.lineChart(GX.qs('#loadChart'), [
+    { data: D.load24h.bandwidth, color: '#a3bffa' },
+    { data: D.load24h.storage, color: '#7ee0c8' },
+    { data: D.load24h.compute, color: '#ffb86b' }
+  ], { min: 0, max: 100 });
+
+  /* ---------- 终端明细 ---------- */
+  function renderTable() {
+    var kw = (GX.qs('#search').value || '').trim().toLowerCase();
+    var list = allNodes.filter(function (n) {
+      if (filterType !== 'all' && n.type !== filterType) return false;
+      if (!kw) return true;
+      var hay = (n.city + n.country + n.id + n.cityKey + n.countryKey).toLowerCase();
+      return hay.indexOf(kw) >= 0;
+    });
+    GX.qs('#tblBody').innerHTML = list.map(function (n) {
+      var color = GX.typeColor(n.type);
+      return '<tr>' +
+        '<td class="gx-mono" style="font-size:.94em">' + n.id + '</td>' +
+        '<td>' + n.city + ' <span class="gx-dim" style="font-size:.88em">· ' + n.country + '</span></td>' +
+        '<td><span class="gx-tag" style="color:' + color + ';background:' + GX.hexA(color, .12) + ';border-color:' + GX.hexA(color, .3) + '">' + GX.typeLabel(n.type) + '</span></td>' +
+        '<td>' + (n.online
+          ? '<span class="gx-ok"><i class="gx-dot gx-dot-pulse"></i> ' + GX.t('net.tbl.online') + '</span>'
+          : '<span class="gx-bad"><i class="gx-dot" style="background:#ff8080"></i> ' + GX.t('net.tbl.offline') + '</span>') + '</td>' +
+        '<td>' + GX.cap(n.storageGB) + '</td>' +
+        '<td>' + GX.bw(n.bwMbps) + '</td>' +
+        '<td>' + (n.tflops ? n.tflops.toFixed(1) + ' TF' : '<span class="gx-dim">' + GX.t('net.tbl.na') + '</span>') + '</td>' +
+        '<td>' + n.uptime.toFixed(1) + '%</td>' +
+        '<td style="color:var(--gx-accent)">' + n.score + '</td></tr>';
+    }).join('') || '<tr><td colspan="9" class="gx-dim" style="text-align:center;padding:26px">' + GX.t('net.tbl.empty') + '</td></tr>';
+    GX.qs('#tblSub').textContent = GX.t(filterType !== 'all' ? 'net.tbl.subFiltered' : 'net.tbl.sub', { n: GX.num(list.length) });
+  }
+  GX.on(GX.qs('#search'), 'input', renderTable);
+
+  /* ---------- 实时刷新 ---------- */
+  var base = D.global.onlineNodes;
+  function stamp() {
+    var d = new Date();
+    GX.qs('#lastUpdate').textContent = String(d.getHours()).padStart(2, '0') + ':' +
+      String(d.getMinutes()).padStart(2, '0') + ':' + String(d.getSeconds()).padStart(2, '0');
+  }
+  GX.liveTick(function () {
+    var onlineKpi = GX.qs('[data-kpi="online"]');
+    base = Math.max(0, base + Math.round(GX.rand(-14, 16)));
+    if (onlineKpi) onlineKpi.textContent = GX.num(base);
+    stamp();
+  }, 3000);
+
+  /* ---------- 渲染总入口 ---------- */
+  function renderAll(animate) {
+    renderKpis(animate);
+    renderMap();
+    renderLegend();
+    renderRegions();
+    renderTypes();
+    renderTable();
+  }
+  renderAll(true);
+  GX.i18n.onChange(function () { renderAll(false); });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title data-i18n="app.title">Guixu Consensus · Mobile App</title>
+<link rel="stylesheet" href="../shared/guixu-theme.css">
+<style>
+  body { background: radial-gradient(ellipse at 50% 0%, #16304a 0%, #0a1520 60%, #060d14 100%); min-height: 100vh; padding: 34px 20px 48px; }
+  .phone-stage { display: flex; flex-direction: column; align-items: center; gap: 18px; }
+  .phone-note { font-size: .8em; color: var(--gx-faint); text-align: center; }
+  .gx-phone .gx-card { padding: 14px; border-radius: 10px; }
+  .gx-phone .gx-card-head { margin-bottom: 12px; }
+  .gx-phone .gx-card-head h3 { font-size: .95em; }
+  .gx-phone .gx-kpi .kpi-value { font-size: 1.42em; }
+  .gx-phone .gx-kpi .kpi-foot { font-size: .72em; }
+  .gx-phone .gx-grid { gap: 10px; }
+  .m-panel { display: none; animation: gxFadeIn .28s ease both; }
+  .m-panel.active { display: block; }
+  .m-hello { padding: 14px 2px 12px; }
+  .m-hello .hi { font-size: .76em; color: var(--gx-faint); }
+  .m-hello .nm { font-size: 1.1em; font-weight: 700; margin-top: 2px; display: flex; align-items: center; gap: 7px; }
+  .m-big { font-size: 2.05em; font-weight: 700; color: var(--gx-accent); line-height: 1.15; font-variant-numeric: tabular-nums; }
+  .m-big small { font-size: .35em; font-weight: 500; color: var(--gx-dim); margin-left: 5px; }
+  .m-line { display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid rgba(163,191,250,.07); font-size: .84em; }
+  .m-line:last-child { border-bottom: none; }
+  .m-line .k { color: var(--gx-dim); }
+  .m-line .v { text-align: right; }
+  .m-sub { font-size: .7em; color: var(--gx-faint); display: block; margin-top: 1px; }
+  .m-item { border: 1px solid var(--gx-line); border-radius: 10px; padding: 14px; background: rgba(255,255,255,.035); }
+  .m-item.off { opacity: .48; }
+  .m-item .it-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .m-item .it-name { font-size: .95em; font-weight: 600; }
+  .m-item .it-desc { font-size: .74em; color: var(--gx-dim); margin-top: 2px; line-height: 1.5; }
+  .m-item .it-val { font-size: 1.28em; font-weight: 700; color: var(--gx-accent); margin: 12px 0 2px; font-variant-numeric: tabular-nums; }
+  .m-item .it-hint { font-size: .72em; color: var(--gx-faint); margin-top: 10px; padding-top: 8px; border-top: 1px solid rgba(163,191,250,.08); line-height: 1.5; }
+  #mEarnChart { width: 100%; height: 118px; display: block; }
+  .m-sec-title { font-size: .78em; color: var(--gx-faint); letter-spacing: 1.2px; text-transform: uppercase; margin: 18px 0 9px; }
+</style>
+</head>
+<body>
+
+<div class="gx-lang-bar"><span data-gx-lang-switch></span></div>
+
+<div class="phone-stage">
+  <div class="gx-phone">
+    <div class="notch"></div>
+
+    <div class="status-bar">
+      <span id="clock">09:41</span>
+      <span data-i18n="app.statusBar">Guixu Consensus · Lightweight node</span>
+      <span>5G · Wi-Fi</span>
+    </div>
+
+    <div class="phone-body">
+
+      <!-- ============ 首页 ============ -->
+      <section class="m-panel active" data-panel="home">
+        <div class="m-hello">
+          <div class="hi" data-i18n="app.hi">Welcome back</div>
+          <div class="nm" id="mOwner">-- <span class="gx-tag gx-tag-ok" id="mRank">--</span></div>
+        </div>
+
+        <div class="gx-card">
+          <div class="gx-card-head">
+            <h3 data-i18n="app.running">Node Running</h3>
+            <span class="gx-tag gx-tag-ok"><i class="gx-dot gx-dot-pulse"></i> <span data-i18n="app.online">Online</span></span>
+          </div>
+          <div style="font-size:.76em;color:var(--gx-faint)" data-i18n="app.todayEarn">Today's earnings (x)</div>
+          <div class="m-big"><span id="mToday">0</span><small>x</small></div>
+          <div class="gx-row-between" style="margin-top:10px">
+            <span class="gx-sub" style="font-size:.76em"><span data-i18n="app.uptimeA">Uptime</span> <b class="gx-accent" id="mUptime">0</b> <span data-i18n="app.uptimeB">days</span></span>
+            <span class="gx-sub" style="font-size:.76em"><span data-i18n="app.score">Credit score</span> <b class="gx-accent" id="mScore">0</b></span>
+          </div>
+        </div>
+
+        <div class="m-sec-title" data-i18n="app.sec.res">Resource Contribution</div>
+        <div class="gx-grid gx-grid-2">
+          <div class="gx-card gx-kpi">
+            <div class="kpi-label" data-i18n="app.res.bw">Idle Bandwidth</div>
+            <div class="kpi-value" style="font-size:1.15em"><span id="mBw">0</span><span class="kpi-unit">Mbps</span></div>
+            <div class="kpi-foot" data-i18n="app.res.bw.foot">Shared on Wi-Fi only</div>
+          </div>
+          <div class="gx-card gx-kpi">
+            <div class="kpi-label" data-i18n="app.res.st">Local Storage</div>
+            <div class="kpi-value" style="font-size:1.15em"><span id="mSt">0</span><span class="kpi-unit">GB</span></div>
+            <div class="kpi-foot" data-i18n="app.res.st.foot">Media cache untouched</div>
+          </div>
+        </div>
+        <div class="gx-card" style="margin-top:10px">
+          <div class="gx-card-head" style="margin-bottom:8px">
+            <h3 data-i18n="app.res.cpu">On-device Compute</h3>
+            <span class="gx-tag gx-tag-bad" data-i18n="app.res.cpu.tag">Not supported</span>
+          </div>
+          <div style="font-size:.75em;color:var(--gx-dim);line-height:1.6" data-i18n="app.res.cpu.desc">
+            Mobile devices do not take part in compute sharing, in order to protect battery life and thermals. Join the network from the PC client to contribute compute.
+          </div>
+        </div>
+
+        <div class="m-sec-title" data-i18n="app.sec.node">Node Info</div>
+        <div class="gx-card">
+          <div class="m-line"><span class="k" data-i18n="app.node.id">Node ID</span><span class="v gx-mono" id="mNodeId">--</span></div>
+          <div class="m-line"><span class="k" data-i18n="app.node.type">Device Type</span><span class="v" data-i18n="app.node.type.val">Mobile · Lightweight node</span></div>
+          <div class="m-line"><span class="k" data-i18n="app.node.loc">Location</span><span class="v" data-i18n="app.node.loc.val">Shenzhen · China</span></div>
+          <div class="m-line"><span class="k" data-i18n="app.node.bal">Wallet Balance</span><span class="v gx-accent" id="mBal">--</span></div>
+        </div>
+      </section>
+
+      <!-- ============ 资源 ============ -->
+      <section class="m-panel" data-panel="share">
+        <div class="m-sec-title" style="margin-top:8px" data-i18n="app.share.secTitle">Sharing Config · Mobile lightweight node</div>
+        <div id="mShareList"></div>
+        <div style="font-size:.72em;color:var(--gx-faint);line-height:1.6;margin-top:14px" data-i18n="app.share.note">
+          The mobile client only contributes bandwidth and storage, strictly limited to Wi-Fi, charging and non-low-battery conditions.
+        </div>
+      </section>
+
+      <!-- ============ 收益 ============ -->
+      <section class="m-panel" data-panel="earn">
+        <div class="m-sec-title" style="margin-top:8px" data-i18n="app.earn.secTitle">My Assets</div>
+        <div class="gx-card">
+          <div style="font-size:.76em;color:var(--gx-faint)" data-i18n="app.earn.bal">Wallet balance (x)</div>
+          <div class="m-big"><span id="mBal2">0</span></div>
+          <div class="gx-row-between" style="margin-top:10px">
+            <span class="gx-sub" style="font-size:.76em"><span data-i18n="app.earn.pending">Pending  </span><b class="gx-accent" id="mPend">--</b></span>
+            <span class="gx-sub" style="font-size:.76em"><span data-i18n="app.earn.tax">Tax paid  </span><b class="gx-accent" id="mTax">--</b></span>
+          </div>
+        </div>
+
+        <div class="m-sec-title" data-i18n="app.earn.trend">Earnings Trend</div>
+        <div class="gx-card"><canvas id="mEarnChart"></canvas></div>
+
+        <div class="m-sec-title" data-i18n="app.earn.bd">Contribution Breakdown</div>
+        <div class="gx-card" id="mBreakdown"></div>
+
+        <div class="m-sec-title" data-i18n="app.earn.hist">Recent Records</div>
+        <div class="gx-card" id="mHistory"></div>
+      </section>
+
+      <!-- ============ 我的 ============ -->
+      <section class="m-panel" data-panel="profile">
+        <div class="m-sec-title" style="margin-top:8px" data-i18n="app.profile.dev">Device Info</div>
+        <div class="gx-card" id="mDevice"></div>
+
+        <div class="m-sec-title" data-i18n="app.profile.policy">Running Policies</div>
+        <div class="gx-card" id="mPolicy"></div>
+
+        <div class="m-sec-title" data-i18n="app.profile.about">About</div>
+        <div class="gx-card">
+          <div class="m-line"><span class="k" data-i18n="app.about.ver">App Version</span><span class="v" data-i18n="app.about.verVal">v0.1.0 prototype</span></div>
+          <div class="m-line"><span class="k" data-i18n="app.about.net">Network</span><span class="v" data-i18n="app.about.netVal">Guixu Consensus Mainnet</span></div>
+          <div class="m-line"><span class="k" data-i18n="app.about.proto">Sharing Protocol</span><span class="v" data-i18n="app.about.protoVal">PoR Proof of Resource</span></div>
+        </div>
+      </section>
+    </div>
+
+    <div class="phone-tabbar">
+      <button class="active" data-tab="home">
+        <svg class="tab-ico" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5L12 4l8 6.5V20H4z"/><path d="M9.5 20v-5h5v5"/></svg>
+        <span data-i18n="app.tab.home">Home</span>
+      </button>
+      <button data-tab="share">
+        <svg class="tab-ico" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M7 6.5h10M5 12h14M7 17.5h10"/></svg>
+        <span data-i18n="app.tab.share">Resources</span>
+      </button>
+      <button data-tab="earn">
+        <svg class="tab-ico" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17.5l5-5 3.5 3.5L21 6.5"/><path d="M15.5 6.5H21v5.5"/></svg>
+        <span data-i18n="app.tab.earn">Earnings</span>
+      </button>
+      <button data-tab="profile">
+        <svg class="tab-ico" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.6 3.1-5.5 7-5.5s7 1.9 7 5.5"/></svg>
+        <span data-i18n="app.tab.profile">Me</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="phone-note" data-i18n="app.note">Mobile app UI prototype v0.1 · shares the same node system as the PC client</div>
+</div>
+
+<script src="../shared/guixu-i18n.js"></script>
+<script src="../shared/world-dots.js"></script>
+<script src="../shared/mock-data.js"></script>
+<script src="../shared/guixu-core.js"></script>
+<script>
+(function () {
+  var D = window.GX_DATA, M = D.me, MB = D.shareProfile.mobile;
+  var curTab = 'home', firstTop = true;
+
+  /* ---------- 时钟 ---------- */
+  var now = new Date(), p2 = function (n) { return (n < 10 ? '0' : '') + n; };
+  GX.qs('#clock').textContent = p2(now.getHours()) + ':' + p2(now.getMinutes());
+
+  /* ---------- Tab 切换 ---------- */
+  function switchTab(key) {
+    curTab = key;
+    GX.qsa('.m-panel').forEach(function (p) { p.classList.toggle('active', p.dataset.panel === key); });
+    GX.qsa('.phone-tabbar button').forEach(function (b) { b.classList.toggle('active', b.dataset.tab === key); });
+    GX.qs('.phone-body').scrollTop = 0;
+    if (key === 'earn') drawEarn();
+  }
+  GX.qsa('.phone-tabbar button').forEach(function (b) {
+    GX.on(b, 'click', function () { switchTab(b.dataset.tab); });
+  });
+
+  /* ---------- 首页 ---------- */
+  function renderHome() {
+    GX.qs('#mOwner').innerHTML = GX.field(M, 'owner') + ' <span class="gx-tag gx-tag-ok">' + GX.t(M.rank.levelKey) + '</span>';
+    [
+      ['#mToday', M.wallet.todayEarn, 2], ['#mUptime', M.uptimeDays, 0],
+      ['#mScore', M.rank.score, 0], ['#mBw', MB.items[0].limit, 0],
+      ['#mSt', MB.items[1].limit, 0], ['#mBal2', M.wallet.balance, 2]
+    ].forEach(function (n) {
+      var el = GX.qs(n[0]);
+      if (firstTop) { GX.countUp(el, n[1], { decimals: n[2] }); } else { el.textContent = GX.num(n[1], n[2]); }
+    });
+    firstTop = false;
+    GX.qs('#mNodeId').textContent = M.nodeId;
+    GX.qs('#mBal').textContent = GX.coin(M.wallet.balance);
+    GX.qs('#mPend').textContent = GX.coin(M.wallet.pending);
+    GX.qs('#mTax').textContent = GX.coin(M.wallet.taxPaid);
+  }
+
+  /* ---------- 资源共享 ---------- */
+  function unitText(it, v) {
+    if (it.unit === 'TFLOPS') return v.toFixed(1);
+    return GX.num(v);
+  }
+  function renderShares() {
+    GX.qs('#mShareList').innerHTML = MB.items.map(function (it) {
+      var off = !it.enabled;
+      return '<div class="m-item' + (off ? ' off' : '') + '" style="margin-bottom:10px">' +
+        '<div class="it-top">' +
+          '<div><div class="it-name">' + GX.t(it.labelKey) + '</div><div class="it-desc">' + GX.t(it.descKey) + '</div></div>' +
+          (off
+            ? '<span class="gx-tag gx-tag-bad">' + GX.t('app.res.cpu.tag') + '</span>'
+            : '<button class="gx-switch' + (it.enabled ? ' on' : '') + '" data-share="' + it.key + '"></button>') +
+        '</div>' +
+        (off ? '' :
+          '<div class="it-val"><span data-val="' + it.key + '">' + unitText(it, it.limit) + '</span>' +
+          ' <span style="font-size:.42em;color:var(--gx-dim)">' + it.unit + '</span></div>' +
+          '<input class="gx-range" type="range" min="0" max="' + it.max + '" step="' + it.step + '" value="' + it.limit + '" data-range="' + it.key + '">' +
+          '<div class="gx-row-between" style="font-size:.7em;color:var(--gx-faint);margin-top:5px"><span>0</span><span>' + GX.t('app.share.upper', { v: it.max + ' ' + it.unit }) + '</span></div>') +
+        '<div class="it-hint">' + GX.t(it.hintKey) + (off ? '' : GX.t('app.share.weight', { v: '<b class="gx-accent">' + GX.t(it.weightKey) + '</b>' })) + '</div>' +
+        '</div>';
+    }).join('');
+
+    GX.qsa('[data-range]').forEach(function (r) {
+      GX.on(r, 'input', function () {
+        var it = MB.items.filter(function (x) { return x.key === r.dataset.range; })[0];
+        GX.qs('[data-val="' + it.key + '"]').textContent = unitText(it, parseFloat(r.value));
+      });
+    });
+    GX.qsa('[data-share]').forEach(function (s) {
+      GX.on(s, 'click', function () {
+        s.classList.toggle('on');
+        s.closest('.m-item').classList.toggle('off', !s.classList.contains('on'));
+      });
+    });
+  }
+
+  /* ---------- 收益 ---------- */
+  function drawEarn() {
+    GX.lineChart(GX.qs('#mEarnChart'), [
+      { data: D.earnings.series, color: '#7ee0c8' }
+    ], { min: 0, grid: true });
+  }
+
+  function renderBreakdown() {
+    var maxB = Math.max.apply(null, D.earnings.breakdown.map(function (b) { return b.month; }));
+    GX.qs('#mBreakdown').innerHTML = D.earnings.breakdown.map(function (b) {
+      return '<div style="margin-bottom:13px">' +
+        '<div class="gx-row-between" style="font-size:.82em;margin-bottom:6px">' +
+          '<span>' + GX.t(b.labelKey) + '<span class="m-sub">' + GX.t('app.earn.today') + b.today.toFixed(2) + ' x</span></span>' +
+          '<span class="gx-accent" style="font-variant-numeric:tabular-nums">' + GX.num(b.month, 2) + ' x</span>' +
+        '</div>' +
+        '<span class="gx-bar"><i style="width:' + (b.month / maxB * 100).toFixed(1) + '%;background:' + b.color + '"></i></span>' +
+        '</div>';
+    }).join('');
+  }
+
+  function renderHistory() {
+    GX.qs('#mHistory').innerHTML = D.earnings.history.map(function (h) {
+      return '<div class="m-line">' +
+        '<span style="flex:1"><span class="gx-mono" style="font-size:.92em">' + GX.t(h.labelKey) + '</span>' +
+        '<span class="m-sub">' + h.time + ' · ' + GX.t(h.typeKey) + '</span></span>' +
+        '<span class="v gx-ok" style="font-weight:600">+' + h.amount.toFixed(2) + ' x</span></div>';
+    }).join('');
+  }
+
+  /* ---------- 我的 ---------- */
+  function renderProfile() {
+    var dm = M.deviceMobile;
+    GX.qs('#mDevice').innerHTML = [
+      ['app.dev.name', dm.name], ['app.dev.os', dm.os], ['app.dev.cpu', dm.cpu],
+      ['app.dev.mem', dm.mem], ['app.dev.disk', dm.disk]
+    ].map(function (r) {
+      return '<div class="m-line"><span class="k">' + GX.t(r[0]) + '</span><span class="v">' + r[1] + '</span></div>';
+    }).join('');
+
+    GX.qs('#mPolicy').innerHTML = MB.policies.map(function (p) {
+      return '<div class="m-line"><span style="flex:1"><b style="font-weight:600">' + GX.t(p.labelKey) + '</b>' +
+        '<span class="m-sub">' + GX.t(p.descKey) + '</span></span>' +
+        '<button class="gx-switch' + (p.on ? ' on' : '') + '" data-policy="' + p.key + '"></button></div>';
+    }).join('');
+    GX.qsa('[data-policy]').forEach(function (s) { GX.bindSwitch(s); });
+  }
+
+  /* ---------- 统一重渲染（语言切换时整体重跑） ---------- */
+  function renderAll() {
+    renderHome();
+    renderShares();
+    renderBreakdown();
+    renderHistory();
+    renderProfile();
+    switchTab(curTab);
+  }
+
+  GX.i18n.onChange(renderAll);
+  GX.i18n.init();
+  renderAll();
+})();
+</script>
+</body>
+</html>

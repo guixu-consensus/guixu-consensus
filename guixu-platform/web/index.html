@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title data-i18n="web.title">Guixu Consensus Platform · Portal</title>
+<link rel="stylesheet" href="../shared/guixu-theme.css">
+<style>
+  /* ---------- Hero ---------- */
+  .hero { position: relative; overflow: hidden; padding: 68px 24px 56px; background: linear-gradient(135deg, #0b1724, #132437, #1b263b); border-bottom: 1px solid var(--gx-line); }
+  .hero::before { content: ''; position: absolute; top: -30%; right: -8%; width: 520px; height: 520px; border-radius: 50%; background: radial-gradient(circle, rgba(163,191,250,.13), transparent 70%); }
+  .hero::after { content: ''; position: absolute; bottom: -35%; left: -6%; width: 420px; height: 420px; border-radius: 50%; background: radial-gradient(circle, rgba(65,90,119,.28), transparent 70%); }
+  .hero-inner { position: relative; z-index: 1; max-width: 1360px; margin: auto; display: grid; grid-template-columns: 1.05fr 1fr; gap: 48px; align-items: center; }
+  .hero h1 { font-size: 2.7em; font-weight: 800; letter-spacing: 3px; margin: 14px 0 6px; }
+  .hero .hero-tag { font-size: 1.15em; color: var(--gx-accent); margin-bottom: 16px; }
+  .hero .hero-desc { color: var(--gx-dim); font-size: .95em; max-width: 520px; margin-bottom: 28px; }
+  .hero-cta { display: flex; gap: 14px; flex-wrap: wrap; }
+  .hero-map { position: relative; }
+  .hero-map canvas { width: 100%; display: block; border-radius: 12px; }
+  .hero-map .cap { text-align: center; font-size: .76em; color: var(--gx-faint); margin-top: 10px; letter-spacing: 1px; }
+
+  /* ---------- 实时数据条 ---------- */
+  .live-strip { max-width: 1360px; margin: -28px auto 0; padding: 0 24px; position: relative; z-index: 2; }
+  .live-strip .inner { background: rgba(13,27,42,.92); border: 1px solid var(--gx-line-strong); border-radius: var(--gx-radius); backdrop-filter: blur(10px); display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); padding: 20px 8px; box-shadow: 0 10px 34px rgba(0,0,0,.32); }
+  .ls-item { text-align: center; padding: 6px 10px; border-right: 1px solid var(--gx-line); }
+  .ls-item:last-child { border-right: none; }
+  .ls-item .v { font-size: 1.35em; font-weight: 700; color: var(--gx-accent); font-variant-numeric: tabular-nums; }
+  .ls-item .k { font-size: .76em; color: var(--gx-dim); margin-top: 2px; }
+
+  /* ---------- 区块 ---------- */
+  .sec { max-width: 1360px; margin: auto; padding: 62px 24px 0; }
+  .sec-head { margin-bottom: 26px; }
+  .sec-head h2 { font-size: 1.5em; font-weight: 700; }
+  .sec-head p { color: var(--gx-dim); font-size: .92em; margin-top: 6px; }
+
+  /* ---------- 产品矩阵 ---------- */
+  .pm-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(244px, 1fr)); gap: 16px; }
+  .pm-card { display: block; background: rgba(255,255,255,.04); border: 1px solid var(--gx-line); border-radius: var(--gx-radius); padding: 24px 22px; transition: all .25s; color: inherit; }
+  .pm-card:hover { border-color: var(--gx-line-strong); background: rgba(255,255,255,.065); transform: translateY(-3px); }
+  .pm-card .ico { width: 42px; height: 42px; border-radius: 11px; background: var(--gx-accent-dim); border: 1px solid var(--gx-line); display: grid; place-items: center; color: var(--gx-accent); margin-bottom: 15px; }
+  .pm-card h3 { font-size: 1.05em; margin-bottom: 7px; }
+  .pm-card p { font-size: .86em; color: var(--gx-dim); min-height: 44px; }
+  .pm-card .go { font-size: .8em; color: var(--gx-accent); margin-top: 12px; display: inline-block; }
+  .pm-card .kind { font-size: .7em; letter-spacing: 1px; color: var(--gx-faint); text-transform: uppercase; }
+
+  /* ---------- 资源对比 ---------- */
+  .cmp-wrap { overflow-x: auto; border: 1px solid var(--gx-line); border-radius: var(--gx-radius); }
+  .cmp { width: 100%; border-collapse: collapse; font-size: .89em; min-width: 560px; }
+  .cmp th, .cmp td { padding: 14px 18px; text-align: left; border-bottom: 1px solid rgba(163,191,250,.08); }
+  .cmp thead th { background: rgba(163,191,250,.06); font-size: .88em; color: var(--gx-accent); }
+  .cmp tbody tr:last-child td { border-bottom: none; }
+  .cmp td.yes { color: var(--gx-ok); }
+  .cmp td.no { color: var(--gx-faint); }
+
+  /* ---------- 商业闭环 ---------- */
+  .biz-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+  .biz-card { background: rgba(255,255,255,.04); border: 1px solid var(--gx-line); border-radius: var(--gx-radius); padding: 24px 22px; position: relative; overflow: hidden; }
+  .biz-card .idx { font-size: .72em; letter-spacing: 2px; color: var(--gx-faint); }
+  .biz-card h3 { font-size: 1.02em; margin: 8px 0 8px; color: var(--gx-accent); }
+  .biz-card p { font-size: .86em; color: var(--gx-dim); }
+  .biz-card .to { font-size: .8em; margin-top: 12px; color: var(--gx-text); }
+  .biz-card::after { content: ''; position: absolute; right: -34px; top: -34px; width: 110px; height: 110px; border-radius: 50%; background: radial-gradient(circle, rgba(163,191,250,.11), transparent 70%); }
+
+  /* ---------- 路线图 ---------- */
+  .rm-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(228px, 1fr)); gap: 16px; }
+  .rm-card { border-left: 2px solid var(--gx-accent); padding: 4px 0 4px 18px; }
+  .rm-card .ph { font-size: .74em; letter-spacing: 1.5px; color: var(--gx-faint); }
+  .rm-card h4 { font-size: 1em; margin: 5px 0 3px; }
+  .rm-card .dt { font-size: .78em; color: var(--gx-accent); margin-bottom: 10px; }
+  .rm-card ul { list-style: none; }
+  .rm-card li { font-size: .84em; color: var(--gx-dim); padding: 3px 0 3px 14px; position: relative; }
+  .rm-card li::before { content: ''; position: absolute; left: 0; top: 12px; width: 5px; height: 5px; border-radius: 50%; background: var(--gx-line-strong); }
+
+  /* ---------- 下载区 ---------- */
+  .dl-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+  .dl-card { display: flex; gap: 18px; align-items: center; background: linear-gradient(135deg, rgba(163,191,250,.09), rgba(255,255,255,.03)); border: 1px solid var(--gx-line); border-radius: var(--gx-radius); padding: 22px; }
+  .dl-card .dico { width: 52px; height: 52px; border-radius: 13px; background: var(--gx-accent-dim); display: grid; place-items: center; color: var(--gx-accent); flex: 0 0 auto; }
+  .dl-card h4 { font-size: 1.02em; }
+  .dl-card .meta { font-size: .78em; color: var(--gx-faint); margin: 3px 0 10px; }
+
+  @media (max-width: 980px) { .hero-inner { grid-template-columns: 1fr; gap: 30px; } .hero h1 { font-size: 2.1em; } }
+</style>
+</head>
+<body>
+
+<nav class="gx-nav">
+  <div class="nav-inner">
+    <a class="nav-brand" href="index.html"><span class="mark" data-i18n="brand.mark">归</span><span data-i18n="brand.name">Guixu Consensus</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="active" data-i18n="nav.home">Portal</a></li>
+      <li><a href="network.html" data-i18n="nav.network">Global Network</a></li>
+      <li><a href="admin.html" data-i18n="nav.admin">Admin</a></li>
+      <li><a href="../desktop/index.html" data-i18n="nav.pc">PC Client</a></li>
+      <li><a href="../mobile/index.html" data-i18n="nav.mobile">Mobile App</a></li>
+      <li><a href="https://www.guixu.club/" target="_blank" rel="noopener" data-i18n="nav.site">Brand Site</a></li>
+    </ul>
+    <span data-gx-lang-switch></span>
+    <a class="gx-btn gx-btn-ghost gx-btn-sm" href="admin.html" data-i18n="nav.console">Console</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<header class="hero">
+  <div class="hero-inner">
+    <div>
+      <span class="gx-tag" data-i18n="web.hero.tag">Proof-of-Resource · Decentralised consensus network</span>
+      <h1 data-i18n="web.hero.h1">Guixu Consensus Platform</h1>
+      <p class="hero-tag" data-i18n="web.hero.tag">Idle is value — make every device a node of the network</p>
+      <p class="hero-desc" data-i18n="web.hero.desc">
+        Aggregating idle disk storage, uplink bandwidth and AI compute from around the world, directly connecting storage providers, edge CDNs and compute buyers.
+        No private sale, no public sale — a 1% transaction tax and a 0.5% transfer tax sustain the operations fund, giving the platform real commercial viability.
+      </p>
+      <div class="hero-cta">
+        <a class="gx-btn gx-btn-primary" href="network.html" data-i18n="web.hero.cta1">View global network</a>
+        <a class="gx-btn gx-btn-ghost" href="admin.html" data-i18n="web.hero.cta2">Enter admin console</a>
+      </div>
+    </div>
+    <div class="hero-map">
+      <canvas id="heroMap"></canvas>
+      <div class="cap" data-i18n="web.hero.mapCap">GLOBAL NODE DISTRIBUTION · LIVE</div>
+    </div>
+  </div>
+</header>
+
+<!-- 实时数据条 -->
+<div class="live-strip">
+  <div class="inner">
+    <div class="ls-item"><div class="v" id="lsOnline">0</div><div class="k" data-i18n="web.ls.online">Online terminals</div></div>
+    <div class="ls-item"><div class="v" id="lsStorage">0</div><div class="k" data-i18n="web.ls.storage">Storage (TB)</div></div>
+    <div class="ls-item"><div class="v" id="lsBw">0</div><div class="k" data-i18n="web.ls.bw">Bandwidth (Gbps)</div></div>
+    <div class="ls-item"><div class="v" id="lsCpu">0</div><div class="k" data-i18n="web.ls.cpu">Compute (TFLOPS)</div></div>
+    <div class="ls-item"><div class="v" id="lsGeo">0</div><div class="k" data-i18n="web.ls.geo">Countries / regions</div></div>
+  </div>
+</div>
+
+<!-- 产品矩阵 -->
+<section class="sec">
+  <div class="sec-head">
+    <h2 data-i18n="web.sec.matrix.h2">Platform matrix</h2>
+    <p data-i18n="web.sec.matrix.p">Five modules form the complete multi-terminal system — click any card to open the corresponding interface</p>
+  </div>
+  <div class="pm-grid" id="pmGrid"></div>
+</section>
+
+<!-- 资源对比 -->
+<section class="sec">
+  <div class="sec-head">
+    <h2 data-i18n="web.sec.cmp.h2">Different terminals · different shared resources</h2>
+    <p data-i18n="web.sec.cmp.p">The platform opens up differentiated resource-contribution capabilities according to device form — a core design that sets Guixu apart from ordinary mining-style projects</p>
+  </div>
+  <div class="cmp-wrap">
+    <table class="cmp">
+      <thead>
+        <tr>
+          <th data-i18n="web.cmp.th1">Shared resource</th>
+          <th data-i18n="web.cmp.th2">PC Client</th>
+          <th data-i18n="web.cmp.th3">Mobile App</th>
+          <th data-i18n="web.cmp.th4">Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td data-i18n="web.cmp.r1.c0">Disk storage</td>
+          <td class="yes" data-i18n="web.cmp.r1.c1">Supported · up to 2000 GB</td>
+          <td class="yes" data-i18n="web.cmp.r1.c2">Supported · up to 64 GB</td>
+          <td class="gx-dim" data-i18n="web.cmp.r1.c3">Cold-data archiving and replica redundancy; the larger the capacity, the higher the weight</td>
+        </tr>
+        <tr>
+          <td data-i18n="web.cmp.r2.c0">Uplink bandwidth</td>
+          <td class="yes" data-i18n="web.cmp.r2.c1">Supported · up to 480 Mbps</td>
+          <td class="yes" data-i18n="web.cmp.r2.c2">Up to 120 Mbps · Wi-Fi only</td>
+          <td class="gx-dim" data-i18n="web.cmp.r2.c3">Used for edge-cache distribution; unit price rises 15% during night hours</td>
+        </tr>
+        <tr>
+          <td data-i18n="web.cmp.r3.c0">AI compute</td>
+          <td class="yes" data-i18n="web.cmp.r3.c1">Supported · up to 14 TFLOPS</td>
+          <td class="no" data-i18n="web.cmp.r3.c2">Not supported</td>
+          <td class="gx-dim" data-i18n="web.cmp.r3.c3">Mobile devices do not join compute sharing, to protect battery life and thermal control</td>
+        </tr>
+        <tr>
+          <td data-i18n="web.cmp.r4.c0">Runtime policies</td>
+          <td class="gx-dim" data-i18n="web.cmp.r4.c1">Idle only / night boost / yield under load</td>
+          <td class="gx-dim" data-i18n="web.cmp.r4.c2">Wi-Fi only / charging only / stop on low battery</td>
+          <td class="gx-dim" data-i18n="web.cmp.r4.c3">Every sharing behaviour can be toggled with one click in the client</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 商业闭环 -->
+<section class="sec">
+  <div class="sec-head">
+    <h2 data-i18n="web.sec.biz.h2">Resource matching · the commercial loop</h2>
+    <p data-i18n="web.sec.biz.p">The platform does not rely on token-price narratives — resources connect directly to real demand-side businesses, forming sustainable commercial viability</p>
+  </div>
+  <div class="biz-grid">
+    <div class="biz-card">
+      <div class="idx" data-i18n="web.biz.1.idx">01 / STORAGE</div>
+      <h3 data-i18n="web.biz.1.h3">Disk storage</h3>
+      <p data-i18n="web.biz.1.p">Fragmented idle space is aggregated into a large-scale cold-data pool, providing replica redundancy and long-term archiving.</p>
+      <div class="to" data-i18n="web.biz.1.to">→ Matching: professional storage providers</div>
+    </div>
+    <div class="biz-card">
+      <div class="idx" data-i18n="web.biz.2.idx">02 / BANDWIDTH</div>
+      <h3 data-i18n="web.biz.2.h3">Uplink bandwidth</h3>
+      <p data-i18n="web.biz.2.p">Idle uplink spread across regions and carriers is a natural fit for edge-distribution scenarios.</p>
+      <div class="to" data-i18n="web.biz.2.to">→ Matching: CDN / edge computing / mining operators</div>
+    </div>
+    <div class="biz-card">
+      <div class="idx" data-i18n="web.biz.3.idx">03 / COMPUTE</div>
+      <h3 data-i18n="web.biz.3.h3">AI compute</h3>
+      <p data-i18n="web.biz.3.p">Idle GPU and CPU capacity joins the scheduling pool to serve batch tasks such as model inference and rendering.</p>
+      <div class="to" data-i18n="web.biz.3.to">→ Matching: AI training and inference providers</div>
+    </div>
+    <div class="biz-card">
+      <div class="idx" data-i18n="web.biz.4.idx">04 / TOKEN</div>
+      <h3 data-i18n="web.biz.4.h3">Traffic token economy</h3>
+      <p data-i18n="web.biz.4.p">The traffic and trading activity accumulated by the platform itself creates a token-economy effect that continuously feeds the operations fund.</p>
+      <div class="to" data-i18n="web.biz.4.to">→ Source: 1% transaction tax + 0.5% transfer tax</div>
+    </div>
+  </div>
+</section>
+
+<!-- 客户端下载 -->
+<section class="sec">
+  <div class="sec-head">
+    <h2 data-i18n="web.sec.dl.h2">Join the network</h2>
+    <p data-i18n="web.sec.dl.p">Pick the client that suits your device and start contributing idle resources</p>
+  </div>
+  <div class="dl-grid">
+    <div class="dl-card">
+      <div class="dico">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="19" height="13" rx="2"/><path d="M8 20h8M12 17v3"/></svg>
+      </div>
+      <div>
+        <h4 data-i18n="web.dl.pc.h4">PC Client</h4>
+        <div class="meta" data-i18n="web.dl.pc.meta">Windows 10 / 11 · full-resource node</div>
+        <a class="gx-btn gx-btn-primary gx-btn-sm" href="../desktop/index.html" data-i18n="web.dl.btn">View UI prototype</a>
+      </div>
+    </div>
+    <div class="dl-card">
+      <div class="dico">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/><path d="M10.5 5.5h3"/></svg>
+      </div>
+      <div>
+        <h4 data-i18n="web.dl.mobile.h4">Mobile App</h4>
+        <div class="meta" data-i18n="web.dl.mobile.meta">Android / iOS · lightweight node</div>
+        <a class="gx-btn gx-btn-primary gx-btn-sm" href="../mobile/index.html" data-i18n="web.dl.btn">View UI prototype</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 路线图 -->
+<section class="sec">
+  <div class="sec-head">
+    <h2 data-i18n="web.sec.rm.h2">Build roadmap</h2>
+    <p data-i18n="web.sec.rm.p">Framework first, then progressive refinement</p>
+  </div>
+  <div class="rm-grid" id="rmGrid"></div>
+</section>
+
+<div class="gx-foot" style="margin-top:56px" data-i18n="web.foot">
+  Guixu Consensus Platform  |  This page is a framework-stage build; data comes from a mock data source
+</div>
+
+<script src="../shared/guixu-i18n.js"></script>
+<script src="../shared/world-dots.js"></script>
+<script src="../shared/mock-data.js"></script>
+<script src="../shared/guixu-core.js"></script>
+<script>
+(function () {
+  /* 语言初始化：填充静态 data-i18n 文案（默认英文，localStorage 记忆） */
+  GX.i18n.init();
+
+  var D = window.GX_DATA;
+
+  /* ---------- Hero 地图 ---------- */
+  GX.drawWorldMap(GX.qs('#heroMap'), { nodes: GX.parseNodes(D.nodes), showNodes: true, animate: true });
+
+  /* ---------- 实时数据条 ---------- */
+  GX.countUp(GX.qs('#lsOnline'), D.global.onlineNodes, { decimals: 0 });
+  GX.countUp(GX.qs('#lsStorage'), D.global.storageTB, { decimals: 0 });
+  GX.countUp(GX.qs('#lsBw'), D.global.bandwidthGbps, { decimals: 0 });
+  GX.countUp(GX.qs('#lsCpu'), D.global.computeTflops, { decimals: 0 });
+  GX.countUp(GX.qs('#lsGeo'), D.global.countries, { decimals: 0 });
+
+  /* ---------- 产品矩阵（文案全部走语言包 key） ---------- */
+  var ICON = {
+    site: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="15" rx="2"/><path d="M3 9h18M6.5 6.5h.01M9.5 6.5h.01"/></svg>',
+    globe: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3z"/></svg>',
+    console: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3.5" width="18" height="17" rx="2"/><path d="M9 3.5v17M12.5 9h5M12.5 13h5M12.5 17h3"/></svg>',
+    pc: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="19" height="13" rx="2"/><path d="M8 20h8M12 17v3"/></svg>',
+    phone: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/><path d="M10.5 5.5h3"/></svg>'
+  };
+
+  var products = [
+    { kindKey: 'web.pm.brand.kind', icon: ICON.site, titleKey: 'web.pm.brand.title', descKey: 'web.pm.brand.desc', url: 'https://www.guixu.club/', goKey: 'web.pm.brand.go' },
+    { kindKey: 'web.pm.net.kind', icon: ICON.globe, titleKey: 'web.pm.net.title', descKey: 'web.pm.net.desc', url: 'network.html', goKey: 'web.pm.net.go' },
+    { kindKey: 'web.pm.admin.kind', icon: ICON.console, titleKey: 'web.pm.admin.title', descKey: 'web.pm.admin.desc', url: 'admin.html', goKey: 'web.pm.admin.go' },
+    { kindKey: 'web.pm.pc.kind', icon: ICON.pc, titleKey: 'web.pm.pc.title', descKey: 'web.pm.pc.desc', url: '../desktop/index.html', goKey: 'web.pm.pc.go' },
+    { kindKey: 'web.pm.mobile.kind', icon: ICON.phone, titleKey: 'web.pm.mobile.title', descKey: 'web.pm.mobile.desc', url: '../mobile/index.html', goKey: 'web.pm.mobile.go' }
+  ];
+
+  function renderProducts() {
+    GX.qs('#pmGrid').innerHTML = products.map(function (p) {
+      return '<a class="pm-card" href="' + p.url + '"' + (/^https?:/i.test(p.url) ? ' target="_blank" rel="noopener"' : '') + '>' +
+        '<div class="ico">' + p.icon + '</div>' +
+        '<div class="kind">' + GX.t(p.kindKey) + '</div>' +
+        '<h3>' + GX.t(p.titleKey) + '</h3><p>' + GX.t(p.descKey) + '</p>' +
+        '<span class="go">' + GX.t(p.goKey) + ' \u2192</span></a>';
+    }).join('');
+  }
+
+  /* ---------- 路线图 ---------- */
+  function renderRoadmap() {
+    GX.qs('#rmGrid').innerHTML = D.roadmap.map(function (r) {
+      return '<div class="rm-card">' +
+        '<div class="ph">' + GX.t('web.rm.phase') + ' ' + r.phase + '</div>' +
+        '<h4>' + GX.t(r.titleKey) + '</h4>' +
+        '<div class="dt">' + r.date + '</div>' +
+        '<ul>' + r.itemKeys.map(function (k) { return '<li>' + GX.t(k) + '</li>'; }).join('') + '</ul></div>';
+    }).join('');
+  }
+
+  function renderAll() { renderProducts(); renderRoadmap(); }
+  renderAll();
+
+  /* ---------- 切换语言时重渲染动态区块 ---------- */
+  GX.i18n.onChange(function () { renderAll(); });
+})();
+</script>
+</body>
+</html>

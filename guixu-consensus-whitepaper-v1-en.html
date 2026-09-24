@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guixu Consensus Network Whitepaper v1.1</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif; background: #f0f2f5; color: #1a1a2e; line-height: 1.9; }
+.hero { background: linear-gradient(135deg, #0d1b2a, #1b263b, #415a77); color: #e0e1dd; padding: 60px 20px; text-align: center; }
+.hero h1 { font-size: 2.8em; letter-spacing: 2px; margin-bottom: 15px; }
+.hero .version { font-size: 1em; opacity: 0.7; }
+.hero .tagline { font-size: 1.2em; margin-top: 10px; color: #a3bffa; }
+.container { max-width: 920px; margin: 0 auto; padding: 20px 30px; }
+.section { background: white; margin: 30px 0; padding: 35px 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+.section h2 { color: #1b263b; font-size: 1.6em; border-bottom: 3px solid #a3bffa; padding-bottom: 12px; margin-bottom: 20px; }
+.section h3 { color: #415a77; font-size: 1.2em; margin-top: 25px; margin-bottom: 12px; }
+.section p { margin-bottom: 14px; text-align: justify; }
+table { width: 100%; border-collapse: collapse; margin: 18px 0; }
+th, td { padding: 12px 14px; text-align: left; border-bottom: 1px solid #e0e0e0; }
+th { background: #f0f4f8; color: #1b263b; font-weight: 600; }
+tr:hover td { background: #f7f9fc; }
+.card { background: #f7f9fc; border-left: 4px solid #415a77; padding: 16px 20px; margin: 15px 0; border-radius: 0 8px 8px 0; }
+.card strong { color: #1b263b; }
+.flow-box { background: linear-gradient(135deg, #1b263b, #415a77); color: #e0e1dd; padding: 25px 30px; margin: 18px 0; border-radius: 10px; text-align: center; font-size: 1.1em; }
+.flow-box .arrow { color: #a3bffa; font-size: 1.5em; margin: 0 8px; }
+.name-box { background: linear-gradient(135deg, #0d1b2a, #1b263b); color: #e0e1dd; padding: 25px 30px; margin: 18px 0; border-radius: 10px; text-align: center; }
+.name-box h3 { color: #a3bffa; margin-bottom: 10px; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>Guixu Consensus Network</h1>
+  <p class="version">Whitepaper v1.1 · Foundational Concept</p>
+  <p class="tagline">All Streams Converge, Consensus Builds Together</p>
+</div>
+
+<div class="container">
+
+<!-- ========== Chapter 1 ========== -->
+<div class="section">
+  <h2>Chapter 1: Project Background & Vision</h2>
+
+  <p>In 2026, compute power remains concentrated in mining farms, and nodes still operate silently within server clusters. The idle computers, mobile phones, bandwidth caps, and storage of ordinary people have never been integrated into blockchain's consensus networks. The centralization of compute and network makes the rhetoric of decentralization seem hollow in reality.</p>
+
+  <p>The Guixu Consensus Network is born from a simple belief: <strong>true decentralization should not require anyone to sacrifice their own devices. Idle resources in everyone's hands are, in themselves, the consensus power that blockchain most desperately needs.</strong></p>
+
+  <h3>Naming Meaning</h3>
+
+  <div class="name-box">
+    <h3>Guixu (The Great Abyss)</h3>
+    <p><strong>Guixu</strong> is a concept from ancient Chinese mythology, first appearing in "Liezi · Tang Wen" (The Questions of Tang). It refers to the bottomless abyss where all ocean currents converge, where every river eventually flows into, yet its volume never increases.</p>
+    <p><strong>English Definition:</strong> Guixu (The Great Abyss) / Oceanic Abyss / The Great Sinkhole</p>
+    <p><strong>Symbolism:</strong> The oceanic abyss's theme of "all things converging to one" and "never depleting" symbolizes terminal devices from across the world pooling together to form a unified consensus network. Resources are continuously utilized and perpetuate. Just as rivers and streams all eventually reach the sea, every person with idle devices is a participant in building a decentralized world.</p>
+  </div>
+
+  <h3>Core Philosophy</h3>
+
+  <div class="card">
+    <strong>"Resources are compute, contribution is consensus."</strong><br>
+    No expensive mining rigs and server clusters are needed. Every idle computer, every idle phone, as long as it stays online, contributes bandwidth, provides storage, and runs stably, is a valid node in the blockchain consensus network.
+  </div>
+
+  <h3>Project Vision</h3>
+  <p>To build a blockchain consensus system truly based on distributed terminal resources, allowing every person with idle devices to participate equally in the construction of a blockchain network and earn returns. Zero threshold, no private sale, no public sale, fully decentralized.</p>
+</div>
+
+<!-- ========== Chapter 2 ========== -->
+<div class="section">
+  <h2>Chapter 2: System Design Philosophy</h2>
+
+  <h3>Core Approach</h3>
+
+  <div class="flow-box">
+    Idle Terminal Devices <span class="arrow">→</span> Contribute Bandwidth/Storage/Compute <span class="arrow">→</span> Contribution Score Calculation <span class="arrow">→</span> Token Reward Distribution
+  </div>
+
+  <h3>Resource Types & Contribution Model</h3>
+  <p>The system records contribution scores separately based on the type of resources contributed by the terminal device. Each resource type has a different contribution coefficient:</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Resource Type</th>
+        <th>Contribution Description</th>
+        <th>Collection Method</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Network Bandwidth</td><td>Utilize idle bandwidth for node-to-node communication, data synchronization, and network forwarding</td><td>Bandwidth metering + connectivity detection</td></tr>
+      <tr><td>Storage Space</td><td>Provide distributed storage nodes for the network, storing blockchain data and application data</td><td>Disk usage + availability detection</td></tr>
+      <tr><td>Compute Power</td><td>Idle CPU/GPU power participates in consensus computation, data verification, and smart contract execution</td><td>CPU cycle detection + GPU usage monitoring</td></tr>
+      <tr><td>Stability</td><td>Device uptime, continuous running duration, network fluctuation tolerance</td><td>Heartbeat detection + uptime logging</td></tr>
+      <tr><td>Geographic Location</td><td>Multiple terminals distributed in different geographic regions enhance network resistance to single-point failures</td><td>IP geolocation tagging</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Terminal Role Classification</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Terminal Type</th>
+        <th>PC Client</th>
+        <th>Mobile</th>
+        <th>Primary Contribution</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Home Computer</td><td>✅ Primary</td><td>—</td><td>Storage + Bandwidth + Compute</td></tr>
+      <tr><td>Mobile Phone</td><td>—</td><td>✅ Lightweight</td><td>Bandwidth + Light Storage + Mobile Node</td></tr>
+      <tr><td>Server / NAS</td><td>✅ Heavy</td><td>—</td><td>High Bandwidth + Large Storage + High Compute</td></tr>
+      <tr><td>Mobile Devices (In-car / Wearables)</td><td>—</td><td>✅ Lightweight</td><td>Mobile Bandwidth + Location Contribution</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ========== Added: Resource Integration & Commercial Loop ========== -->
+<div class="section">
+  <h3>Resource Integration &amp; Commercial Loop</h3>
+  <p>Idle resources aggregated by the Guixu Consensus Network are not merely bookkept internally. Through standardized interfaces they connect directly to real-world demand-side platforms, forming a complete commercial loop: contribute &rarr; aggregate &rarr; match &rarr; monetize &rarr; reinvest. This is Guixu's core survival capability and what distinguishes it from purely conceptual networks &mdash; its resources always have real buyers.</p>
+  <table>
+    <thead>
+      <tr><th>Resource Type</th><th>Demand-Side Platforms</th><th>Monetization Path</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Disk storage</td><td>Professional storage providers, distributed cloud storage &amp; backup/archive services</td><td>Enterprise backup, cold-data archiving, object storage capacity leasing</td></tr>
+      <tr><td>Bandwidth</td><td>CDN providers, edge computing networks, mining resource operators</td><td>Traffic distribution, node acceleration, bandwidth leasing (including mining-related use)</td></tr>
+      <tr><td>Terminal compute</td><td>AI training &amp; inference providers, rendering and scientific computing platforms</td><td>GPU / CPU compute leasing, model inference hosting</td></tr>
+      <tr><td>Traffic &amp; network effects</td><td>Token holders, ecosystem applications, secondary markets</td><td>Accumulated traffic itself generates token economic value</td></tr>
+    </tbody>
+  </table>
+  <p>Beyond direct monetization of the three physical resource classes, the growth of the network itself constitutes independent commercial value. As connected terminals and active addresses keep increasing, the traffic, user attention and transaction activity accumulated by the platform can themselves form token economic value: transaction and transfer taxes continuously feed the Operations Reserve Fund, rising network activity drives token demand, and ultimately a positive three-way loop emerges among resource contributors, demand-side buyers and token holders.</p>
+</div>
+
+<!-- ========== Chapter 3 ========== -->
+<div class="section">
+  <h2>Chapter 3: Token Economic Model</h2>
+
+  <h3>Token Basic Information</h3>
+  <p>The Guixu Consensus Network token (hereinafter referred to as the "Guixu Token") is the sole credential for community members to participate in consensus network construction and earn contribution rewards. This token continuously provides funding for the operations reserve fund through the contract's built-in "transaction tax" and "transfer tax" mechanisms.</p>
+
+  <h3>Token Issuance Rules</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Item</th>
+        <th>Rule</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Total Supply</td><td>Minted on demand, no fixed upper limit, issuance speed determined dynamically by contribution scores</td></tr>
+      <tr><td>Issuance Method</td><td>No private sale, no public sale, all minted automatically through terminal resource contribution</td></tr>
+      <tr><td>Distribution Mechanism</td><td>Allocated proportionally by terminal resource contribution score: more contribution equals more rewards</td></tr>
+      <tr><td>Minting Trigger Condition</td><td>Automatic minting and allocation when terminal contribution reaches a certain threshold</td></tr>
+      <tr><td>Minting Cooldown</td><td>Each mint separated by 1-hour interval to prevent frequent small minting</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Tax Mechanism — Operations Reserve Fund</h3>
+  <div class="card">
+    <strong>Transaction Tax:</strong> Each transaction (Transfer) incurs a 1% Guixu token transaction tax.<br>
+    <strong>Transfer Tax:</strong> Each transfer incurs a 0.5% Guixu token transfer tax.<br>
+    <strong>Anti-Bot Strategy:</strong> The tax rates are deliberately set high, substantially increasing the cost for automated scripts to batch-farm and exploit the system, protecting the interests of genuine token holders.<br>
+    <strong>Rate Rationale:</strong> Tax rates can be adjusted via community governance voting, ensuring fees both provide sufficient operations funding and do not excessively impact user experience.<br>
+    <strong>Fund Destination:</strong> All tax revenue automatically flows into the operations reserve pool, used for node reward distribution, network maintenance, security audits, and system upgrades.
+  </div>
+
+  <h3>Contribution Score Calculation Model</h3>
+  <p>Contribution Score = Σ(Resource Type × Contribution Coefficient × Contribution Duration × Stability Weight × Anti-Exploit Coefficient)</p>
+
+  <h3>Anti-Exploit & Anti-Exploitation</h3>
+  <p>To prevent automated scripts, AI agents, and malicious users from mass-producing fake terminals for exploiting the system, the network integrates a multi-layer defense mechanism:</p>
+
+  <table>
+    <thead>
+      <tr><th>Defense Strategy</th><th>Implementation</th><th>Purpose</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Device Fingerprint</td><td>Terminal unique identifier (device ID + network environment fingerprint). Repeated contribution from the same device does not stack.</td><td>Prevent single-device multi-account</td></tr>
+      <tr><td>Contribution Decay Curve</td><td>New devices start at contribution coefficient 1.0, gradually increasing to 1.5 after 30 days of continuous online presence. Prevents short-term farming.</td><td>Prevent short-term mass farming</td></tr>
+      <tr><td>Behavioral Analysis</td><td>Abnormal activity detection: non-human-regular operation frequency, anomalous contribution curves, automated script pattern recognition.</td><td>Detect automated scripts</td></tr>
+      <tr><td>Resource Authenticity Verification</td><td>Bandwidth usage matched against device capability. Abnormally high contribution scores trigger manual review.</td><td>Prevent capability mismatch</td></tr>
+      <tr><td>Geolocation Validation</td><td>Multiple terminal registrations under the same IP range trigger rate limiting. Frequent IP changes trigger warnings.</td><td>Prevent distributed fake nodes</td></tr>
+      <tr><td>Community Reporting Mechanism</td><td>Users can report anomalous contributors; confirmed via community vote, with contribution scores deducted.</td><td>Community Co-Governance</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ========== Chapter 4 ========== -->
+<div class="section">
+  <h2>Chapter 4: Technical Architecture</h2>
+
+  <h3>Architecture Overview</h3>
+  <p>The system adopts a three-tier architecture of "decentralized nodes + on-chain ledger + off-chain verification" to ensure system security and scalability.</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Layer</th>
+        <th>Function</th>
+        <th>Technology</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Terminal Layer</td><td>Terminal resource contribution, data collection, local verification</td><td>PC Client / Mobile App / Browser Extension</td></tr>
+      <tr><td>Consensus Layer</td><td>Contribution score calculation, node weight assessment, token minting</td><td>Distributed consensus algorithm (resource-contribution-weighted PoR)</td></tr>
+      <tr><td>On-Chain Ledger</td><td>Contribution record storage, token distribution, tax collection, on-chain governance</td><td>Smart Contract + On-Chain Ledger</td></tr>
+      <tr><td>Application Layer</td><td>Contribution dashboard, token wallet, community voting, operations reserve query</td><td>Web Frontend + Mobile App</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Consensus Algorithm — PoR (Proof of Resource)</h3>
+  <p>Traditional PoW consumes massive electricity; PoS depends on locked capital. The Guixu Consensus Network adopts the <strong>PoR (Proof of Resource)</strong> consensus mechanism: <strong>it replaces capital staking and hashrate competition with resource contribution, establishing an independent path distinct from PoW and PoS; the technical implementation draws on PoS's stake-weighting approach, but the weight derives from resource contribution rather than token staking.</strong></p>
+  <ul>
+    <li>Terminals prove their contribution value through continuous contribution of idle resources (bandwidth, storage, compute)</li>
+    <li>The system real-time calculates each terminal's contribution score ranking</li>
+    <li>Terminals with the highest contribution scores gain priority in token minting rights</li>
+    <li>All resource contribution records are stored on-chain, immutable</li>
+  </ul>
+</div>
+
+<!-- ========== Chapter 5 ========== -->
+<div class="section">
+  <h2>Chapter 5: Operations & Governance</h2>
+
+  <h3>Community Governance</h3>
+  <p>The system operates on fully decentralized governance. All major decisions are determined by Guixu token holder voting:</p>
+  <ul>
+    <li>Tax rate adjustments (modification of 1% transaction tax and 0.5% transfer tax)</li>
+    <li>Contribution coefficient adjustments (change of weights for each resource type)</li>
+    <li>Operations reserve fund usage approval</li>
+    <li>Technology upgrades and protocol changes</li>
+    <li>Malicious node punishment</li>
+  </ul>
+
+  <h3>Operations Reserve Fund</h3>
+  <div class="card">
+    <strong>Funding Source:</strong> Transaction tax (1%) + Transfer tax (0.5%), flowing continuously.<br>
+    <strong>Fund Usage:</strong><br>
+    &nbsp;&nbsp;• Node reward distribution (40%)<br>
+    &nbsp;&nbsp;• Network maintenance and security audits (30%)<br>
+    &nbsp;&nbsp;• System upgrades and development (20%)<br>
+    &nbsp;&nbsp;• Community building and marketing (10%)<br>
+    <strong>Fund Oversight:</strong> All fund flows are fully transparent on-chain and auditable. Periodic fund reports are published.
+  </div>
+
+  <h3>Terminal Onboarding</h3>
+  <table>
+    <thead>
+      <tr><th>Access Method</th><th>Platform</th><th>Function</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>PC Client</td><td>Windows / macOS / Linux</td><td>Full resource contribution, high bandwidth utilization, large storage node</td></tr>
+      <tr><td>Mobile App</td><td>iOS / Android</td><td>Lightweight resource contribution, mobile bandwidth, location contribution</td></tr>
+      <tr><td>Browser Extension</td><td>Chrome / Firefox / Edge</td><td>Browser-internal resource contribution, web acceleration node</td></tr>
+      <tr><td>API Interface</td><td>Developer Platform</td><td>Third-party device access, enterprise-level node support</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ========== Chapter 6 ========== -->
+<div class="section">
+  <h2>Chapter 6: Implementation Roadmap</h2>
+
+  <h3>Phase 1: Foundation Network Construction (Q1-Q2 2027)</h3>
+  <ul>
+    <li>Complete terminal contribution data collection system development</li>
+    <li>Deploy PoR consensus algorithm prototype</li>
+    <li>Release PC beta version</li>
+    <li>Establish token contract (1% transaction tax + 0.5% transfer tax)</li>
+    <li>Launch beta testing community</li>
+  </ul>
+
+  <h3>Phase 2: Mainnet Launch (Q3 2027)</h3>
+  <ul>
+    <li>Mainnet officially launched</li>
+    <li>Mobile App launched</li>
+    <li>Community governance voting mechanism activated</li>
+    <li>Public access opened</li>
+  </ul>
+
+  <h3>Phase 3: Ecosystem Expansion (Q4 2027 - 2028)</h3>
+  <ul>
+    <li>Integration of more device types (routers, IoT devices, in-car terminals)</li>
+    <li>Cross-chain bridge capability introduced</li>
+    <li>DeFi ecosystem expansion (liquidity mining, lending)</li>
+    <li>Global node network expansion</li>
+  </ul>
+
+  <h3>Phase 4: Mature Network (2028+)</h3>
+  <ul>
+    <li>Becomes the world's largest decentralized consensus network</li>
+    <li>Achieve fully decentralized governance</li>
+    <li>Build a comprehensive Guixu Consensus ecosystem</li>
+  </ul>
+</div>
+
+<!-- ========== Chapter 7 ========== -->
+<div class="section">
+  <h2>Chapter 7: Risks & Challenges</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Risk Type</th>
+        <th>Risk Description</th>
+        <th>Mitigation Strategy</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Device Fragmentation</td><td>Significant performance differences between terminal devices make unified contribution scoring difficult</td><td>Contribution coefficient weighting model with dynamic weights based on device capability</td></tr>
+      <tr><td>Cybersecurity</td><td>Terminal device security cannot be fully guaranteed</td><td>Periodic security audits, endpoint protection, abnormal activity monitoring</td></tr>
+      <tr><td>Legal Compliance</td><td>Divergent legal regulations on blockchain tokens across countries</td><td>Regional compliance operations, localized legal advisor teams</td></tr>
+      <tr><td>Technology Maturity</td><td>PoR consensus algorithm requires real-world validation</td><td>Phased testing, academic collaboration, public whitepaper</td></tr>
+      <tr><td>Community Growth</td><td>Requires a sufficiently large number of terminal users to form an effective network</td><td>Early incentives, community promotion, partner programs</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ========== Chapter 8 ========== -->
+<div class="section">
+  <h2>Chapter 8: Concluding Remarks</h2>
+
+  <p>The Guixu Consensus Network is not a concept about the future, but a reflection on reality: in the digital age, everyone's idle resources represent a form of wasted wealth. When these resources pool together, they are sufficient to support a decentralized blockchain network.</p>
+
+  <p>We believe that true decentralization is not a slogan, but practice. No expensive mining rigs, no massive capital thresholds, just your idle devices, your idle bandwidth, and your idle storage. These resources are your chips, your contribution, your vote for a decentralized world.</p>
+
+  <p>Guixu Consensus Network — All Streams Converge, Consensus Builds Together.</p>
+</div>
+
+<!-- ========== Appendix ========== -->
+<div class="section">
+  <h2>Appendix: Glossary</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Term</th>
+        <th>Definition</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Guixu</td><td>Ancient Chinese mythological concept referring to the bottomless abyss where all ocean currents converge, symbolizing all things converging to one</td></tr>
+      <tr><td>The Great Abyss</td><td>English definition of Guixu, referring to the deepest trench in the ocean</td></tr>
+      <tr><td>PoR</td><td>Proof of Resource, resource-proof consensus mechanism</td></tr>
+      <tr><td>Contribution Score</td><td>Quantified indicator of terminal resource contribution, determines token distribution ratio</td></tr>
+      <tr><td>Operations Reserve Fund</td><td>System operations fund pool formed by transaction tax and transfer tax</td></tr>
+      <tr><td>Token</td><td>Guixu Consensus Network token, on-chain value exchange credential</td></tr>
+      <tr><td>Node</td><td>Terminal device participating in the Guixu Consensus Network</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ========== Footer ========== -->
+<div class="footer">
+  <p><strong>Guixu Consensus Network Whitepaper v1.1</strong> · Foundational Concept</p>
+  <p>Document Version: 2026-09-20 v1.1</p>
+  <p>Copyright © 2026 Guixu Consensus Community</p>
+</div>
+
+</div>
+
+</body>
+</html>

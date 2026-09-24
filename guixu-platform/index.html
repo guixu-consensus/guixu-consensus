@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title data-i18n="ov.title">Guixu Consensus Platform · Framework Overview</title>
+<link rel="stylesheet" href="shared/guixu-theme.css">
+<style>
+  body { background: radial-gradient(ellipse at 50% -10%, #16304a 0%, #0a1520 55%, #060d14 100%); min-height: 100vh; }
+  .topbar { max-width: 1180px; margin: 0 auto; padding: 24px 24px 0; display: flex; justify-content: flex-end; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 32px 24px 60px; }
+  .hero { text-align: center; margin-bottom: 44px; }
+  .hero .mark { width: 56px; height: 56px; border-radius: 16px; background: linear-gradient(135deg, var(--gx-accent), var(--gx-600)); display: grid; place-items: center; color: var(--gx-800); font-weight: 800; font-size: 1.5em; margin: 0 auto 18px; box-shadow: var(--gx-glow); }
+  .hero h1 { font-size: 1.9em; font-weight: 700; letter-spacing: .5px; }
+  .hero p { color: var(--gx-dim); font-size: .94em; margin-top: 10px; }
+  .hero .meta { display: flex; gap: 10px; justify-content: center; margin-top: 18px; flex-wrap: wrap; }
+  .grp-title { display: flex; align-items: center; gap: 10px; font-size: .84em; color: var(--gx-faint); letter-spacing: 1.6px; text-transform: uppercase; margin: 34px 0 16px; }
+  .grp-title::after { content: ''; flex: 1; height: 1px; background: var(--gx-line); }
+  .mod { display: block; background: rgba(255,255,255,.04); border: 1px solid var(--gx-line); border-radius: var(--gx-radius); padding: 22px; transition: all .22s; color: inherit; }
+  .mod:hover { border-color: var(--gx-line-strong); background: rgba(255,255,255,.065); transform: translateY(-2px); }
+  .mod .ic { width: 38px; height: 38px; border-radius: 11px; background: var(--gx-accent-dim); border: 1px solid var(--gx-line); display: grid; place-items: center; color: var(--gx-accent); margin-bottom: 14px; }
+  .mod h3 { font-size: 1.04em; font-weight: 600; margin-bottom: 6px; }
+  .mod p { font-size: .84em; color: var(--gx-dim); line-height: 1.65; min-height: 44px; }
+  .mod .tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 14px; }
+  .mod .go { margin-top: 14px; font-size: .82em; color: var(--gx-accent); font-weight: 600; }
+</style>
+</head>
+<body>
+
+<div class="topbar"><span data-gx-lang-switch></span></div>
+
+<div class="wrap">
+
+  <div class="hero">
+    <div class="mark" data-i18n="brand.mark">归</div>
+    <h1 data-i18n="ov.h1">Guixu Consensus Platform · Framework</h1>
+    <p data-i18n="ov.sub">Proof-of-Resource network · Platform-side and client-side skeletons are ready for direct preview</p>
+    <div class="meta">
+      <span class="gx-tag" data-i18n="tag.frameworkVer">Framework v0.1</span>
+      <span class="gx-tag gx-tag-ok" data-i18n="ov.tag.static">Fully static · Zero dependency</span>
+      <span class="gx-tag" data-i18n="ov.tag.mock">Mock-data driven</span>
+    </div>
+  </div>
+
+  <div class="grp-title" data-i18n="ov.grp.platform">Platform Side</div>
+  <div class="gx-grid gx-grid-3">
+    <a class="mod" href="web/index.html">
+      <div class="ic">
+        <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 3 2.6 15 0 18M12 3c-2.6 3-2.6 15 0 18"/></svg>
+      </div>
+      <h3 data-i18n="ov.mod.portal.title">Web Portal</h3>
+      <p data-i18n="ov.mod.portal.desc">Brand landing page: hero live map, network metrics bar, product matrix, resource comparison, business loop, roadmap and client download section.</p>
+      <div class="tags"><span class="gx-tag" data-i18n="ov.mod.portal.tag1">Showcase</span><span class="gx-tag" data-i18n="ov.mod.portal.tag2">Navigation</span></div>
+      <div class="go" data-i18n="ov.go">Open page →</div>
+    </a>
+    <a class="mod" href="web/network.html">
+      <div class="ic">
+        <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h20M12 2v20"/><circle cx="12" cy="12" r="9"/></svg>
+      </div>
+      <h3 data-i18n="ov.mod.net.title">Global Terminals</h3>
+      <p data-i18n="ov.mod.net.desc">Dot-matrix world map with live node distribution, regional and type composition, 24-hour load curves and a live terminal ledger.</p>
+      <div class="tags"><span class="gx-tag" data-i18n="ov.mod.net.tag1">Data visualisation</span><span class="gx-tag" data-i18n="ov.mod.net.tag2">Real time</span></div>
+      <div class="go" data-i18n="ov.go">Open page →</div>
+    </a>
+    <a class="mod" href="web/admin.html">
+      <div class="ic">
+        <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="5" rx="1.5"/><rect x="13" y="10" width="8" height="11" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/></svg>
+      </div>
+      <h3 data-i18n="ov.mod.admin.title">Admin Console</h3>
+      <p data-i18n="ov.mod.admin.desc">Operations console: overview and alerts, terminal ledger with export, resource-market orders, token settlement and tax rules, business onboarding review, operations fund and system settings.</p>
+      <div class="tags"><span class="gx-tag" data-i18n="ov.mod.admin.tag1">Operations</span><span class="gx-tag" data-i18n="ov.mod.admin.tag2">7 modules</span></div>
+      <div class="go" data-i18n="ov.go">Open page →</div>
+    </a>
+  </div>
+
+  <div class="grp-title" data-i18n="ov.grp.client">Client Side</div>
+  <div class="gx-grid gx-grid-2">
+    <a class="mod" href="desktop/index.html">
+      <div class="ic">
+        <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="19" height="12.5" rx="2"/><path d="M8.5 20h7M12 16.5V20"/></svg>
+      </div>
+      <h3 data-i18n="ov.mod.pc.title">PC Client</h3>
+      <p data-i18n="ov.mod.pc.desc">Full-resource node: adjustable sharing of disk storage, uplink bandwidth and AI compute, with node status, live contribution, earnings detail and runtime policies.</p>
+      <div class="tags"><span class="gx-tag" data-i18n="ov.mod.pc.tag1">Storage</span><span class="gx-tag" data-i18n="ov.mod.pc.tag2">Bandwidth</span><span class="gx-tag" data-i18n="ov.mod.pc.tag3">Compute</span></div>
+      <div class="go" data-i18n="ov.go">Open page →</div>
+    </a>
+    <a class="mod" href="mobile/index.html">
+      <div class="ic">
+        <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M10.5 18.5h3"/></svg>
+      </div>
+      <h3 data-i18n="ov.mod.mobile.title">Mobile App</h3>
+      <p data-i18n="ov.mod.mobile.desc">Lightweight node: shares only idle bandwidth and local storage, strictly limited to Wi-Fi, charging and non-low-battery conditions; on-device compute is not supported by design.</p>
+      <div class="tags"><span class="gx-tag" data-i18n="ov.mod.mobile.tag1">Bandwidth</span><span class="gx-tag" data-i18n="ov.mod.mobile.tag2">Storage</span><span class="gx-tag" data-i18n="ov.mod.mobile.tag3">Lightweight</span></div>
+      <div class="go" data-i18n="ov.go">Open page →</div>
+    </a>
+  </div>
+
+  <div class="grp-title" data-i18n="ov.grp.notes">Notes</div>
+  <div class="gx-card">
+    <div class="gx-section-title" data-i18n="ov.notes.title">Framework-stage conventions</div>
+    <p class="gx-sub" style="line-height:1.9;font-size:.87em" data-i18n-html="ov.notes.body">
+      1. All pages are fully static HTML/CSS/JS with no backend dependency &mdash; double-click to preview in a browser.<br>
+      2. All data comes from the shared mock layer <span class="gx-mono gx-accent">shared/mock-data.js</span>; when the real API is ready, only <span class="gx-mono gx-accent">GX.api</span> needs to be replaced &mdash; no page changes required.<br>
+      3. Visual specification and UI components are consolidated in <span class="gx-mono gx-accent">shared/guixu-theme.css</span>, sharing the same palette and components as the existing bilingual brand site.<br>
+      4. Platform side and client side share one node system; the differentiated resource configuration between PC and mobile is a core design point.<br>
+      5. Multilingual support is driven by <span class="gx-mono gx-accent">shared/guixu-i18n.js</span> with language packs under <span class="gx-mono gx-accent">shared/i18n/</span> &mdash; adding a language only requires adding one language-pack file.
+    </p>
+  </div>
+
+</div>
+
+<script src="shared/guixu-i18n.js"></script>
+<script>GX.i18n.init();</script>
+</body>
+</html>

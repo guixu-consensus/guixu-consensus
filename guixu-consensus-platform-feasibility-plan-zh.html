@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>归墟共识平台项目可行性运行计划书</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Microsoft YaHei', sans-serif; background: #f5f6fa; color: #1e1e2d; line-height: 1.8; }
+.hero { background: linear-gradient(135deg, #0d1b2a, #1b263b, #415a77); color: #e0e1dd; padding: 50px 20px; text-align: center; }
+.hero h1 { font-size: 2.2em; letter-spacing: 2px; margin-bottom: 10px; }
+.hero .sub { font-size: 0.95em; opacity: 0.7; }
+.hero .tagline { font-size: 1.05em; margin-top: 8px; color: #a3bffa; }
+.container { max-width: 880px; margin: 0 auto; padding: 16px 24px 40px; }
+.section { background: #fff; margin: 24px 0; padding: 30px 36px; border-radius: 10px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+.section h2 { color: #1b263b; font-size: 1.45em; border-bottom: 3px solid #a3bffa; padding-bottom: 10px; margin-bottom: 16px; }
+.section h3 { color: #415a77; font-size: 1.1em; margin-top: 20px; margin-bottom: 10px; }
+.section p { margin-bottom: 12px; text-align: justify; }
+table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 0.93em; }
+th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #e8e8e8; }
+th { background: #f0f4f8; color: #1b263b; font-weight: 600; }
+tr:hover td { background: #f9f9fc; }
+.card { background: #f5f7fb; border-left: 4px solid #415a77; padding: 14px 18px; margin: 12px 0; border-radius: 0 6px 6px 0; }
+.card strong { color: #1b263b; }
+.chart { background: #eef1f6; border: 1px solid #d0d7de; padding: 18px; margin: 14px 0; border-radius: 8px; }
+.chart .row { display: flex; align-items: center; margin: 5px 0; }
+.chart .label { width: 130px; text-align: right; font-size: 0.88em; color: #4a4a5a; }
+.chart .bar-wrap { flex: 1; height: 22px; background: #dde0e6; border-radius: 4px; overflow: hidden; }
+.chart .bar-fill { height: 100%; background: linear-gradient(90deg, #3a5a8c, #a3bffa); border-radius: 4px; display: flex; align-items: center; padding: 0 8px; color: #fff; font-size: 0.82em; font-weight: 600; min-width: fit-content; }
+.chart .val { width: 65px; font-size: 0.88em; font-weight: 600; color: #3a5a8c; }
+.flow { background: linear-gradient(135deg, #1b263b, #415a77); color: #e0e1dd; padding: 20px 24px; margin: 16px 0; border-radius: 10px; text-align: center; font-size: 1em; }
+.flow .ar { color: #a3bffa; font-size: 1.4em; margin: 0 6px; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>归墟共识平台项目可行性运行计划书</h1>
+  <p class="sub">v1.1 · 2026年9月</p>
+  <p class="tagline">万流归一，共筑共识</p>
+</div>
+
+<div class="container">
+
+<!-- 第一章 -->
+<div class="section">
+  <h2>第一章 项目背景与运营现状</h2>
+  <h3>1.1 项目背景</h3>
+  <p>2026年，区块链行业正面临算力集中化、参与门槛高、能源浪费三大痛点。现有公链的算力被专业矿场垄断，PoW挖矿消耗大量电力，PoS需要大量代币质押——这些都不符合去中心化的初衷。</p>
+  <p>归墟共识平台提出一个全新的思路：<strong>真正的去中心化不是要求用户投入资金购买矿机，而是让每一位拥有闲置设备的人都能参与共识网络。</strong>闲置的电脑、手机、路由器、NAS——这些资源本身就是区块链最需要的共识力量。</p>
+
+  <h3>1.2 项目定位</h3>
+  <div class="card">
+    <strong>项目性质：</strong>去中心化共识网络平台<br>
+    <strong>核心机制：</strong>PoR（Proof of Resource）资源证明共识<br>
+    <strong>通证类型：</strong>归墟代币（Guixu Token）<br>
+    <strong>运营方式：</strong>社区共治、链上治理、全链上透明<br>
+    <strong>资金模式：</strong>100%去中心化，不依赖外部融资，通过交易税和转账税自给自足
+  </div>
+
+  <h3>1.3 运营现状</h3>
+  <p>项目当前处于基础理念阶段，白皮书已完成中英文版本发布。计划于2027年Q1-Q2进行PoR算法原型验证与内测阶段，Q3主网上线，Q4进入开放阶段。</p>
+</div>
+
+<!-- 第二章 -->
+<div class="section">
+  <h2>第二章 运营数据概览</h2>
+  <h3>2.1 运营指标体系</h3>
+
+  <div class="chart">
+    <strong>目标运营指标（第一阶段：内测期）</strong>
+    <div class="row"><span class="label">目标节点数</span><div class="bar-wrap"><div class="bar-fill" style="width:20%;">100-500节点</div></div><span class="val">Q2目标</span></div>
+    <div class="row"><span class="label">目标日交易量</span><div class="bar-wrap"><div class="bar-fill" style="width:25%;">1000-5000笔</div></div><span class="val">预估</span></div>
+    <div class="row"><span class="label">目标日均存储贡献</span><div class="bar-wrap"><div class="bar-fill" style="width:40%;">50-200 GB</div></div><span class="val">GB/天</span></div>
+    <div class="row"><span class="label">目标日均带宽贡献</span><div class="bar-wrap"><div class="bar-fill" style="width:35%;">2-10 Mbps</div></div><span class="val">Mbps/天</span></div>
+    <div class="row"><span class="label">日均通证发行量</span><div class="bar-wrap"><div class="bar-fill" style="width:15%;">500-2000枚</div></div><span class="val">枚/天</span></div>
+  </div>
+
+  <h3>2.2 资源贡献统计</h3>
+  <table>
+    <thead><tr><th>资源类型</th><th>采集方式</th><th>权重系数</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td>网络带宽</td><td>流量计量器</td><td>1.0x</td><td>基础资源，各设备普遍提供</td></tr>
+      <tr><td>存储空间</td><td>磁盘使用量检测</td><td>1.2x</td><td>高价值资源，PC端/NAS端贡献</td></tr>
+      <tr><td>计算能力</td><td>CPU/GPU周期检测</td><td>1.5x</td><td>最高价值资源，重端设备优先</td></tr>
+      <tr><td>在线稳定性</td><td>心跳检测+日志</td><td>1.1x</td><td>连续在线奖励，30天系数逐步提升</td></tr>
+      <tr><td>地理位置</td><td>IP地理位置标注</td><td>0.8x</td><td>多区域分布奖励</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 第三章 -->
+<div class="section">
+  <h2>第三章 社区治理机制</h2>
+  <h3>3.1 PoR共识机制</h3>
+  <p>归墟共识平台采用<strong>PoR（Proof of Resource）资源证明</strong>共识机制：<strong>以资源贡献替代资本质押与算力竞赛，是区别于PoW/PoS的独立路径；技术实现借鉴PoS的权益加权思路，但权重来源是资源贡献而非代币质押。</strong></p>
+  <div class="flow">闲置终端 <span class="ar">→</span> 贡献资源 <span class="ar">→</span> 计算贡献值 <span class="ar">→</span> 排名铸造通证</div>
+  <ul>
+    <li>终端通过持续贡献闲置资源（带宽、存储、算力）来证明其贡献价值</li>
+    <li>系统实时计算各终端的贡献值排名</li>
+    <li>贡献值排名靠前的终端，优先获得通证铸造权</li>
+    <li>所有资源贡献记录在链上，不可篡改</li>
+  </ul>
+
+  <h3>3.2 通证发行机制</h3>
+  <table>
+    <thead><tr><th>维度</th><th>规则</th></tr></thead>
+    <tbody>
+      <tr><td>发行总量</td><td>按需铸造，无固定总量上限</td></tr>
+      <tr><td>发行方式</td><td>无私募、无公募，全部通过终端资源贡献自动铸造</td></tr>
+      <tr><td>分配比例</td><td>贡献越多分配越多，贡献值排名决定铸造权</td></tr>
+      <tr><td>铸造频率</td><td>每1小时铸造一次，防止高频刷取</td></tr>
+      <tr><td>防薅策略</td><td>设备指纹、贡献衰减曲线、行为分析、地理位置校验</td></tr>
+    </tbody>
+  </table>
+
+  <h3>3.3 税务机制 — 运维基金</h3>
+  <div class="card">
+    <strong>交易税：</strong>每笔交易（Transfer）收取1%归墟代币作为交易税<br>
+    <strong>转账税：</strong>每笔转账收取0.5%归墟代币作为转账税<br>
+    <strong>税率调整：</strong>税率可在社区治理中投票调整<br>
+    <strong>基金去向：</strong>交易税和转账税收入自动转入运维基金池<br><br>
+    <strong>基金用途分配：</strong>节点奖励（40%）、网络维护与安全审计（30%）、系统升级与开发（20%）、社区建设与市场推广（10%）
+  </div>
+
+  <h3>3.4 社区治理投票</h3>
+  <p>归墟代币持有者通过链上投票参与社区治理，主要投票事项包括：</p>
+  <ul>
+    <li>税率调整（交易税1%、转账税0.5%的修改）</li>
+    <li>贡献系数调整（各资源类型权重的变更）</li>
+    <li>运维基金使用审批</li>
+    <li>技术升级与协议变更</li>
+    <li>恶意节点处罚</li>
+  </ul>
+</div>
+
+<!-- 第四章 -->
+<div class="section">
+  <h2>第四章 运营策略与方向</h2>
+  <h3>4.1 分阶段运营计划</h3>
+  <table>
+    <thead><tr><th>阶段</th><th>时间</th><th>目标</th><th>关键里程碑</th></tr></thead>
+    <tbody>
+      <tr><td>内测阶段</td><td>2027 Q1-Q2</td><td>100-500个内测节点</td><td>PoR算法原型验证、PC端beta、通证合约上线</td></tr>
+      <tr><td>公测阶段</td><td>2027 Q3</td><td>500-2000个公测节点</td><td>主网上线、移动端App发布、治理投票启动</td></tr>
+      <tr><td>开放阶段</td><td>2027 Q4</td><td>开放公开接入</td><td>全球节点网络扩张</td></tr>
+      <tr><td>生态阶段</td><td>2028+</td><td>构建完整生态</td><td>DeFi生态、跨链桥接、多设备接入</td></tr>
+    </tbody>
+  </table>
+
+  <h3>4.2 市场推广策略</h3>
+  <div class="card">
+    <strong>早期激励：</strong>前1000名用户获得额外贡献系数加成（1.5x）<br>
+    <strong>社区共建：</strong>社区共建计划、节点大使计划<br>
+    <strong>学术合作：</strong>与高校合作进行PoR算法研究<br>
+    <strong>技术社区：</strong>GitHub开源、技术博客、白皮书发布<br>
+    <strong>游戏化设计：</strong>贡献面板、排行榜、贡献等级系统
+  </div>
+
+  <h3>4.3 技术路线图</h3>
+  <table>
+    <thead><tr><th>技术模块</th><th>当前进度</th><th>下一阶段</th></tr></thead>
+    <tbody>
+      <tr><td>PoR共识算法</td><td>论文级原型</td><td>可运行的Demo版本</td></tr>
+      <tr><td>终端客户端</td><td>PC端开发中</td><td>PC端beta版、移动端App</td></tr>
+      <tr><td>通证合约</td><td>设计完成</td><td>EVM合约上线</td></tr>
+      <tr><td>安全审计</td><td>计划中</td><td>第三方安全审计</td></tr>
+      <tr><td>跨链桥接</td><td>规划中</td><td>主网上线后逐步集成</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 资源对接与商业闭环 -->
+<div class="section">
+  <h3>4.4 资源对接与商业闭环</h3>
+  <p>平台聚合的闲置资源已规划标准化对接通道，直接面向真实需求方实体平台输出，确保资源"有处可去、有价可变"。运营层面按资源类型分线推进：</p>
+  <table>
+    <thead><tr><th>资源类型</th><th>对接方向</th><th>运营动作</th></tr></thead>
+    <tbody>
+      <tr><td>磁盘存储</td><td>专业存储服务商、分布式云存储 / 备份归档平台</td><td>签订容量采购协议，按可用容量与在线时长结算</td></tr>
+      <tr><td>带宽资源</td><td>CDN 服务商、边缘网络、矿业资源运营商</td><td>打包闲置带宽资源池，按流量 / 时长出租（含挖矿相关用途）</td></tr>
+      <tr><td>终端算力</td><td>AI 训练与推理服务商、渲染与科学计算平台</td><td>算力调度接入，按任务计费结算</td></tr>
+      <tr><td>流量与生态</td><td>通证持有者与生态应用方</td><td>流量聚合形成通证经济效益，税费注入运维基金</td></tr>
+    </tbody>
+  </table>
+  <p>上述对接构成项目的商业生存基础：即便在通证价格波动的情况下，资源本身的真实需求仍可持续产生收益，反哺运维基金并支撑网络长期运营。同时，平台积聚的流量与用户注意力本身即可形成通证经济效益，与资源变现在收益结构上互为补充。</p>
+</div>
+
+<!-- 第五章 -->
+<div class="section">
+  <h2>第五章 风险评估与应对</h2>
+  <h3>5.1 技术风险</h3>
+  <table>
+    <thead><tr><th>风险项</th><th>影响</th><th>应对方案</th></tr></thead>
+    <tbody>
+      <tr><td>设备性能差异大</td><td>贡献值难以公平衡量</td><td>动态贡献系数模型，按设备性能分级</td></tr>
+      <tr><td>网络延迟不一致</td><td>节点间通信效率差异</td><td>智能路由 + 异步共识机制</td></tr>
+      <tr><td>安全漏洞</td><td>恶意攻击可能破坏共识</td><td>多层防御 + 社区举报 + 安全审计</td></tr>
+      <tr><td>设备指纹被伪造</td><td>恶意用户多开作弊</td><td>设备指纹多维度交叉验证</td></tr>
+    </tbody>
+  </table>
+
+  <h3>5.2 法律风险</h3>
+  <table>
+    <thead><tr><th>风险项</th><th>影响</th><th>应对方案</th></tr></thead>
+    <tbody>
+      <tr><td>各国监管政策不统一</td><td>运营合规难度大</td><td>分区域合规运营，不预设法律立场</td></tr>
+      <tr><td>通证被认定为证券</td><td>法律风险高</td><td>通证定位为资源贡献凭证，非投资工具</td></tr>
+      <tr><td>跨境数据传输合规</td><td>数据合规风险</td><td>数据本地化存储 + 合规数据传输协议</td></tr>
+    </tbody>
+  </table>
+
+  <h3>5.3 市场风险</h3>
+  <table>
+    <thead><tr><th>风险项</th><th>影响</th><th>应对方案</th></tr></thead>
+    <tbody>
+      <tr><td>主流公链采用PoS后竞争加剧</td><td>用户增长放缓</td><td>差异化定位：专注于闲置资源利用</td></tr>
+      <tr><td>用户参与意愿不足</td><td>节点数量增长慢</td><td>早期激励、游戏化贡献面板、社区大使</td></tr>
+      <tr><td>通证价格剧烈波动</td><td>用户信心受挫</td><td>通证价格与贡献值挂钩，降低炒作空间</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- 第六章 -->
+<div class="section">
+  <h2>第六章 运营展望</h2>
+  <h3>6.1 短期展望（2027年）</h3>
+  <ul>
+    <li>完成PoR算法的原型验证与内测</li>
+    <li>主网上线，移动端App发布</li>
+    <li>建立全球节点网络，覆盖主要城市</li>
+    <li>社区治理机制运行正常</li>
+  </ul>
+
+  <h3>6.2 中期展望（2028年）</h3>
+  <ul>
+    <li>节点数量突破10000，覆盖全球主要地区</li>
+    <li>DeFi生态初步建立（流动性挖矿、借贷协议）</li>
+    <li>跨链桥接能力上线，与其他主流公链互联互通</li>
+    <li>通证经济模型稳定运行，税务收入可持续支持网络运营</li>
+  </ul>
+
+  <h3>6.3 长期愿景</h3>
+  <div class="card">
+    <strong>2028+：</strong>成为全球最大的分布式共识网络，真正的去中心化不再是一个口号，而是现实。<br>
+    每一位拥有闲置设备的普通人，都可以通过自己的设备参与区块链网络的建设，并获得合理的回报。<br>
+    万流归一，共筑共识。
+  </div>
+</div>
+
+<!-- 页脚 -->
+<div class="footer" style="text-align:center;padding:20px;color:#888;font-size:0.85em;">
+  <p><strong>归墟共识平台项目可行性运行计划书 v1.1</strong></p>
+  <p>文档版本：2026-09-20 v1.1</p>
+  <p>版权所有 © 2026 归墟共识社区</p>
+</div>
+
+</div>
+
+</body>
+</html>

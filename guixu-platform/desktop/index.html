@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title data-i18n="pc.title">Guixu Consensus · PC Client</title>
+<link rel="stylesheet" href="../shared/guixu-theme.css">
+<style>
+  body { background: radial-gradient(ellipse at 50% 0%, #16304a 0%, #0a1520 58%, #060d14 100%); min-height: 100vh; padding: 34px 24px 48px; }
+  .gx-window-body .gx-side { height: auto; position: static; }
+  .gx-topbar { margin-bottom: 20px; }
+  #pcChart { width: 100%; height: 170px; display: block; }
+  #earnChart { width: 100%; height: 160px; display: block; }
+  .res-item { border: 1px solid var(--gx-line); border-radius: var(--gx-radius); padding: 20px; background: rgba(255,255,255,.035); }
+  .res-item.off { opacity: .5; }
+  .res-item .rhead { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }
+  .res-item .rname { font-size: 1.02em; font-weight: 600; }
+  .res-item .rdesc { font-size: .82em; color: var(--gx-dim); margin-top: 3px; }
+  .res-item .rval { font-size: 1.7em; font-weight: 700; color: var(--gx-accent); font-variant-numeric: tabular-nums; line-height: 1.2; }
+  .res-item .rval small { font-size: .42em; font-weight: 500; color: var(--gx-dim); margin-left: 4px; }
+  .res-item .rscale { display: flex; justify-content: space-between; font-size: .74em; color: var(--gx-faint); margin-top: 6px; }
+  .res-item .rhint { font-size: .78em; color: var(--gx-faint); margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(163,191,250,.08); }
+  .flow-line { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(163,191,250,.07); font-size: .86em; }
+  .flow-line:last-child { border-bottom: none; }
+  .flow-line .fl-type { font-size: .74em; color: var(--gx-faint); }
+  .flow-line .fl-amt { color: var(--gx-ok); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .panel { display: none; animation: gxFadeIn .3s ease both; }
+  .panel.active { display: block; }
+</style>
+</head>
+<body>
+
+<div class="gx-lang-bar"><span data-gx-lang-switch></span></div>
+
+<div class="gx-window">
+  <!-- 窗口标题栏 -->
+  <div class="gx-window-bar">
+    <div class="lights">
+      <i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i>
+    </div>
+    <span class="win-title"><span data-i18n="pc.title">Guixu Consensus · PC Client</span> &nbsp;|&nbsp; <span class="gx-mono" id="winNode">--</span></span>
+    <span style="margin-left:auto" class="gx-tag gx-tag-ok"><i class="gx-dot gx-dot-pulse"></i> <span data-i18n="pc.winRunning">Node Running</span></span>
+  </div>
+
+  <div class="gx-window-body">
+    <!-- 侧边栏 -->
+    <aside class="gx-side">
+      <div class="brand">
+        <span class="mark" data-i18n="brand.mark">归</span>
+        <span><b data-i18n="pc.brand">Guixu Node</b><small data-i18n="pc.brandSub">PC CLIENT</small></span>
+      </div>
+
+      <div class="nav-label" data-i18n="pc.nav.console">Console</div>
+      <a class="nav-item active" data-panel="status">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/></svg>
+        <span data-i18n="pc.nav.status">Node Status</span>
+      </a>
+      <a class="nav-item" data-panel="share">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M7 6.5h10M5 12h14M7 17.5h10"/></svg>
+        <span data-i18n="pc.nav.share">Resource Sharing</span>
+      </a>
+
+      <div class="nav-label" data-i18n="pc.nav.assets">Assets</div>
+      <a class="nav-item" data-panel="earn">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17.5l5-5 3.5 3.5L21 6.5"/><path d="M15.5 6.5H21v5.5"/></svg>
+        <span data-i18n="pc.nav.earn">Earnings</span>
+      </a>
+      <a class="nav-item" data-panel="policy">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2.5v2.6M12 18.9v2.6M2.5 12h2.6M18.9 12h2.6M5.2 5.2l1.9 1.9M16.9 16.9l1.9 1.9M18.8 5.2l-1.9 1.9M7.1 16.9l-1.9 1.9"/></svg>
+        <span data-i18n="pc.nav.policy">Policies</span>
+      </a>
+
+      <div class="side-foot">
+        <a href="../web/index.html" style="color:var(--gx-dim)" data-i18n="back.home">← Back to Home</a><br>
+        <span data-i18n="pc.ver">Client prototype v0.1</span>
+      </div>
+    </aside>
+
+    <!-- 主区 -->
+    <main class="gx-main">
+      <div class="gx-topbar">
+        <div>
+          <div class="gx-crumb" id="crumb">PC Client / Node Status</div>
+          <h2 style="font-size:1.28em;font-weight:700;margin-top:3px" id="panelTitle">Node Status</h2>
+        </div>
+        <div class="gx-row">
+          <span class="gx-sub" id="ownerTag">--</span>
+          <button class="gx-btn gx-btn-ghost gx-btn-sm" id="btnPause">Pause sharing</button>
+        </div>
+      </div>
+
+      <!-- 节点状态 -->
+      <section class="panel active" data-panel="status">
+        <div class="gx-grid gx-grid-4">
+          <div class="gx-card gx-kpi">
+            <div class="kpi-label" data-i18n="pc.kpi.level">Node Tier</div>
+            <div class="kpi-value" style="font-size:1.4em"><span id="s1">--</span></div>
+            <div class="kpi-foot"><span id="s1f">--</span></div>
+          </div>
+          <div class="gx-card gx-kpi">
+            <div class="kpi-label" data-i18n="pc.kpi.uptime">Continuous Uptime</div>
+            <div class="kpi-value"><span id="s2">0</span><span class="kpi-unit" data-i18n="pc.kpi.uptime.unit">days</span></div>
+            <div class="kpi-foot" data-i18n="pc.kpi.uptime.foot">Stability directly raises earning weight</div>
+          </div>
+          <div class="gx-card gx-kpi">
+            <div class="kpi-label" data-i18n="pc.kpi.today">Today's Earnings</div>
+            <div class="kpi-value"><span id="s3">0</span><span class="kpi-unit">x</span></div>
+            <div class="kpi-foot" data-i18n="pc.kpi.today.foot">Settled at T+1</div>
+          </div>
+          <div class="gx-card gx-kpi">
+            <div class="kpi-label" data-i18n="pc.kpi.share">Currently Sharing</div>
+            <div class="kpi-value" style="font-size:1.35em"><span id="s4">3</span><span class="kpi-unit" data-i18n="pc.kpi.share.unit">resources</span></div>
+            <div class="kpi-foot" data-i18n="pc.kpi.share.foot">Storage / bandwidth / compute</div>
+          </div>
+        </div>
+
+        <div class="gx-grid gx-grid-2 gx-mt">
+          <div class="gx-card">
+            <div class="gx-card-head">
+              <h3 data-i18n="pc.card.live.h3">Live Local Contribution</h3>
+              <span class="gx-sub" data-i18n="pc.card.live.sub">Last 3 minutes</span>
+            </div>
+            <canvas id="pcChart"></canvas>
+          </div>
+          <div class="gx-card">
+            <div class="gx-card-head">
+              <h3 data-i18n="pc.card.dev.h3">Device Info</h3>
+              <span class="gx-sub" data-i18n="pc.card.dev.sub">Used for resource capability assessment</span>
+            </div>
+            <div id="deviceInfo"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 资源共享 -->
+      <section class="panel" data-panel="share">
+        <div class="gx-card" style="margin-bottom:16px">
+          <div class="gx-card-head" style="margin-bottom:6px">
+            <div>
+              <h3 data-i18n="pc.share.h3">Resource Sharing Configuration</h3>
+              <div class="gx-sub" data-i18n="pc.share.sub">A PC is a full-resource node: storage, bandwidth and AI compute can all be contributed at once, and every share yields to idle time automatically.</div>
+            </div>
+            <span class="gx-tag" data-i18n="pc.share.cap">Limits bound by local hardware</span>
+          </div>
+        </div>
+        <div class="gx-grid gx-grid-3" id="shareList"></div>
+      </section>
+
+      <!-- 收益明细 -->
+      <section class="panel" data-panel="earn">
+        <div class="gx-grid gx-grid-4">
+          <div class="gx-card gx-kpi">
+            <div class="kpi-label" data-i18n="pc.earn.balance">Wallet Balance</div>
+            <div class="kpi-value"><span id="e1">0</span><span class="kpi-unit">x</span></div>
+            <div class="kpi-foot" data-i18n="pc.earn.balance.foot">Withdrawable anytime</div>
+          </div>
+          <div class="gx-card gx-kpi">
+            <div class="kpi-label" data-i18n="pc.earn.today">Today's Earnings</div>
+            <div class="kpi-value"><span id="e2">0</span><span class="kpi-unit">x</span></div>
+            <div class="kpi-foot" data-i18n="pc.earn.today.foot">+8.2% vs yesterday</div>
+          </div>
+          <div class="gx-card gx-kpi">
+            <div class="kpi-label" data-i18n="pc.earn.pending">Pending Settlement</div>
+            <div class="kpi-value"><span id="e3">0</span><span class="kpi-unit">x</span></div>
+            <div class="kpi-foot" data-i18n="pc.earn.pending.foot">Credited at T+1</div>
+          </div>
+          <div class="gx-card gx-kpi">
+            <div class="kpi-label" data-i18n="pc.earn.tax">Cumulative Tax Paid</div>
+            <div class="kpi-value"><span id="e4">0</span><span class="kpi-unit">x</span></div>
+            <div class="kpi-foot" data-i18n="pc.earn.tax.foot">1% trading tax + 0.5% transfer tax</div>
+          </div>
+        </div>
+
+        <div class="gx-grid gx-grid-2 gx-mt">
+          <div class="gx-card">
+            <div class="gx-card-head"><h3 data-i18n="pc.earn.trend.h3">Earnings Trend</h3><span class="gx-sub" data-i18n="pc.earn.trend.sub">Last 15 days</span></div>
+            <canvas id="earnChart"></canvas>
+          </div>
+          <div class="gx-card">
+            <div class="gx-card-head"><h3 data-i18n="pc.earn.bd.h3">Contribution Breakdown</h3><span class="gx-sub" data-i18n="pc.earn.bd.sub">Month to date</span></div>
+            <div id="breakdown"></div>
+          </div>
+        </div>
+
+        <div class="gx-card gx-mt">
+          <div class="gx-card-head"><h3 data-i18n="pc.earn.hist.h3">Tasks &amp; Settlement Records</h3><span class="gx-sub" data-i18n="pc.earn.hist.sub">Latest 6 entries</span></div>
+          <div id="history"></div>
+        </div>
+      </section>
+
+      <!-- 运行策略 -->
+      <section class="panel" data-panel="policy">
+        <div class="gx-card">
+          <div class="gx-card-head"><h3 data-i18n="pc.policy.h3">Running Policies</h3><span class="gx-sub" data-i18n="pc.policy.sub">Decide when resources may be shared</span></div>
+          <div id="policyList"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<script src="../shared/guixu-i18n.js"></script>
+<script src="../shared/world-dots.js"></script>
+<script src="../shared/mock-data.js"></script>
+<script src="../shared/guixu-core.js"></script>
+<script>
+(function () {
+  var D = window.GX_DATA, M = D.me, P = D.shareProfile.pc;
+
+  var PANEL_KEY = { status: 'pc.panel.status', share: 'pc.panel.share', earn: 'pc.panel.earn', policy: 'pc.panel.policy' };
+  var curPanel = 'status', paused = false, firstTop = true;
+
+  /* ---------- 面板切换 ---------- */
+  function switchPanel(key) {
+    curPanel = key;
+    GX.qsa('.panel').forEach(function (p) { p.classList.toggle('active', p.dataset.panel === key); });
+    GX.qsa('.gx-side a.nav-item').forEach(function (a) { a.classList.toggle('active', a.dataset.panel === key); });
+    var t = GX.t(PANEL_KEY[key] || '');
+    GX.qs('#panelTitle').textContent = t;
+    GX.qs('#crumb').textContent = GX.t('pc.crumb', { panel: t });
+    if (key === 'status') drawPcChart();
+    if (key === 'earn') drawEarnChart();
+  }
+  GX.qsa('.gx-side a.nav-item').forEach(function (a) {
+    GX.on(a, 'click', function (e) { e.preventDefault(); switchPanel(a.dataset.panel); });
+  });
+
+  /* ---------- 顶部 / 状态 ---------- */
+  function renderTop() {
+    GX.qs('#winNode').textContent = M.nodeId;
+    GX.qs('#ownerTag').textContent = GX.t('pc.owner', { name: GX.field(M, 'owner') });
+    GX.qs('#s1').textContent = GX.t(M.rank.levelKey);
+    GX.qs('#s1f').textContent = GX.t('pc.kpi.level.foot', {
+      v: GX.num(M.rank.score) + ' · ' + GX.t('pc.kpi.level.top', { p: M.rank.percentile })
+    });
+    GX.qs('#s4').textContent = P.items.filter(function (i) { return i.enabled; }).length;
+    [
+      ['#s2', M.uptimeDays, 0], ['#s3', M.wallet.todayEarn, 2],
+      ['#e1', M.wallet.balance, 2], ['#e2', M.wallet.todayEarn, 2],
+      ['#e3', M.wallet.pending, 2], ['#e4', M.wallet.taxPaid, 2]
+    ].forEach(function (n) {
+      var el = GX.qs(n[0]);
+      if (firstTop) { GX.countUp(el, n[1], { decimals: n[2] }); } else { el.textContent = GX.num(n[1], n[2]); }
+    });
+    firstTop = false;
+    GX.qs('#btnPause').textContent = paused ? GX.t('pc.resume') : GX.t('pc.pause');
+    GX.qs('#btnPause').className = paused ? 'gx-btn gx-btn-primary gx-btn-sm' : 'gx-btn gx-btn-ghost gx-btn-sm';
+  }
+
+  /* ---------- 设备信息 ---------- */
+  function renderDevice() {
+    var d = M.devicePC;
+    GX.qs('#deviceInfo').innerHTML = [
+      ['pc.dev.name', d.name], ['pc.dev.os', d.os], ['pc.dev.cpu', d.cpu],
+      ['pc.dev.gpu', d.gpu], ['pc.dev.mem', d.mem], ['pc.dev.disk', d.disk]
+    ].map(function (r) {
+      return '<div class="flow-line"><span class="gx-dim">' + GX.t(r[0]) + '</span><span>' + r[1] + '</span></div>';
+    }).join('');
+  }
+
+  function drawPcChart() {
+    GX.lineChart(GX.qs('#pcChart'), [
+      { data: GX.wobble(62, 40, 6), color: '#a3bffa' }
+    ], { min: 0, max: 100 });
+  }
+  function drawEarnChart() {
+    GX.lineChart(GX.qs('#earnChart'), [
+      { data: D.earnings.series, color: '#7ee0c8' }
+    ], { min: 0 });
+  }
+
+  /* ---------- 资源共享 ---------- */
+  function unitText(item, v) {
+    if (item.key === 'compute') return v.toFixed(1) + ' TFLOPS';
+    if (item.key === 'storage') return GX.num(v) + ' GB';
+    return GX.num(v) + ' Mbps';
+  }
+  function renderShares() {
+    GX.qs('#shareList').innerHTML = P.items.map(function (it) {
+      return '<div class="res-item' + (it.enabled ? '' : ' off') + '" data-item="' + it.key + '">' +
+        '<div class="rhead">' +
+          '<div><div class="rname">' + GX.t(it.labelKey) + '</div><div class="rdesc">' + GX.t(it.descKey) + '</div></div>' +
+          '<button class="gx-switch' + (it.enabled ? ' on' : '') + '" data-share="' + it.key + '"' + (it.enabled ? '' : ' disabled') + '></button>' +
+        '</div>' +
+        '<div style="margin:16px 0 2px" class="rval"><span data-val="' + it.key + '">' + unitText(it, it.limit) + '</span></div>' +
+        '<input class="gx-range" type="range" min="0" max="' + it.max + '" step="' + it.step + '" value="' + it.limit + '" data-range="' + it.key + '"' + (it.enabled ? '' : ' disabled') + '>' +
+        '<div class="rscale"><span>0</span><span>' + GX.t('pc.share.upper', { v: unitText(it, it.max) }) + '</span></div>' +
+        '<div class="rhint">' + GX.t(it.hintKey) + GX.t('pc.share.weight', { v: '<b class="gx-accent">' + GX.t(it.weightKey) + '</b>' }) + '</div>' +
+        '</div>';
+    }).join('');
+
+    GX.qsa('[data-range]').forEach(function (r) {
+      GX.on(r, 'input', function () {
+        var it = P.items.filter(function (x) { return x.key === r.dataset.range; })[0];
+        GX.qs('[data-val="' + it.key + '"]').textContent = unitText(it, parseFloat(r.value));
+      });
+    });
+    GX.qsa('[data-share]').forEach(function (s) {
+      GX.on(s, 'click', function () {
+        if (s.disabled) return;
+        s.classList.toggle('on');
+        s.closest('.res-item').classList.toggle('off', !s.classList.contains('on'));
+      });
+    });
+  }
+
+  /* ---------- 收益 ---------- */
+  function renderBreakdown() {
+    var maxB = Math.max.apply(null, D.earnings.breakdown.map(function (b) { return b.month; }));
+    GX.qs('#breakdown').innerHTML = D.earnings.breakdown.map(function (b) {
+      return '<div class="flow-line" style="display:block">' +
+        '<div class="gx-row-between" style="margin-bottom:6px">' +
+          '<span>' + GX.t(b.labelKey) + '</span>' +
+          '<span class="gx-accent" style="font-variant-numeric:tabular-nums">' + GX.num(b.month, 2) + ' x</span>' +
+        '</div>' +
+        '<span class="gx-bar"><i style="width:' + (b.month / maxB * 100).toFixed(1) + '%;background:' + b.color + '"></i></span>' +
+        '</div>';
+    }).join('');
+  }
+
+  function renderHistory() {
+    GX.qs('#history').innerHTML = D.earnings.history.map(function (h) {
+      return '<div class="flow-line">' +
+        '<span style="flex:1"><span class="gx-mono" style="font-size:.9em">' + GX.t(h.labelKey) + '</span>' +
+        '<br><span class="fl-type">' + h.time + ' · ' + GX.t(h.typeKey) + '</span></span>' +
+        '<span class="fl-amt">+' + h.amount.toFixed(2) + ' x</span></div>';
+    }).join('');
+  }
+
+  /* ---------- 运行策略 ---------- */
+  function renderPolicies() {
+    GX.qs('#policyList').innerHTML = P.policies.map(function (p) {
+      return '<div class="flow-line">' +
+        '<span style="flex:1"><b style="font-weight:600;font-size:.98em">' + GX.t(p.labelKey) + '</b>' +
+        '<br><span class="fl-type">' + GX.t(p.descKey) + '</span></span>' +
+        '<button class="gx-switch' + (p.on ? ' on' : '') + '" data-policy="' + p.key + '"></button></div>';
+    }).join('');
+    GX.qsa('[data-policy]').forEach(function (s) { GX.bindSwitch(s); });
+  }
+
+  /* ---------- 暂停按钮 ---------- */
+  GX.on(GX.qs('#btnPause'), 'click', function () {
+    paused = !paused;
+    GX.qs('#btnPause').textContent = paused ? GX.t('pc.resume') : GX.t('pc.pause');
+    GX.qs('#btnPause').className = paused ? 'gx-btn gx-btn-primary gx-btn-sm' : 'gx-btn gx-btn-ghost gx-btn-sm';
+  });
+
+  /* ---------- 统一重渲染（语言切换时整体重跑） ---------- */
+  function renderAll() {
+    renderTop();
+    renderDevice();
+    renderShares();
+    renderBreakdown();
+    renderHistory();
+    renderPolicies();
+    switchPanel(curPanel);
+  }
+
+  GX.i18n.onChange(renderAll);
+  GX.i18n.init();
+  renderAll();
+})();
+</script>
+</body>
+</html>

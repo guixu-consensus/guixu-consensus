@@ -1,0 +1,159 @@
+---
+AIGC:
+    Label: "1"
+    ContentProducer: 001191440300708461136T1XGW3
+    ProduceID: 3c9b9cd9025783dd3ce698a9ba04573b_cba940d8b75711f1a59e525400248c00
+    ReservedCode1: t61kdzhtUIrOBcaHf+1dIBvVWzBaUpVT2EAkZmWx2Ovm0Tz2Wh5NhGpcAZF002QZdV+SIjMBUqm1QpmzV4YmnGwlY3LT8VSfE9FXWHPoWRtdzj+Bctg8b2v6zgBOepVYSgmTVQlgdCtEbVijNboNsB9TqkL9+k2UGM5ciPPRilZRgo1XgsLC1n0b3RA=
+    ContentPropagator: 001191440300708461136T1XGW3
+    PropagateID: 3c9b9cd9025783dd3ce698a9ba04573b_cba940d8b75711f1a59e525400248c00
+    ReservedCode2: t61kdzhtUIrOBcaHf+1dIBvVWzBaUpVT2EAkZmWx2Ovm0Tz2Wh5NhGpcAZF002QZdV+SIjMBUqm1QpmzV4YmnGwlY3LT8VSfE9FXWHPoWRtdzj+Bctg8b2v6zgBOepVYSgmTVQlgdCtEbVijNboNsB9TqkL9+k2UGM5ciPPRilZRgo1XgsLC1n0b3RA=
+---
+
+# 归墟共识平台 · 程序框架 v0.1
+
+> Guixu Consensus Platform — 多端程序框架（骨架阶段）
+> 本目录为**平台端 + 用户端**的程序代码根目录，与同级的白皮书 / 计划书 / 官网静态页配套。
+
+---
+
+## 1. 当前进度定位
+
+本版本是**框架骨架**，目标是先把信息架构、页面结构、数据接口、视觉规范全部立起来，
+后续按模块逐步填充业务逻辑。所有页面**均可直接双击打开预览**，零依赖、无需构建、无需服务器。
+
+数据全部来自 `shared/mock-data.js` 的模拟数据，通过 `shared/guixu-core.js` 中的 `GX.api`
+统一读取 —— 未来接后端时只改这一个文件，页面代码零改动。
+
+---
+
+## 2. 目录结构
+
+```
+guixu-platform/
+├── README.md                    本文件
+├── shared/                      共享资源（全端复用）
+│   ├── guixu-theme.css          主题变量 + 组件库（按钮/卡片/KPI/表格/开关/外壳）
+│   ├── guixu-i18n.js            多语言引擎（默认英文 / localStorage 持久化 / 语言可扩展）
+│   ├── guixu-core.js            数据访问层 + 工具函数 + 世界地图渲染 + 轻量图表
+│   ├── mock-data.js             【模拟数据集】全网快照/节点/区域/收益/商户（文案已 key 化）
+│   ├── world-dots.js            点阵世界地图底图（源自 Natural Earth 110m 真实地理数据）
+│   └── i18n/                    语言包目录（新增语言只需在此增加 <code>.js）
+│       ├── en.js                英文文案（默认语言）
+│       └── zh.js                简体中文文案
+│
+├── web/                         ▍平台端（Web）
+│   ├── index.html               官网门户 —— 品牌首页 + 平台实时概览 + 产品矩阵
+│   ├── network.html             全球终端情况 —— 地图可视化 + 区域分布 + 终端明细
+│   └── admin.html               后台管理 —— 总览/终端/资源/通证/商业对接/系统设置
+│
+├── desktop/                     ▍用户端（PC）
+│   └── index.html               PC 客户端 —— 全资源节点（存储+带宽+算力）
+│
+└── mobile/                      ▍用户端（手机）
+    └── index.html               手机 APP —— 轻量节点（带宽+存储），算力不参与
+```
+
+---
+
+## 3. 打开方式
+
+| 端 | 入口文件 | 说明 |
+|---|---|---|
+| 平台官网 | `web/index.html` | 建议从此页进入，内含到其他模块的导航 |
+| 全球终端 | `web/network.html` | 需与 `shared/` 保持相对路径 |
+| 后台管理 | `web/admin.html` | 演示用后台，含侧边栏多模块切换 |
+| PC 客户端 | `desktop/index.html` | 以「应用窗口」形式呈现 |
+| 手机 APP | `mobile/index.html` | 以「手机外框」形式呈现 |
+
+> 全部为静态页面，**双击即可运行**。请勿单独移动某个 html 文件，需与其上级目录一起移动，否则 `shared/` 引用会失效。
+
+全站**默认英文**；各页右上角（移动端为顶部状态栏）提供 `EN / 中` 语言切换按钮，
+切换结果写入 `localStorage(gx-lang)`，刷新后保持上次所选语言。
+
+---
+
+## 4. 多语言（i18n）
+
+当前提供**英文（默认）+ 简体中文**两套完整文案（各 636 条），机制上支持仅新增语言包即可扩展更多语言。
+
+| 机制 | 落点 |
+|---|---|
+| 引擎 | `shared/guixu-i18n.js` —— `GX.i18n.init()` / `GX.t(key)` / `GX.lang` / `GX.field()` |
+| 语言包 | `shared/i18n/<code>.js`，文件内调用 `GX.i18n.register('<code>', {...})` 自注册 |
+| 静态标记 | `data-i18n="key"`、`data-i18n-html="key"`、`data-i18n-attr="placeholder:key"` |
+| 动态文案 | 渲染函数统一走 `GX.t(key)`（含占位符 `{name}`） |
+| 数据层 | `shared/mock-data.js` 文案全部 key 化（`labelKey` / `descKey` / `cityKey` 等） |
+| 切换与持久化 | `[data-gx-lang-switch]` 由引擎渲染按钮；默认 `en`，选择写入 `localStorage(gx-lang)` |
+| 重渲染 | 页面动态区块统一注册 `GX.i18n.onChange(renderAll)`，切换语言时整体重跑 |
+
+渲染方式为「改写元素文本」，全程不使用 CSS 显隐控制语言元素 —— 任何元素在任何语言下都只被替换文本、不会被隐藏。
+
+**新增一种语言**（以日文 `ja` 为例）：
+
+1. 复制 `shared/i18n/en.js` 为 `shared/i18n/ja.js`，将 `register('en', ...)` 改为 `register('ja', ...)` 并翻译文案；
+2. 在 `shared/guixu-i18n.js` 的 `LOCALES` 数组追加 `'ja'`（可选：在 `META` 中补 `{ name: '日本語', short: 'JP' }`）。
+
+页面 HTML **零改动**，引擎会自动注入新语言包并在切换器中渲染对应按钮。
+
+---
+
+## 5. 核心差异化：不同终端提供不同共享资源
+
+这是本平台与普通「挖矿型」项目的关键区别，已在两端界面中显式体现：
+
+| 资源类型 | PC 客户端 | 手机 APP |
+|---|---|---|
+| 磁盘存储 | ✅ 主力（上限 2000 GB） | ✅ 轻量（上限 64 GB） |
+| 上行带宽 | ✅ 主力（上限 480 Mbps） | ✅ 闲时（上限 120 Mbps，仅 Wi-Fi + 充电） |
+| AI 算力 | ✅ 支持（上限 14 TFLOPS） | ❌ 不支持（保续航与温度） |
+| 运行策略 | 仅空闲时 / 夜间加速 / 高负载让路 | 仅 Wi-Fi / 仅充电 / 低电量停止 |
+
+对应数据定义见 `shared/mock-data.js` 的 `shareProfile` 字段。
+
+---
+
+## 6. 商业闭环的界面落点
+
+平台「资源直连专业需求方」的商业模型，在程序中的落点：
+
+- **官网门户**：产品矩阵中体现「资源市场」入口
+- **全球终端**：展示可被对接的资源总盘子（存储/带宽/算力三类实时储量）
+- **后台管理**：`商业对接` 模块 —— 需求方订单、报价、结算
+- **后台 `通证结算`**：1% 交易税 + 0.5% 转账税 → 运维基金收支流水
+
+---
+
+## 7. 后续开发路线（建议顺序）
+
+```
+P1 框架骨架        ✅ 当前版本
+P2 结构细化        □ 各页面补齐二级页 / 详情弹窗 / 筛选器
+P3 数据接通        □ GX.api.mode 切换为 live，对接真实后端
+P4 用户端能力      □ 客户端资源采集（存储/带宽/算力真实探测）
+P5 通证与结算      □ 钱包、PoR 凭证、税费计算
+P6 商业对接        □ 需求方入驻、订单撮合、结算流水
+```
+
+---
+
+## 8. 二次开发约定
+
+1. **样式**：一律使用 `guixu-theme.css` 中的 `--gx-*` 变量与 `gx-` 前缀类名，勿散写颜色值。
+2. **数据**：页面不得硬编码业务数据，必须从 `GX_DATA` / `GX.api` 读取。
+3. **新增页面**：引入 `shared/guixu-theme.css` → `shared/world-dots.js` → `shared/mock-data.js` → `shared/guixu-core.js` → `shared/guixu-i18n.js`，顺序不可颠倒；页面文案不得硬编码，静态用 `data-i18n`、动态用 `GX.t(key)`。
+4. **接后端**：修改 `GX.api.mode = 'live'` 并实现 `fetchSnapshot()`，期望返回结构与本文件第 2 节的 `mock-data.js` 完全一致。
+
+---
+
+## 9. 已知占位与待完善项
+
+- 图表为自绘 Canvas 轻量实现，仅支持折线/环形，后续可替换为 ECharts（如需引入第三方库）
+- 节点光点为模拟数据渲染，尚未接入真实上报链路
+- 后台管理的操作按钮多为演示态，暂未绑定写接口
+- 手机 APP 与 PC 客户端未包含壳工程（Electron / 安卓原生），当前为界面原型
+- 未包含登录 / 鉴权流程
+
+---
+
+*归墟共识 · 资源证明（PoR）· 闲置即价值*
+*（内容由AI生成，仅供参考）*

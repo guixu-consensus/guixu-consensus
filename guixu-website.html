@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guixu Consensus — The Great Abyss</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Segoe UI', 'Microsoft YaHei', system-ui, sans-serif; background: #f0f2f5; color: #1a1a2e; line-height: 1.7; }
+
+/* ---------- NAV ---------- */
+nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; background: rgba(13,27,42,.92); backdrop-filter: blur(8px); border-bottom: 1px solid rgba(163,191,250,.12); }
+nav .inner { max-width: 1100px; margin: auto; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; height: 56px; }
+nav .logo { color: #e0e1dd; font-size: 1.15em; font-weight: 700; letter-spacing: .5px; }
+nav .logo span { color: #a3bffa; }
+nav .nav-links { display: flex; gap: 24px; align-items: center; list-style: none; }
+nav .nav-links a { color: rgba(224,225,221,.7); text-decoration: none; font-size: .9em; transition: color .2s; }
+nav .nav-links a:hover { color: #a3bffa; }
+.lang-btn { background: rgba(163,191,250,.15); border: 1px solid rgba(163,191,250,.3); color: #a3bffa; border-radius: 6px; padding: 4px 14px; font-size: .85em; cursor: pointer; transition: all .2s; }
+.lang-btn:hover { background: rgba(163,191,250,.3); }
+.menu-toggle { display: none; background: none; border: none; color: #a3bffa; font-size: 1.5em; cursor: pointer; }
+
+/* ---------- HERO ---------- */
+.hero { min-height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; background: linear-gradient(135deg, #0d1b2a, #1b263b, #415a77); padding: 80px 24px 60px; position: relative; overflow: hidden; }
+.hero::before { content: ''; position: absolute; top: -20%; right: -10%; width: 500px; height: 500px; background: radial-gradient(circle, rgba(163,191,250,.12) 0%, transparent 70%); border-radius: 50%; }
+.hero::after { content: ''; position: absolute; bottom: -15%; left: -5%; width: 400px; height: 400px; background: radial-gradient(circle, rgba(65,90,119,.25) 0%, transparent 70%); border-radius: 50%; }
+.hero-content { position: relative; z-index: 1; max-width: 720px; }
+.hero h1 { font-size: 3em; color: #e0e1dd; margin-bottom: 8px; font-weight: 700; letter-spacing: 2px; }
+.hero .tagline { font-size: 1.3em; color: #a3bffa; margin-bottom: 16px; }
+.hero .sub { color: rgba(224,225,221,.6); font-size: 1em; margin-bottom: 32px; }
+.hero .cta-group { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+.btn { display: inline-block; padding: 12px 32px; border-radius: 8px; font-size: .95em; font-weight: 600; text-decoration: none; transition: all .25s; }
+.btn-primary { background: #a3bffa; color: #0d1b2a; }
+.btn-primary:hover { background: #8aa5e6; transform: translateY(-1px); }
+.btn-outline { border: 2px solid rgba(163,191,250,.4); color: #a3bffa; }
+.btn-outline:hover { border-color: #a3bffa; background: rgba(163,191,250,.08); }
+.hero .scroll-hint { margin-top: 40px; color: rgba(224,225,221,.4); font-size: .8em; animation: float 2s ease-in-out infinite; }
+@keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+
+/* ---------- SECTIONS ---------- */
+section { padding: 80px 24px; }
+.dark-section { background: linear-gradient(135deg, #0d1b2a, #1b263b, #415a77); color: #e0e1dd; }
+.light-section { background: #f0f2f5; }
+.section-inner { max-width: 1000px; margin: auto; }
+.section-title { font-size: 1.8em; font-weight: 700; margin-bottom: 8px; }
+.dark-section .section-title { color: #e0e1dd; }
+.light-section .section-title { color: #1b263b; }
+.section-subtitle { font-size: 1em; opacity: .65; margin-bottom: 40px; }
+.dark-section .section-subtitle { color: rgba(224,225,221,.65); }
+.light-section .section-subtitle { color: #4a4a5a; }
+.section-desc { max-width: 680px; margin-bottom: 20px; }
+
+/* ---------- ABOUT ---------- */
+.about-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-top: 32px; }
+.about-card { background: #fff; border-radius: 12px; padding: 28px 24px; box-shadow: 0 2px 12px rgba(0,0,0,.05); }
+.about-card .icon { font-size: 2em; margin-bottom: 12px; }
+.about-card h3 { font-size: 1.1em; color: #1b263b; margin-bottom: 8px; }
+.about-card p { font-size: .9em; color: #4a4a5a; }
+
+/* ---------- HOW IT WORKS ---------- */
+.steps { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; margin-top: 32px; }
+.step { background: rgba(255,255,255,.05); border: 1px solid rgba(163,191,250,.15); border-radius: 12px; padding: 28px 20px; flex: 1 1 200px; max-width: 220px; text-align: center; }
+.step .num { display: inline-block; width: 36px; height: 36px; line-height: 36px; background: #a3bffa; color: #0d1b2a; border-radius: 50%; font-weight: 700; font-size: .95em; margin-bottom: 12px; }
+.step h4 { color: #a3bffa; margin-bottom: 8px; font-size: 1em; }
+.step p { color: rgba(224,225,221,.6); font-size: .85em; }
+.step-arrow { display: none; }
+@media (min-width: 900px) { .step-arrow { display: inline; color: rgba(163,191,250,.4); font-size: 1.5em; margin: 0 4px; } }
+
+/* ---------- TOKEN ---------- */
+.token-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-top: 32px; }
+.token-stat { text-align: center; padding: 24px; }
+.token-stat .value { font-size: 2em; font-weight: 700; color: #a3bffa; }
+.token-stat .label { font-size: .85em; color: rgba(224,225,221,.6); margin-top: 4px; }
+.tax-row { margin-top: 32px; background: rgba(255,255,255,.05); border-radius: 10px; padding: 24px; }
+.tax-row h4 { color: #a3bffa; margin-bottom: 12px; }
+.tax-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(163,191,250,.1); font-size: .9em; }
+.tax-item:last-child { border-bottom: none; }
+.tax-item .amount { color: #a3bffa; font-weight: 600; }
+
+/* ---------- ROADMAP ---------- */
+.timeline { position: relative; margin-top: 40px; padding-left: 32px; }
+.timeline::before { content: ''; position: absolute; left: 12px; top: 0; bottom: 0; width: 2px; background: rgba(163,191,250,.2); }
+.tl-item { position: relative; margin-bottom: 36px; }
+.tl-item::before { content: ''; position: absolute; left: -26px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: #a3bffa; border: 2px solid #0d1b2a; }
+.tl-item .tl-date { font-size: .85em; color: #a3bffa; margin-bottom: 4px; }
+.tl-item h4 { font-size: 1.05em; color: #e0e1dd; margin-bottom: 4px; }
+.tl-item p { color: rgba(224,225,221,.6); font-size: .9em; }
+
+/* ---------- FAQ ---------- */
+.faq-item { background: #fff; border-radius: 10px; margin-bottom: 12px; overflow: hidden; box-shadow: 0 1px 6px rgba(0,0,0,.04); }
+.faq-q { padding: 18px 24px; font-weight: 600; color: #1b263b; cursor: pointer; display: flex; justify-content: space-between; align-items: center; user-select: none; transition: background .2s; }
+.faq-q:hover { background: #f8f9fb; }
+.faq-q .arrow { transition: transform .25s; color: #a3bffa; }
+.faq-item.open .faq-q .arrow { transform: rotate(180deg); }
+.faq-a { padding: 0 24px 18px; color: #4a4a5a; font-size: .9em; line-height: 1.7; max-height: 0; overflow: hidden; transition: max-height .35s ease; }
+.faq-item.open .faq-a { max-height: 500px; }
+
+/* ---------- FOOTER ---------- */
+footer { background: #0d1b2a; color: rgba(224,225,221,.5); text-align: center; padding: 32px 24px; font-size: .85em; }
+footer .footer-links { display: flex; gap: 24px; justify-content: center; margin-bottom: 16px; flex-wrap: wrap; }
+footer a { color: #a3bffa; text-decoration: none; }
+footer a:hover { text-decoration: underline; }
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 768px) {
+  .hero h1 { font-size: 2.2em; }
+  .hero .tagline { font-size: 1.1em; }
+  nav .nav-links { display: none; position: absolute; top: 56px; left: 0; right: 0; background: rgba(13,27,42,.97); flex-direction: column; padding: 16px 24px; gap: 12px; border-bottom: 1px solid rgba(163,191,250,.12); }
+  nav .nav-links.show { display: flex; }
+  .menu-toggle { display: block; }
+  section { padding: 60px 16px; }
+}
+
+/* ---------- BILINGUAL HIDDEN ---------- */
+[data-zh], [data-en] { display: none; }
+html[lang="en"] [data-en] { display: revert; }
+html[lang="zh"] [data-zh] { display: revert; }
+html[lang="en"] [data-zh] { display: none; }
+html[lang="zh"] [data-en] { display: none; }
+[data-en], [data-zh] { display: none; }
+/* ---------- HIDDEN COUNTER ---------- */
+.counter-wrap { text-align: center; margin-top: 10px; line-height: 1; }
+.counter-toggle { cursor: pointer; color: rgba(224,225,221,.05); font-size: 8px; user-select: none; transition: color .3s; }
+.counter-toggle:hover { color: rgba(163,191,250,.35); }
+.counter-box { display: none; margin-top: 6px; font-size: 11px; color: rgba(224,225,221,.28); letter-spacing: .5px; }
+.counter-box.show { display: block; }
+.counter-box .c-num { font-size: 15px; color: rgba(163,191,250,.45); font-weight: 700; }
+/* ---------- RESOURCE MARKETPLACE ---------- */
+.mp-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 40px; }
+.mp-card { background: rgba(163,191,250,.045); border: 1px solid rgba(163,191,250,.14); border-radius: 12px; padding: 26px; transition: border-color .3s, transform .3s; }
+.mp-card:hover { border-color: rgba(163,191,250,.34); transform: translateY(-3px); }
+.mp-icon { font-size: 1.7em; margin-bottom: 10px; }
+.mp-card h3 { color: #3a5fd0; font-size: 1.05em; margin-bottom: 8px; }
+.mp-card p { color: rgba(30,35,55,.7); font-size: .9em; line-height: 1.75; }
+@media (max-width: 600px) { .mp-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="inner">
+    <div class="logo"><span>Guixu</span> Consensus</div>
+    <button class="menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('show')">☰</button>
+    <ul class="nav-links">
+      <li><a href="#about" data-en>About</a><a href="#about" data-zh>关于</a></li>
+      <li><a href="#how" data-en>How It Works</a><a href="#how" data-zh>机制</a></li>
+      <li><a href="#marketplace" data-en>Marketplace</a><a href="#marketplace" data-zh>资源市场</a></li>
+      <li><a href="#token" data-en>Token</a><a href="#token" data-zh>通证</a></li>
+      <li><a href="#roadmap" data-en>Roadmap</a><a href="#roadmap" data-zh>路线图</a></li>
+      <li><a href="#faq" data-en>FAQ</a><a href="#faq" data-zh>FAQ</a></li>
+      <li><a href="guixu-platform/index.html" target="_blank" rel="noopener" data-en>Platform</a><a href="guixu-platform/index.html" target="_blank" rel="noopener" data-zh>程序框架</a></li>
+      <li><button class="lang-btn" onclick="toggleLang()">中文</button></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-content">
+    <h1 data-en>The Great Abyss</h1>
+    <h1 data-zh>万流归一</h1>
+    <p class="tagline" data-en>Every idle device deserves a purpose.</p>
+    <p class="tagline" data-zh>每一份闲置，都有它的价值。</p>
+    <p class="sub" data-en>Proof of Resource — a blockchain where your computer, phone, or router participates in consensus. No mining rigs. No large capital. Just your device, online and contributing.</p>
+    <p class="sub" data-zh>资源证明共识 — 让你的电脑、手机或路由器参与区块链共识网络。不需要矿机，不需要大额资金。只需你的设备在线，贡献资源。</p>
+    <div class="cta-group">
+      <a href="#how" class="btn btn-primary" data-en>Learn How</a>
+      <a href="#how" class="btn btn-primary" data-zh>了解机制</a>
+      <a href="#roadmap" class="btn btn-outline" data-en>View Roadmap</a>
+      <a href="#roadmap" class="btn btn-outline" data-zh>查看路线图</a>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="light-section">
+  <div class="section-inner">
+    <h2 class="section-title" data-en>About Guixu</h2>
+    <h2 class="section-title" data-zh>关于归墟</h2>
+    <p class="section-subtitle" data-en>A decentralized consensus network built on everyday idle devices — no mining farms, no capital requirements.</p>
+    <p class="section-subtitle" data-zh>一个基于日常闲置设备构建的去中心化共识网络 — 没有矿场，没有资金门槛。</p>
+
+    <div class="about-grid">
+      <div class="about-card">
+        <div class="icon">🖥️</div>
+        <h3 data-en>Zero Entry Cost</h3>
+        <h3 data-zh>零门槛参与</h3>
+        <p data-en>No mining rig, no capital lockup. Just install the client and your idle device starts contributing.</p>
+        <p data-zh>不需要矿机，不需要质押代币。安装客户端，闲置设备就开始贡献价值。</p>
+      </div>
+      <div class="about-card">
+        <div class="icon">🤝</div>
+        <h3 data-en>Community Governed</h3>
+        <h3 data-zh>社区共治</h3>
+        <p data-en>Every decision — from tax rates to protocol upgrades — is voted on by token holders. Fully transparent on-chain.</p>
+        <p data-zh>从税率到协议升级，每一项重大决策都由代币持有者投票决定，全链上透明。</p>
+      </div>
+      <div class="about-card">
+        <div class="icon">🔗</div>
+        <h3 data-en>100% Decentralized</h3>
+        <h3 data-zh>100% 去中心化</h3>
+        <p data-en>No private sale, no public sale, no external financing. Self-sustaining through transaction and transfer taxes.</p>
+        <p data-zh>无私募，无公募，不依赖外部融资。通过交易税和转账税自给自足。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how" class="dark-section">
+  <div class="section-inner">
+    <h2 class="section-title" data-en>How It Works</h2>
+    <h2 class="section-title" data-zh>工作原理</h2>
+    <p class="section-subtitle" data-en>Proof of Resource (PoR) — your device's idle bandwidth, storage, and compute power become consensus votes.</p>
+    <p class="section-subtitle" data-zh>资源证明（PoR）— 设备的闲置带宽、存储空间和计算能力，就是共识的投票权。</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="num">1</div>
+        <h4 data-en>Connect</h4>
+        <h4 data-zh>接入</h4>
+        <p data-en>Install the client on your PC, phone, or router. Keep it online.</p>
+        <p data-zh>在电脑、手机或路由器上安装客户端，保持设备在线。</p>
+      </div>
+      <span class="step-arrow">→</span>
+      <div class="step">
+        <div class="num">2</div>
+        <h4 data-en>Contribute</h4>
+        <h4 data-zh>贡献</h4>
+        <p data-en>Your device contributes bandwidth, storage, and computing power to the network.</p>
+        <p data-zh>你的设备向网络贡献带宽、存储和计算能力。</p>
+      </div>
+      <span class="step-arrow">→</span>
+      <div class="step">
+        <div class="num">3</div>
+        <h4 data-en>Earn</h4>
+        <h4 data-zh>获得</h4>
+        <p data-en>Based on your contribution score, you receive Guixu tokens automatically.</p>
+        <p data-zh>根据贡献值，系统自动铸造并分配归墟代币给你。</p>
+      </div>
+    </div>
+
+    <div style="margin-top:40px; text-align:center;">
+      <p style="color:rgba(224,225,221,.5); font-size:.9em;">
+        <span data-en>Resources contributed: Bandwidth · Storage · Compute · Stability · Location</span>
+        <span data-zh>贡献的资源类型：带宽 · 存储 · 算力 · 稳定性 · 地理位置</span>
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- RESOURCE MARKETPLACE -->
+<section id="marketplace" class="light-section">
+  <div class="section-inner">
+    <h2 class="section-title" data-en>Resource Marketplace</h2>
+    <h2 class="section-title" data-zh>资源市场</h2>
+    <p class="section-subtitle" data-en>Your idle resources connect directly to real-world demand. Every contribution finds its buyer.</p>
+    <p class="section-subtitle" data-zh>你的闲置资源直连真实需求，每一份贡献都能找到买家。</p>
+
+    <div class="mp-grid">
+      <div class="mp-card">
+        <div class="mp-icon">💾</div>
+        <h3 data-en>Storage Resources</h3>
+        <h3 data-zh>磁盘存储资源</h3>
+        <p data-en>Aggregated distributed storage capacity is matched with professional storage service providers. Your spare disk space becomes enterprise-grade backup and archive storage — encrypted, verifiable on-chain.</p>
+        <p data-zh>聚合后的分布式存储能力对接专业存储服务商，你的闲置硬盘空间转化为企业级备份与归档存储，加密且链上可验证。</p>
+      </div>
+      <div class="mp-card">
+        <div class="mp-icon">🌐</div>
+        <h3 data-en>Bandwidth Resources</h3>
+        <h3 data-zh>带宽资源</h3>
+        <p data-en>Idle bandwidth is pooled and supplied to CDN providers, edge computing networks and mining resource operators. Your unused internet connection becomes a monetizable asset.</p>
+        <p data-zh>闲置带宽聚合后供给 CDN 服务商、边缘计算网络及矿业资源运营商，你的闲置网络连接转化为可变现资产。</p>
+      </div>
+      <div class="mp-card">
+        <div class="mp-icon">⚡</div>
+        <h3 data-en>AI Compute Resources</h3>
+        <h3 data-zh>AI 算力资源</h3>
+        <p data-en>Idle GPU and CPU cycles are matched with AI training and inference service providers. Turn your desktop, workstation or even smartphone into part of a distributed AI compute cluster.</p>
+        <p data-zh>闲置 GPU 与 CPU 算力对接 AI 训练与推理服务商，让你的台式机、工作站甚至手机成为分布式 AI 算力集群的一部分。</p>
+      </div>
+      <div class="mp-card">
+        <div class="mp-icon">💰</div>
+        <h3 data-en>Traffic-Driven Token Economy</h3>
+        <h3 data-zh>流量驱动的通证经济</h3>
+        <p data-en>Beyond resource sales, the network's growing scale and accumulated traffic form the foundation of Guixu's token economy. Transactions, transfers and market activity sustain the maintenance fund and generate continuous value.</p>
+        <p data-zh>除了资源销售，网络不断扩大的规模与积聚的流量本身就是归墟通证经济的基石——交易、转账及市场活动持续支撑运维基金并创造长期价值。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TOKEN -->
+<section id="token" class="light-section">
+  <div class="section-inner">
+    <h2 class="section-title" data-en>Token Economics</h2>
+    <h2 class="section-title" data-zh>通证经济</h2>
+    <p class="section-subtitle" data-en>The Guixu Token — fair, transparent, and sustained by the network itself.</p>
+    <p class="section-subtitle" data-zh>归墟代币 — 公平、透明，由网络自身持续支撑。</p>
+
+    <div class="token-grid">
+      <div class="token-stat">
+        <div class="value" data-en>No Cap</div>
+        <div class="value" data-zh>按需铸造</div>
+        <div class="label" data-en>Minted on demand, no fixed supply limit</div>
+        <div class="label" data-zh>无固定总量上限，由系统贡献值动态决定发行速度</div>
+      </div>
+      <div class="token-stat">
+        <div class="value" data-en>No Sale</div>
+        <div class="value" data-zh>无私募公募</div>
+        <div class="label" data-en>Zero private or public sale — all earned through contribution</div>
+        <div class="label" data-zh>无私募、无公募，全部通过终端资源贡献自动铸造</div>
+      </div>
+      <div class="token-stat">
+        <div class="value" data-en>1h</div>
+        <div class="value" data-zh>铸造冷却</div>
+        <div class="label" data-en>Minting cooldown: 1 hour prevents high-frequency farming</div>
+        <div class="label" data-zh>每次铸造间隔1小时，防止高频刷取</div>
+      </div>
+      <div class="token-stat">
+        <div class="value" data-en>24/7</div>
+        <div class="value" data-zh>持续运行</div>
+        <div class="label" data-en>Stable devices earn more — 30+ days gets boosted rewards</div>
+        <div class="label" data-zh>设备越稳定，获得越多 — 连续在线30天后奖励逐步提升</div>
+      </div>
+    </div>
+
+    <div class="tax-row">
+      <h4 data-en>Maintenance Fund — Powered by Network Activity</h4>
+      <h4 data-zh>运维基金 — 由网络活动持续驱动</h4>
+      <div class="tax-item">
+        <span data-en>Transaction Tax</span><span data-zh>交易税</span>
+        <span class="amount">1%</span>
+      </div>
+      <div class="tax-item">
+        <span data-en>Transfer Tax</span><span data-zh>转账税</span>
+        <span class="amount">0.5%</span>
+      </div>
+      <div style="margin-top:12px; font-size:.85em; color:rgba(224,225,221,.5);">
+        <span data-en>Fund allocation: Node Rewards 40% · Maintenance &amp; Audits 30% · Upgrades &amp; Dev 20% · Community 10%</span>
+        <span data-zh>基金用途：节点奖励 40% · 网络维护与安全审计 30% · 系统升级与开发 20% · 社区建设 10%</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section id="roadmap" class="dark-section">
+  <div class="section-inner">
+    <h2 class="section-title" data-en>Roadmap</h2>
+    <h2 class="section-title" data-zh>路线图</h2>
+    <p class="section-subtitle" data-en>Our journey from proof of concept to a global distributed consensus network.</p>
+    <p class="section-subtitle" data-zh>从概念验证到全球分布式共识网络的演进之路。</p>
+
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-date">Q1 – Q2 2027</div>
+        <h4 data-en>Beta Phase</h4>
+        <h4 data-zh>内测阶段</h4>
+        <p data-en>PoR algorithm prototype validation, PC beta launch. Target: 100–500 beta nodes.</p>
+        <p data-zh>PoR 算法原型验证，PC 端 beta 上线。目标：100-500 个内测节点。</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">Q3 2027</div>
+        <h4 data-en>Mainnet Launch</h4>
+        <h4 data-zh>主网上线</h4>
+        <p data-en>Network goes live, mobile App release, governance voting begins. Target: 500–2,000 nodes.</p>
+        <p data-zh>主网正式上线，移动端 App 发布，治理投票启动。目标：500-2000 个节点。</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">Q4 2027</div>
+        <h4 data-en>Public Access</h4>
+        <h4 data-zh>开放接入</h4>
+        <p data-en>Open public access. Node network expands globally. More device types supported.</p>
+        <p data-zh>开放公开接入，全球节点网络扩张，支持更多设备类型。</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">2028+</div>
+        <h4 data-en>Ecosystem</h4>
+        <h4 data-zh>生态阶段</h4>
+        <p data-en>DeFi integrations, cross-chain bridges, multi-device access. Full Guixu ecosystem.</p>
+        <p data-zh>DeFi 生态集成、跨链桥接、多设备接入，构建完整的归墟共识生态系统。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" class="light-section">
+  <div class="section-inner">
+    <h2 class="section-title" data-en>Frequently Asked Questions</h2>
+    <h2 class="section-title" data-zh>常见问题</h2>
+    <p class="section-subtitle" data-en>Quick answers for the curious.</p>
+    <p class="section-subtitle" data-zh>快速解答大家关心的话题。</p>
+
+    <div class="faq-list">
+      <div class="faq-item">
+        <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+          <span data-en>Do I need a powerful computer?</span>
+          <span data-zh>我需要高性能电脑吗？</span>
+          <span class="arrow">▼</span>
+        </div>
+        <div class="faq-a">
+          <p data-en>No. Any device with internet connection and basic computing capability can join — from an old laptop to a Raspberry Pi. The more stable and resource-rich your device, the higher your contribution score, but even modest devices are welcome.</p>
+          <p data-zh>不需要。任何能联网且具备基本计算能力的设备都可以加入 — 从旧笔记本到树莓派。设备越稳定、资源越丰富，贡献值越高，但即使配置一般的设备也能参与。</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+          <span data-en>What exactly do I contribute?</span>
+          <span data-zh>我具体贡献什么？</span>
+          <span class="arrow">▼</span>
+        </div>
+        <div class="faq-a">
+          <p data-en>Your device contributes its idle resources — bandwidth for node communication, storage for the distributed ledger, and compute power for consensus verification. The client monitors usage but never affects your daily tasks.</p>
+          <p data-zh>你的设备贡献闲置资源 — 带宽用于节点间通信，存储用于分布式账本，计算能力用于共识验证。客户端监控使用量但不会影响你的日常使用。</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+          <span data-en>How are tokens distributed?</span>
+          <span data-zh>代币如何分配？</span>
+          <span class="arrow">▼</span>
+        </div>
+        <div class="faq-a">
+          <p data-en>There is no private or public sale. All tokens are minted on demand based on terminal resource contribution. The device that contributes more gets more. It's a fair system: contribution determines reward.</p>
+          <p data-zh>没有私募或公募。所有代币都按需铸造，取决于终端资源贡献。贡献多的获得更多，公平而透明：贡献即奖励。</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+          <span data-en>Is Guixu a scam? How do I trust it?</span>
+          <span data-zh>归墟是骗局吗？如何信任它？</span>
+          <span class="arrow">▼</span>
+        </div>
+        <div class="faq-a">
+          <p data-en>Guixu has no VC funding, no insiders, no pre-mine. The code is open, the rules are transparent on-chain, and the maintenance fund is managed by community vote. We invite you to verify everything yourself.</p>
+          <p data-zh>归墟没有风投，没有内幕，没有提前挖。代码开源，规则链上透明，运维基金由社区投票管理。我们邀请你亲自验证一切。</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+          <span data-en>Can I use this alongside my regular computer use?</span>
+          <span data-zh>我可以和日常使用电脑一起运行吗？</span>
+          <span class="arrow">▼</span>
+        </div>
+        <div class="faq-a">
+          <p data-en>Absolutely. The client only uses truly idle resources. If your device is busy with tasks, the client scales down. It's designed to work quietly in the background without impacting your experience.</p>
+          <p data-zh>完全可以。客户端只使用真正闲置的资源。如果你的设备正在忙，客户端会自动降频。它设计为在后台安静运行，不影响你的正常使用体验。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-links">
+    <a href="#" data-en>GitHub</a><a href="#" data-zh>GitHub</a>
+    <a href="#" data-en>Whitepaper</a><a href="#" data-zh>白皮书</a>
+    <a href="#" data-en>Documentation</a><a href="#" data-zh>技术文档</a>
+  </div>
+  <p>&copy; 2026 Guixu Consensus Community · <span data-en>Open Source</span><span data-zh>开源项目</span></p>
+  <div class="counter-wrap">
+    <span class="counter-toggle" onclick="document.getElementById('ctrBox').classList.toggle('show')">●</span>
+    <div id="ctrBox" class="counter-box">
+      <span class="c-num">12,847</span> &nbsp;·&nbsp; <span data-en>Global Active Nodes</span><span data-zh>全球活跃节点</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+function toggleLang() {
+  var html = document.documentElement;
+  var current = html.getAttribute('lang');
+  if (current === 'en') {
+    html.setAttribute('lang', 'zh');
+  } else {
+    html.setAttribute('lang', 'en');
+  }
+  var btn = document.querySelector('.lang-btn');
+  btn.textContent = html.getAttribute('lang') === 'en' ? '中文' : 'EN';
+}
+</script>
+</body>
+</html>

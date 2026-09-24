@@ -1,0 +1,80 @@
+# ============================================================
+# 归墟共识平台 · Git 忽略规则
+# Guixu Consensus Platform · Git Ignore Rules
+# ============================================================
+
+# ---------- 压缩包 / 归档文件（Archives） ----------
+*.zip
+*.rar
+*.7z
+*.tar
+*.tar.gz
+*.tgz
+*.gz
+*.bz2
+*.xz
+*.cab
+
+# ---------- 临时目录（Temporary directories） ----------
+temp/
+temp*/
+tmp/
+tmp*/
+.scratch/
+.cache/
+*.tmp
+*.temp
+
+# ---------- 备份目录与备份文件（Backup） ----------
+backup/
+backup*/
+backups/
+bak/
+*_bak/
+*.bak
+*.backup
+*.orig
+*.old
+*_backup_*
+*-backup-*
+*~$*
+
+# ---------- 构建产物与依赖（Build output & dependencies） ----------
+dist/
+build/
+out/
+node_modules/
+__pycache__/
+*.pyc
+*.pyo
+
+# ---------- 系统垃圾与回收站（OS junk & trash） ----------
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+desktop.ini
+$RECYCLE.BIN/
+*RECYCLE.BIN/
+System Volume Information/
+*.lnk
+.DS_Store
+._*
+.Spotlight-V100/
+.Trashes/
+.fseventsd/
+
+# ---------- 编辑器 / IDE ----------
+.vscode/
+.idea/
+*.swp
+*.swo
+*.swn
+*~
+
+# ---------- 日志（Logs） ----------
+*.log
+npm-debug.log*
+yarn-error.log*
+
+# 开发过程截图（不公开）
+截图相关/
