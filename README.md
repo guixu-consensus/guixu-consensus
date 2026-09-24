@@ -129,10 +129,10 @@ A decentralized network project built on **Proof of Resource (PoR)**: turning ev
 │   └── mobile/                                    ▍用户端（手机）
 │       └── index.html                             手机 App（带宽 + 轻量存储）
 │
-└── 截图相关/                                       界面截图（PNG）
+└── 截图相关/                                       本地素材目录，不纳入版本库
 ```
 
-> 说明：`guixu-platform.zip` 为框架目录的打包件，属构建分发包，已通过 `.gitignore` 排除，不入库。
+> 说明：`guixu-platform.zip` 为框架目录的打包件，属构建分发包；`截图相关/` 为本地素材目录（界面截图）。二者均已通过 `.gitignore` 排除，不纳入版本库。
 
 ## 四、本地预览
 
@@ -269,10 +269,10 @@ Score = Σ (resource type × coefficient × duration × stability weight × anti
 │   └── mobile/                                    ▍Client side (mobile)
 │       └── index.html                             Mobile app (bandwidth + light storage)
 │
-└── 截图相关/                                       UI screenshots (PNG)
+└── 截图相关/                                       Local-only assets, not tracked by Git
 ```
 
-> `guixu-platform.zip` is a distribution archive of the framework folder and is excluded from version control via `.gitignore`.
+> `guixu-platform.zip` is a distribution archive of the framework folder, and `截图相关/` is a local asset folder (UI screenshots). Both are excluded from version control via `.gitignore`.
 
 ## 4. Local Preview
 
