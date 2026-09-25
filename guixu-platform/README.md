@@ -1,14 +1,3 @@
----
-AIGC:
-    Label: "1"
-    ContentProducer: 001191440300708461136T1XGW3
-    ProduceID: 3c9b9cd9025783dd3ce698a9ba04573b_cba940d8b75711f1a59e525400248c00
-    ReservedCode1: t61kdzhtUIrOBcaHf+1dIBvVWzBaUpVT2EAkZmWx2Ovm0Tz2Wh5NhGpcAZF002QZdV+SIjMBUqm1QpmzV4YmnGwlY3LT8VSfE9FXWHPoWRtdzj+Bctg8b2v6zgBOepVYSgmTVQlgdCtEbVijNboNsB9TqkL9+k2UGM5ciPPRilZRgo1XgsLC1n0b3RA=
-    ContentPropagator: 001191440300708461136T1XGW3
-    PropagateID: 3c9b9cd9025783dd3ce698a9ba04573b_cba940d8b75711f1a59e525400248c00
-    ReservedCode2: t61kdzhtUIrOBcaHf+1dIBvVWzBaUpVT2EAkZmWx2Ovm0Tz2Wh5NhGpcAZF002QZdV+SIjMBUqm1QpmzV4YmnGwlY3LT8VSfE9FXWHPoWRtdzj+Bctg8b2v6zgBOepVYSgmTVQlgdCtEbVijNboNsB9TqkL9+k2UGM5ciPPRilZRgo1XgsLC1n0b3RA=
----
-
 # 归墟共识平台 · 程序框架 v0.1
 
 > Guixu Consensus Platform — 多端程序框架（骨架阶段）
@@ -156,4 +145,3 @@ P6 商业对接        □ 需求方入驻、订单撮合、结算流水
 ---
 
 *归墟共识 · 资源证明（PoR）· 闲置即价值*
-*（内容由AI生成，仅供参考）*

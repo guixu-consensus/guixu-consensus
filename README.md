@@ -1,14 +1,3 @@
----
-AIGC:
-    Label: "1"
-    ContentProducer: 001191440300708461136T1XGW3
-    ProduceID: 3c9b9cd9025783dd3ce698a9ba04573b_b9ceafacb82211f189c8525400393706
-    ReservedCode1: 6mak3TYteIZeq8JDBuuumctQ6wMsFfaaAWEzpGJRWbbLKW6oU2MCb7N/oMLd0SYlfF80OAUwZXtYWw0eg/867naQswGaDGp23V91dmFTGb7zR4yH5bDIPqXhxe2X9AgvCgi146cDAi03aflHGlM4lvrGbOkp3tuTbT4L79xI1Ihaww7j7t6NQmFX9lc=
-    ContentPropagator: 001191440300708461136T1XGW3
-    PropagateID: 3c9b9cd9025783dd3ce698a9ba04573b_b9ceafacb82211f189c8525400393706
-    ReservedCode2: 6mak3TYteIZeq8JDBuuumctQ6wMsFfaaAWEzpGJRWbbLKW6oU2MCb7N/oMLd0SYlfF80OAUwZXtYWw0eg/867naQswGaDGp23V91dmFTGb7zR4yH5bDIPqXhxe2X9AgvCgi146cDAi03aflHGlM4lvrGbOkp3tuTbT4L79xI1Ihaww7j7t6NQmFX9lc=
----
-
 # 归墟共识平台 · Guixu Consensus Platform
 
 > **万流归一，共筑共识。** · *All streams converge into one — build the consensus together.*
@@ -311,5 +300,3 @@ Copyright (c) 2026 Guixu Consensus Community (归墟共识社区)
 *归墟共识 · 资源证明（PoR）· 闲置即价值*
 *Guixu Consensus · Proof of Resource · Idle is value*
 
-*（本项目文档与页面内容部分由 AI 生成，仅供参考，不构成任何投资建议。）*
-*（内容由AI生成，仅供参考）*

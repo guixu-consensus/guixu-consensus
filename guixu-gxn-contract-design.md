@@ -1,14 +1,3 @@
-\---  
-AIGC:  
-Label: "1"  
-ContentProducer: 001191440300708461136T1XGW3  
-ProduceID: 3c9b9cd9025783dd3ce698a9ba04573b_c345ca12b8e111f1b172525400248c00  
-ReservedCode1: GCG1C9eHdOW3FJ6oG7gkbW6DLxxNtb8xngzxeTZwJoxd4TTCFkqWnGhQP7oKPeY+2sjKWUba2XTRMe78ylapuwfrjMfvNEKXdCjbvSgo69IgUHGYfyHWVnrutWPpvSfFH/6OwY+IO8N7edKDwYKb9NGqhnEqm27ust7FlWahfBbHXOtVNNw5qCS2ekI=  
-ContentPropagator: 001191440300708461136T1XGW3  
-PropagateID: 3c9b9cd9025783dd3ce698a9ba04573b_c345ca12b8e111f1b172525400248c00  
-ReservedCode2: GCG1C9eHdOW3FJ6oG7gkbW6DLxxNtb8xngzxeTZwJoxd4TTCFkqWnGhQP7oKPeY+2sjKWUba2XTRMe78ylapuwfrjMfvNEKXdCjbvSgo69IgUHGYfyHWVnrutWPpvSfFH/6OwY+IO8N7edKDwYKb9NGqhnEqm27ust7FlWahfBbHXOtVNNw5qCS2ekI=  
-\---
-
 # 归墟共识平台 GXN 智能合约设计文档
 
 | 项目   | 内容                                         |
@@ -1433,4 +1422,3 @@ M1 合约开发与单测 ──► M2 测试网 Chapel 联调 ──► M3 第�
 | 验证者激励与罚没参数 | 验证者报酬额度、是否引入质押与罚没 | M3 审计前（引入质押会改变合约结构） |
 | 在线判定与中断宽限口径 | 心跳间隔、超时阈值、连续在线是否设宽限窗口 | M2 开始前 |
 | 阶段时间表与负责人 | 各阶段起止时间与责任人指派 | M1 开始前 |
-*（内容由AI生成，仅供参考）*
