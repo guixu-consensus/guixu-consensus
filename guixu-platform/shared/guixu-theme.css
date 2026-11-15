@@ -282,3 +282,24 @@ img { max-width: 100%; display: block; }
   .gx-grid-2, .gx-grid-3, .gx-grid-4 { grid-template-columns: 1fr; }
   .gx-title { font-size: 1.4em; }
 }
+
+/* ---------- 品牌标识（官方 LOGO 素材） ---------- */
+/* 尺寸一律用 em，与同排文字字号同步（同步缩放），导航 2.35em / 侧栏 2.95em */
+.brand-mark { display: block; width: 1.6em; height: 1.6em; object-fit: contain; flex: 0 0 auto; filter: drop-shadow(0 0 7px rgba(163,191,250,.6)) drop-shadow(0 1px 3px rgba(0,0,0,.55)); }
+/* 侧栏 LOGO 与「主标题 + 副标题」两行文字等高对齐（.brand 是 align-items:center，故上下同齐）；
+   字号定 2.95em ≈ 47px，正好等于两行文字块高度（16px×行高 + 12px×行高），光晕同步放大以免显小 */
+.gx-side .brand .brand-mark { width: 2.95em; height: 2.95em;
+  filter: brightness(1.18) saturate(1.1) drop-shadow(0 0 9px rgba(255,255,255,.9)) drop-shadow(0 0 30px rgba(255,255,255,.5)) drop-shadow(0 0 52px rgba(255,255,255,.24)) drop-shadow(0 2px 6px rgba(0,0,0,.55)); }
+/* 顶部导航（门户/全球网络）LOGO：2.35em ≈ 37.6px，58px 导航条上下各留 ~10px 呼吸；
+   光晕统一为纯白冷光（深蓝调页面比暖金协调，2026-09-25 定稿） */
+.gx-nav .nav-brand .brand-mark { width: 2.35em; height: 2.35em;
+  filter: brightness(1.18) saturate(1.1) drop-shadow(0 0 7px rgba(255,255,255,.9)) drop-shadow(0 0 24px rgba(255,255,255,.55)) drop-shadow(0 0 42px rgba(255,255,255,.28)) drop-shadow(0 2px 6px rgba(0,0,0,.5)); }
+.gx-nav .nav-brand { gap: .5em; }
+.gx-logo-wide { display: inline-block; background: #fff; border-radius: 16px; padding: 12px 22px;
+  box-shadow: 0 12px 34px rgba(0,0,0,.5), 0 0 0 1px rgba(163,191,250,.18); line-height: 0; transition: transform .2s; }
+.gx-logo-wide:hover { transform: translateY(-2px); }
+.gx-logo-wide img { display: block; width: 100%; max-width: 300px; height: auto; }
+.hero .gx-logo-wide { margin: 0 auto 22px; }
+.phone-stage .gx-logo-wide { margin-bottom: 4px; }
+.gx-foot a { color: var(--gx-accent); text-decoration: none; }
+.gx-foot a:hover { text-decoration: underline; }

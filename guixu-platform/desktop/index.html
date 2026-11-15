@@ -3,13 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png?v=20260925c">
+<link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png?v=20260925c">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=20260925c">
 <title data-i18n="pc.title">Guixu Consensus · PC Client</title>
-<link rel="stylesheet" href="../shared/guixu-theme.css">
+<link rel="stylesheet" href="../shared/guixu-theme.css?v=20260925j">
 <style>
   body { background: radial-gradient(ellipse at 50% 0%, #16304a 0%, #0a1520 58%, #060d14 100%); min-height: 100vh; padding: 34px 24px 48px; }
   .gx-window-body .gx-side { height: auto; position: static; }
   .gx-topbar { margin-bottom: 20px; }
-  #pcChart { width: 100%; height: 170px; display: block; }
+  #liveReport .flow-line { flex-wrap: wrap; gap: 3px 10px; padding: 9px 0; }
+  #liveReport .flow-line > span:first-child { flex: 0 1 auto; }
   #earnChart { width: 100%; height: 160px; display: block; }
   .res-item { border: 1px solid var(--gx-line); border-radius: var(--gx-radius); padding: 20px; background: rgba(255,255,255,.035); }
   .res-item.off { opacity: .5; }
@@ -26,13 +31,334 @@
   .flow-line .fl-amt { color: var(--gx-ok); font-weight: 600; font-variant-numeric: tabular-nums; }
   .panel { display: none; animation: gxFadeIn .3s ease both; }
   .panel.active { display: block; }
+  /* 设备信息：真实读取的注释与来源说明 */
+  .dv-note { font-size: .78em; color: var(--gx-faint); margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(163,191,250,.08); line-height: 1.6; }
+  .dv-src { font-size: .72em; color: var(--gx-faint); opacity: .85; margin-top: 6px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; word-break: break-all; }
+  /* 三卡并排后卡片较窄：数值可换行右对齐，绝不溢出卡片 */
+  #deviceInfo .flow-line, #deviceRes .flow-line { flex-wrap: wrap; gap: 3px 10px; padding: 9px 0; }
+  #deviceInfo .flow-line > span:first-child, #deviceRes .flow-line > span:first-child { flex: 0 1 auto; }
+  .dv-val { flex: 1 1 auto; min-width: 0; text-align: right; word-break: break-word; }
+  .dv-val.gx-val-sm, .m-line .v.gx-val-sm { font-size: .9em; }
+  /* 窄卡片里标题与副标题改为上下两行，避免各自折行显得凌乱 */
+  [data-panel="status"] .gx-grid-3 > .gx-card > .gx-card-head { flex-direction: column; align-items: flex-start; gap: 2px; }
+  /* 图表铺满卡片：不给宽度时 canvas 会以属性宽度为准，隐藏面板里按 400 兜底后就被钉死 */
+  #cvChart, #earnChart { display: block; width: 100%; }
+  #cvChart { height: 150px; }
+  #earnChart { height: 160px; }
+  .gx-side a.brand { text-decoration: none; color: inherit; cursor: pointer; transition: filter .18s ease; }
+  .gx-side a.brand:hover { filter: brightness(1.12); }
+  /* 一键满屏按钮（顶栏右侧，与「暂停共享」同风格） */
+  #btnFull { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+  #btnFull svg { display: block; flex: 0 0 auto; }
+  #btnFull[aria-pressed="true"] { color: #a3bffa; border-color: rgba(163,191,250,.62);
+    box-shadow: 0 0 12px rgba(163,191,250,.3); }
+  #btnFull:focus-visible { outline: 2px solid rgba(163,191,250,.75); outline-offset: 1px; }
+  @media (max-width: 720px) { #btnFull .gx-fs-txt { display: none; } }
+</style>
+  <!-- 统一卡片光影系统 v2（2026-09-29） -->
+  <link rel="stylesheet" href="../shared/gx-cards.css?v=20260929c">
+<style id="gxWmCSS">
+/* 左下角归墟 LOGO 虚影（约四分之三画幅，纯装饰层，不拦截交互） */
+.gx-window { position: relative; }
+@media (prefers-reduced-motion: reduce) { .hero *, .panel * { transition-duration: 0 !important; animation-duration: 0 !important; } }
+html:fullscreen .gx-window { max-width: none !important; padding-right: 0 !important; }
+.gx-wm { position: absolute; left: -6vmin; bottom: -9vmin; width: min(72vmin, 760px); height: min(72vmin, 760px);
+  background: url(/guixu-mark-wm.webp?v=20261031e) no-repeat left bottom / contain;
+  pointer-events: none; user-select: none; -webkit-user-select: none; z-index: 0; }
+.gx-window-bar, .gx-window-body { position: relative; z-index: 1; }
+/* 背景动态特效：游走萤火 canvas 层（装饰，不拦截交互，压在内容之上做浮空光点） */
+#gxFirefly { position: absolute; inset: 0; display: block; width: 100%; height: 100%;
+  pointer-events: none; user-select: none; -webkit-user-select: none; z-index: 3; mix-blend-mode: screen; }
+@media (max-width: 720px) {
+  .gx-wm { left: -8vmin; bottom: -10vmin; width: 80vmin; height: 80vmin; }
+}
 </style>
 </head>
 <body>
+<!-- ===== GUIXU SPLASH START ===== -->
+<style id="gxSplashCSS">
+/* ===== 归墟开屏动画 · CSS ===== */
+#splashScreen.splash-overlay{position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;overflow:hidden;pointer-events:auto;opacity:1;
+  background:radial-gradient(ellipse 62% 52% at 50% 42%,#0e2539 0%,#071625 46%,#03080f 100%);
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Helvetica Neue",Arial,sans-serif;
+  -webkit-tap-highlight-color:transparent;transition:opacity .62s ease}
+#splashScreen.splash-overlay.hide{opacity:0}
+#splashScreen.splash-overlay[data-active="0"]{display:none}
+
+/* 网格底纹 */
+#splashScreen .splash-grid{position:absolute;inset:0;opacity:0;
+  background-image:linear-gradient(rgba(120,180,255,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(120,180,255,.055) 1px,transparent 1px);
+  background-size:44px 44px;
+  -webkit-mask-image:radial-gradient(ellipse 56% 46% at 50% 45%,#000 18%,transparent 72%);
+  mask-image:radial-gradient(ellipse 56% 46% at 50% 45%,#000 18%,transparent 72%);
+  animation:gxSpGridIn 1.8s ease .15s forwards}
+@keyframes gxSpGridIn{from{opacity:0;transform:scale(1.07)}to{opacity:1;transform:scale(1)}}
+
+/* 粒子层 */
+#splashScreen .splash-fx{position:absolute;inset:0;width:100%;height:100%;display:block}
+
+/* 旋转光束（光栅） */
+#splashScreen .splash-rays{position:absolute;left:50%;top:50%;width:150vmax;height:150vmax;margin:-75vmax 0 0 -75vmax;opacity:0;
+  background:conic-gradient(from 0deg,rgba(150,205,255,.15) 0deg,rgba(150,205,255,0) 11deg,rgba(150,205,255,0) 23deg,
+    rgba(150,205,255,.10) 29deg,rgba(150,205,255,0) 41deg,rgba(150,205,255,0) 58deg,
+    rgba(150,205,255,.13) 64deg,rgba(150,205,255,0) 78deg,rgba(150,205,255,0) 98deg,
+    rgba(150,205,255,.08) 104deg,rgba(150,205,255,0) 118deg,rgba(150,205,255,0) 180deg,
+    rgba(150,205,255,.10) 200deg,rgba(150,205,255,0) 214deg,rgba(150,205,255,0) 250deg,
+    rgba(150,205,255,.12) 268deg,rgba(150,205,255,0) 282deg,rgba(150,205,255,0) 320deg,
+    rgba(150,205,255,.09) 336deg,rgba(150,205,255,0) 350deg);
+  -webkit-mask-image:radial-gradient(closest-side,#000 0%,transparent 60%);
+  mask-image:radial-gradient(closest-side,#000 0%,transparent 60%);
+  animation:gxSpRaysIn 2s ease .5s forwards,gxSpSpin 86s linear infinite}
+@keyframes gxSpRaysIn{to{opacity:1}}
+@keyframes gxSpSpin{to{transform:rotate(360deg)}}
+
+/* 开机光束 */
+#splashScreen .splash-beam{position:absolute;left:50%;top:50%;width:8px;height:2px;border-radius:2px;background:#e6f3ff;
+  box-shadow:0 0 18px 7px rgba(160,210,255,.85),0 0 64px 22px rgba(90,160,230,.45);
+  animation:gxSpBeam 1.2s cubic-bezier(.2,.72,.3,1) both}
+@keyframes gxSpBeam{
+  0%{opacity:0;transform:translate(-50%,-50%) scaleX(.2) scaleY(1)}
+  12%{opacity:1}
+  42%{transform:translate(-50%,-50%) scaleX(42) scaleY(1)}
+  68%{opacity:.5;transform:translate(-50%,-50%) scaleX(66) scaleY(.6)}
+  100%{opacity:0;transform:translate(-50%,-50%) scaleX(88) scaleY(.3)}}
+
+/* 舞台：光晕 + 冲击环 + LOGO */
+#splashScreen .splash-stage{position:relative;z-index:5;width:min(247px,51vw,27vh);height:min(247px,51vw,27vh);
+  display:flex;align-items:center;justify-content:center}
+#splashScreen .splash-halo{position:absolute;inset:-16%;border-radius:50%;opacity:0;will-change:opacity;
+  background:radial-gradient(circle at 50% 50%,rgba(165,214,255,.5) 0%,rgba(92,155,232,.24) 38%,rgba(60,110,190,0) 70%);
+  animation:gxSpHaloIn 1s cubic-bezier(.2,.8,.3,1) .3s forwards,gxSpHaloPulse 3.8s ease-in-out 1.35s infinite}
+@keyframes gxSpHaloIn{from{opacity:0}to{opacity:.86}}
+@keyframes gxSpHaloPulse{0%,100%{opacity:.78}50%{opacity:1}}
+#splashScreen .splash-ring{position:absolute;border-radius:50%;border:1px solid rgba(165,212,255,.55);opacity:0;
+  animation:gxSpWave 2s cubic-bezier(.22,.7,.3,1) .26s both}
+#splashScreen .splash-ring.r1{inset:8%}
+#splashScreen .splash-ring.r2{inset:20%;border-color:rgba(200,230,255,.42);animation-delay:.52s;animation-duration:2.3s}
+@keyframes gxSpWave{0%{opacity:0;transform:scale(.5)}16%{opacity:.85}100%{opacity:0;transform:scale(1.5)}}
+#splashScreen .splash-emblem{position:relative;width:56%;height:56%;display:flex;align-items:center;justify-content:center;
+  animation:gxSpEmblemIn 1.35s cubic-bezier(.16,.86,.3,1) .28s both}
+@keyframes gxSpEmblemIn{
+  0%{opacity:0;transform:translate3d(0,16px,0) scale(.78) rotate(-11deg)}
+  55%{opacity:1}
+  100%{opacity:1;transform:translate3d(0,0,0) scale(1) rotate(0deg)}}
+#splashScreen .splash-img{position:relative;z-index:2;width:100%;height:auto;display:block;
+  filter:brightness(1.12) saturate(1.06) drop-shadow(0 0 9px rgba(255,255,255,.5)) drop-shadow(0 0 30px rgba(122,186,255,.5)) drop-shadow(0 0 66px rgba(70,130,210,.3))}
+#splashScreen .splash-sheen{position:absolute;inset:0;z-index:3;pointer-events:none;
+  -webkit-mask-image:url(/guixu-splash-640.webp);mask-image:url(/guixu-splash-640.webp);
+  -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+  -webkit-mask-position:center;mask-position:center;
+  -webkit-mask-size:contain;mask-size:contain}
+#splashScreen .splash-sheen i{position:absolute;top:-18%;bottom:-18%;left:0;width:26%;display:block;opacity:0;
+  background:linear-gradient(90deg,rgba(255,255,255,0),rgba(226,243,255,.95),rgba(255,255,255,0));
+  filter:blur(3px);animation:gxSpSheen 2.3s cubic-bezier(.4,0,.25,1) .82s 1 both}
+@keyframes gxSpSheen{0%{opacity:0;transform:translate3d(-170%,0,0)}10%{opacity:1}90%{opacity:1}100%{opacity:0;transform:translate3d(540%,0,0)}}
+#splashScreen .splash-flash{position:absolute;left:50%;top:50%;width:126%;height:126%;transform:translate(-50%,-50%);
+  z-index:1;border-radius:50%;opacity:0;
+  background:radial-gradient(circle,rgba(238,248,255,.92) 0%,rgba(160,212,255,.34) 30%,rgba(160,212,255,0) 63%);
+  animation:gxSpFlash 1.05s ease .4s both}
+@keyframes gxSpFlash{0%{opacity:0}16%{opacity:.9}100%{opacity:0}}
+
+/* 文案 */
+#splashScreen .splash-text{position:relative;z-index:6;text-align:center;margin-top:clamp(18px,4.2vh,38px);opacity:0;
+  animation:gxSpUp .95s cubic-bezier(.2,.8,.3,1) 1.02s forwards}
+#splashScreen .splash-text .nm{font-size:clamp(26px,7.4vw,40px);font-weight:700;letter-spacing:.42em;text-indent:.42em;line-height:1.1;
+  background:linear-gradient(135deg,#f4f9ff 0%,#c2ddf9 44%,#7fb2e2 100%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+#splashScreen .splash-text .sb{margin-top:11px;font-size:clamp(10px,2.8vw,12px);letter-spacing:.32em;text-indent:.32em;
+  color:rgba(168,198,228,.6);text-transform:uppercase}
+#splashScreen .splash-load{position:relative;z-index:6;display:flex;gap:9px;margin-top:22px;opacity:0;
+  animation:gxSpUp .8s ease 1.32s forwards}
+#splashScreen .splash-load i{width:6px;height:6px;border-radius:50%;background:#9fc9ee;opacity:.32;
+  animation:gxSpDot 1.35s ease-in-out infinite}
+#splashScreen .splash-load i:nth-child(2){background:#d6ebff;animation-delay:.16s}
+#splashScreen .splash-load i:nth-child(3){background:#8fbcdf;animation-delay:.32s}
+@keyframes gxSpDot{0%,100%{opacity:.3;transform:translate3d(0,0,0)}45%{opacity:1;transform:translate3d(0,-7px,0)}}
+@keyframes gxSpUp{from{opacity:0;transform:translate3d(0,15px,0)}to{opacity:1;transform:none}}
+#splashScreen .splash-v{position:absolute;left:0;right:0;bottom:clamp(20px,4.2vh,34px);z-index:6;text-align:center;opacity:0;
+  font-size:10.5px;letter-spacing:.22em;color:rgba(158,190,220,.55);animation:gxSpUp .8s ease 1.5s forwards}
+#splashScreen .splash-tip{position:absolute;left:50%;bottom:clamp(74px,12vh,116px);z-index:8;
+  transform:translateX(-50%) translateY(6px);opacity:0;pointer-events:none;
+  font-size:12px;letter-spacing:.1em;color:rgba(196,220,242,.92);
+  background:rgba(20,46,72,.55);border:1px solid rgba(150,200,255,.26);padding:8px 16px;border-radius:999px;
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+  transition:opacity .45s ease,transform .45s ease}
+#splashScreen .splash-tip.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media (prefers-reduced-motion:reduce){
+  #splashScreen .splash-rays,#splashScreen .splash-beam{display:none}
+  #splashScreen *{animation-duration:.01s!important;animation-delay:0s!important}
+}
+</style>
+
+<div id="splashScreen" class="splash-overlay" data-active="1" role="img" aria-label="归墟">
+  <canvas class="splash-fx" id="splashFx"></canvas>
+  <div class="splash-grid"></div>
+  <div class="splash-rays"></div>
+  <div class="splash-beam"></div>
+  <div class="splash-stage">
+    <div class="splash-halo"></div>
+    <div class="splash-ring r1"></div>
+    <div class="splash-ring r2"></div>
+    <div class="splash-emblem">
+      <span class="splash-flash"></span>
+      <img class="splash-img" src="/guixu-splash-640.webp" alt="归墟" width="640" height="640" decoding="async">
+      <span class="splash-sheen"><i></i></span>
+    </div>
+  </div>
+  <div class="splash-text">
+    <div class="nm">归墟</div>
+    <div class="sb">The Great Abyss</div>
+  </div>
+  <div class="splash-load"><i></i><i></i><i></i></div>
+  <div class="splash-tip" id="splashTip">♪ 点击屏幕开启音效</div>
+  <div class="splash-v">PROOF OF RESOURCE NETWORK · GUIXU.CLUB</div>
+</div>
+<script>
+/* ===== 归墟开屏动画 · JS（静态遮罩版：隐藏 = display:none + data-active=0）===== */
+(function(){
+  var MIN_SHOW=2600, MAX_SHOW=8000;
+  /* 预览页专用：?hold=<秒> 延长展示时间，方便慢慢看效果（正式页无此参数） */
+  var _hold=parseFloat((location.search.match(/[?&]hold=(\d+(?:\.\d+)?)/)||[])[1]);
+  if(_hold>0){ MIN_SHOW=_hold*1000; MAX_SHOW=MIN_SHOW+6000; }
+  var _tpl=null, _rafStopper=null, _hidden=false, _start=0, _replaying=false;
+
+  function _ac(){
+    try{ if(!window._splashAC) window._splashAC=new (window.AudioContext||window.webkitAudioContext)(); return window._splashAC; }
+    catch(e){ return null; }
+  }
+  function _note(a,f,t0,dur,type,gain){
+    try{ var o=a.createOscillator(),g=a.createGain();
+      o.type=type||'sine'; o.frequency.setValueAtTime(f,t0); o.connect(g); g.connect(a.destination);
+      g.gain.setValueAtTime(0,t0); g.gain.linearRampToValueAtTime(gain||.07,t0+.02);
+      g.gain.exponentialRampToValueAtTime(.0008,t0+dur);
+      o.start(t0); o.stop(t0+dur+.05);
+    }catch(e){}
+  }
+  function _whoosh(a,t0,dur,peak){
+    try{ var len=Math.max(1,Math.floor(a.sampleRate*dur)), buf=a.createBuffer(1,len,a.sampleRate), d=buf.getChannelData(0);
+      for(var i=0;i<len;i++){ d[i]=(Math.random()*2-1)*(1-i/len); }
+      var s=a.createBufferSource(); s.buffer=buf;
+      var f=a.createBiquadFilter(); f.type='bandpass'; f.Q.value=.9;
+      f.frequency.setValueAtTime(240,t0); f.frequency.exponentialRampToValueAtTime(3400,t0+dur);
+      var g=a.createGain(); g.gain.setValueAtTime(0,t0);
+      g.gain.linearRampToValueAtTime(peak||.05,t0+dur*.32); g.gain.exponentialRampToValueAtTime(.0008,t0+dur);
+      s.connect(f); f.connect(g); g.connect(a.destination); s.start(t0); s.stop(t0+dur+.05);
+    }catch(e){}
+  }
+  /* 三段式音效：0s 低频涌起 + 气流 → 0.28s 落定重音 → 0.44s 上行音阶 → 1.28s 点睛余韵 */
+  window._playSplashSound=function(){
+    var a=_ac(); if(!a) return false;
+    if(a.state!=='running') return false;
+    var b=a.currentTime+.02;
+    _note(a,55,b,1.6,'sine',.17); _note(a,110,b+.04,1.4,'triangle',.05); _note(a,220,b+.02,1.2,'sine',.025);
+    _whoosh(a,b+.02,.9,.045);
+    _note(a,82.41,b+.28,.85,'triangle',.13); _note(a,164.81,b+.28,.6,'sine',.05);
+    [[261.63,.44],[392.00,.56],[523.25,.68],[659.25,.80],[783.99,.92]].forEach(function(n){
+      _note(a,n[0],b+n[1],.95,'triangle',.072); });
+    [[1318.51,1.28,1.7],[1567.98,1.40,1.6],[2093.00,1.52,1.5]].forEach(function(n){
+      _note(a,n[0],b+n[1],n[2],'sine',.05); });
+    window._splashSoundPlayed=true;
+    var tip=document.getElementById('splashTip'); if(tip) tip.classList.remove('show');
+    return true;
+  };
+  function _trySound(){
+    var a=_ac(); if(!a) return;
+    if(a.state==='running'){ window._playSplashSound(); }
+    else if(a.state==='suspended'){ a.resume().then(function(){ window._playSplashSound(); }).catch(function(){}); }
+  }
+  function _wake(){
+    var a=window._splashAC;
+    if(a&&a.state==='suspended'){ a.resume().then(function(){ if(!window._splashSoundPlayed) window._playSplashSound(); }).catch(function(){}); }
+    else if(a&&a.state==='running'&&!window._splashSoundPlayed){ window._playSplashSound(); }
+    var tip=document.getElementById('splashTip'); if(tip) tip.classList.remove('show');
+    document.removeEventListener('click',_wake); document.removeEventListener('touchstart',_wake);
+  }
+  document.addEventListener('click',_wake,{once:true});
+  document.addEventListener('touchstart',_wake,{once:true});
+
+  /* 粒子 / 火星 */
+  function _fx(){
+    var cv=document.getElementById('splashFx');
+    if(!cv||!cv.getContext) return null;
+    var ctx=cv.getContext('2d'), dpr=Math.min(window.devicePixelRatio||1,2);
+    var W=0,H=0,amb=[],sparks=[],raf=null,running=true,last=0;
+    function size(){ W=cv.width=Math.max(1,Math.floor(cv.clientWidth*dpr)); H=cv.height=Math.max(1,Math.floor(cv.clientHeight*dpr)); }
+    function mkAmb(){ return {x:Math.random()*W,y:H*(.2+Math.random()*.8),r:(.6+Math.random()*1.4)*dpr,
+      vx:(Math.random()-.5)*.07*dpr,vy:-(.06+Math.random()*.2)*dpr,a:.1+Math.random()*.42}; }
+    function burst(){ for(var i=0;i<48;i++){ var ang=Math.random()*Math.PI*2, sp=(.7+Math.random()*2.6)*dpr;
+      sparks.push({x:W/2,y:H/2,vx:Math.cos(ang)*sp,vy:Math.sin(ang)*sp,life:1,r:(.8+Math.random()*1.5)*dpr}); } }
+    function frame(now){
+      if(!running) return;
+      var dt=Math.min(48,now-last)/16.7; last=now;
+      ctx.clearRect(0,0,W,H); ctx.globalCompositeOperation='lighter';
+      for(var i=0;i<amb.length;i++){ var p=amb[i]; p.x+=p.vx*dt; p.y+=p.vy*dt;
+        if(p.y<-12){ p.y=H+12; p.x=Math.random()*W; }
+        if(p.x<0)p.x=W; if(p.x>W)p.x=0;
+        ctx.beginPath(); ctx.fillStyle='rgba(168,214,255,'+p.a.toFixed(3)+')'; ctx.arc(p.x,p.y,p.r,0,6.2832); ctx.fill(); }
+      for(var j=sparks.length-1;j>=0;j--){ var s=sparks[j];
+        s.x+=s.vx*dt; s.y+=s.vy*dt; s.vx*=.972; s.vy*=.972; s.life-=.0165*dt;
+        if(s.life<=0){ sparks.splice(j,1); continue; }
+        ctx.beginPath(); ctx.fillStyle='rgba(228,244,255,'+(s.life*.9).toFixed(3)+')'; ctx.arc(s.x,s.y,Math.max(.2,s.r*s.life),0,6.2832); ctx.fill(); }
+      raf=requestAnimationFrame(frame);
+    }
+    size(); for(var k=0;k<70;k++) amb.push(mkAmb());
+    last=performance.now(); raf=requestAnimationFrame(frame);
+    setTimeout(burst,400); setTimeout(burst,1500);
+    window.addEventListener('resize',size);
+    return {stop:function(){ running=false; if(raf)cancelAnimationFrame(raf); window.removeEventListener('resize',size); }};
+  }
+
+  function _hide(){
+    var el=document.getElementById('splashScreen'); if(!el||_hidden) return;
+    _hidden=true;
+    el.classList.remove('show'); el.classList.add('hide');
+    setTimeout(function(){
+      el.style.display='none'; el.dataset.active='0';
+      if(_rafStopper){ try{_rafStopper();}catch(e){} _rafStopper=null; }
+      try{ if(typeof window.launchFireworks==='function') window.launchFireworks(); else if(typeof window.guixuFireworks==='function') window.guixuFireworks(); }catch(e){}
+    },640);
+  }
+  function _tick(){
+    if(_hidden) return;
+    if(Date.now()-_start>=MIN_SHOW) _hide(); else setTimeout(_tick,100);
+  }
+  function _boot(){
+    var el=document.getElementById('splashScreen'); if(!el) return;
+    _hidden=false; _start=Date.now();
+    if(_tpl===null) _tpl=el.outerHTML;
+    _rafStopper=_fx();
+    _trySound();
+    setTimeout(function(){ if(!window._splashSoundPlayed){ var t=document.getElementById('splashTip'); if(t) t.classList.add('show'); } },950);
+    setTimeout(function(){ if(!window._splashSoundPlayed){ var t=document.getElementById('splashTip'); if(t) t.classList.add('show'); } },2100);
+    setTimeout(_tick,120);
+    setTimeout(function(){ _hide(); },MAX_SHOW);
+  }
+  /* 重播：重建遮罩节点，动画从头开始（供按钮 / LOGO 点击调用） */
+  window.gxShowSplash=function(){
+    if(_replaying) return; _replaying=true;
+    var old=document.getElementById('splashScreen');
+    if(old&&old.parentNode) old.parentNode.removeChild(old);
+    if(_rafStopper){ try{_rafStopper();}catch(e){} _rafStopper=null; }
+    var box=document.createElement('div'); box.innerHTML=_tpl;
+    var node=box.firstElementChild;
+    document.body.insertBefore(node,document.body.firstChild);
+    _replaying=false;
+    window._splashSoundPlayed=false;
+    _boot();
+  };
+  _boot();
+})();
+</script>
+<noscript><style>#splashScreen{display:none!important}</style></noscript>
+<!-- ===== GUIXU SPLASH END ===== -->
+
 
 <div class="gx-lang-bar"><span data-gx-lang-switch></span></div>
 
 <div class="gx-window">
+  <div class="gx-wm" aria-hidden="true"></div>
+  <canvas id="gxFirefly" aria-hidden="true"></canvas>
   <!-- 窗口标题栏 -->
   <div class="gx-window-bar">
     <div class="lights">
@@ -45,10 +371,10 @@
   <div class="gx-window-body">
     <!-- 侧边栏 -->
     <aside class="gx-side">
-      <div class="brand">
-        <span class="mark" data-i18n="brand.mark">归</span>
+      <a class="brand" href="https://www.guixu.club/" title="归墟共识官网 / Guixu Consensus Home" aria-label="Guixu Consensus Home">
+        <img class="brand-mark" src="/guixu800tm-96.webp?v=20260925a" alt="Guixu Consensus">
         <span><b data-i18n="pc.brand">Guixu Node</b><small data-i18n="pc.brandSub">PC CLIENT</small></span>
-      </div>
+      </a>
 
       <div class="nav-label" data-i18n="pc.nav.console">Console</div>
       <a class="nav-item active" data-panel="status">
@@ -58,6 +384,10 @@
       <a class="nav-item" data-panel="share">
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M7 6.5h10M5 12h14M7 17.5h10"/></svg>
         <span data-i18n="pc.nav.share">Resource Sharing</span>
+      </a>
+      <a class="nav-item" data-panel="consensus">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9S14.5 21 12 21s-3.8-2.6-3.8-6S9.5 5.6 12 3z"/></svg>
+        <span data-i18n="pc.nav.consensus">Consensus Value</span>
       </a>
 
       <div class="nav-label" data-i18n="pc.nav.assets">Assets</div>
@@ -71,7 +401,7 @@
       </a>
 
       <div class="side-foot">
-        <a href="../web/index.html" style="color:var(--gx-dim)" data-i18n="back.home">← Back to Home</a><br>
+        <a href="https://www.guixu.club/" style="color:var(--gx-dim)" data-i18n="back.home">← Back to Home</a><br>
         <span data-i18n="pc.ver">Client prototype v0.1</span>
       </div>
     </aside>
@@ -84,8 +414,19 @@
           <h2 style="font-size:1.28em;font-weight:700;margin-top:3px" id="panelTitle">Node Status</h2>
         </div>
         <div class="gx-row">
+          <!-- 钱包连接（内联，置于「节点主人」前）：组件见 shared/gx-wallet.js -->
+          <div id="gxWalletMount" data-mode="inline" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end"></div>
           <span class="gx-sub" id="ownerTag">--</span>
           <button class="gx-btn gx-btn-ghost gx-btn-sm" id="btnPause">Pause sharing</button>
+          <!-- 一键满屏：Fullscreen API，进入后页面自适应浏览器窗口；文案与图标随全屏状态与语言切换 -->
+          <button class="gx-btn gx-btn-ghost gx-btn-sm" id="btnFull" type="button" aria-pressed="false">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path class="fs-out" d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>
+              <path class="fs-in" d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5" style="display:none"/>
+            </svg>
+            <span class="gx-fs-txt" data-i18n="pc.fs.on">Full screen</span>
+          </button>
         </div>
       </div>
 
@@ -104,7 +445,7 @@
           </div>
           <div class="gx-card gx-kpi">
             <div class="kpi-label" data-i18n="pc.kpi.today">Today's Earnings</div>
-            <div class="kpi-value"><span id="s3">0</span><span class="kpi-unit">x</span></div>
+            <div class="kpi-value"><span id="s3">0</span><span class="kpi-unit">gx</span></div>
             <div class="kpi-foot" data-i18n="pc.kpi.today.foot">Settled at T+1</div>
           </div>
           <div class="gx-card gx-kpi">
@@ -114,13 +455,30 @@
           </div>
         </div>
 
-        <div class="gx-grid gx-grid-2 gx-mt">
-          <div class="gx-card">
+        <!-- 钱包身份（入口页连接后贯通显示：终端 ID / 节点名 / 邮箱；未连接钱包时整卡隐藏，保持原 mock） -->
+        <div class="gx-card gx-mt" id="walletCard" style="display:none">
+          <div class="gx-card-head">
+            <h3 data-i18n="wallet.h3">Wallet Identity</h3>
+            <span class="gx-sub" data-i18n="wallet.sub">Connected on the entry page · stored locally</span>
+          </div>
+          <div class="flow-line"><span class="gx-dim" data-i18n="wallet.addr">Wallet Address</span><span class="gx-mono" id="wiAddr">--</span></div>
+          <!-- 节点名 / 邮箱：与手机端一致，可直接编辑并保存（共用 shared/gx-wallet.js 的同一套保存逻辑） -->
+          <div id="wiProfile"></div>
+          <!-- 推荐码 / 邀请链接：与手机端「我的推荐码」卡片同一份实现（shared/gx-wallet.js → GX_WALLET.renderInvite） -->
+          <div id="wiInvite"></div>
+          <!-- 推荐人：与手机端共用 shared/gx-wallet.js 的同一份逻辑；已绑定则只读展示、不出现「绑定推荐人」按钮 -->
+          <div id="wiRef"></div>
+          <!-- 直推 / 团队：与手机端钱包卡同一份数据源（/api/referral/team） -->
+          <div id="wiStats"></div>
+        </div>
+
+        <div class="gx-grid gx-grid-3 gx-mt">
+          <div class="gx-card" id="liveCard">
             <div class="gx-card-head">
               <h3 data-i18n="pc.card.live.h3">Live Local Contribution</h3>
-              <span class="gx-sub" data-i18n="pc.card.live.sub">Last 3 minutes</span>
+              <span class="gx-sub" data-i18n="pc.card.live.sub">Reported every 60s</span>
             </div>
-            <canvas id="pcChart"></canvas>
+            <div id="liveReport"></div>
           </div>
           <div class="gx-card">
             <div class="gx-card-head">
@@ -128,6 +486,14 @@
               <span class="gx-sub" data-i18n="pc.card.dev.sub">Used for resource capability assessment</span>
             </div>
             <div id="deviceInfo"></div>
+          </div>
+          <!-- 本机资源（能贡献什么）：与设备信息分开，全部真实读取 -->
+          <div class="gx-card">
+            <div class="gx-card-head">
+              <h3 data-i18n="pc.card.res.h3">Local Resources</h3>
+              <span class="gx-sub" data-i18n="pc.card.res.sub">Capability this device can contribute</span>
+            </div>
+            <div id="deviceRes"></div>
           </div>
         </div>
       </section>
@@ -144,31 +510,89 @@
           </div>
         </div>
         <div class="gx-grid gx-grid-3" id="shareList"></div>
+        <div class="dv-note" id="shareNote" style="margin-top:14px"></div>
       </section>
 
       <!-- 收益明细 -->
+      <!-- 共识价值：全网总盘 / 我的位置 / 通证标尺 / 网络增长（数据源 /api/platform/metrics + earnings.platform） -->
+      <section class="panel" data-panel="consensus">
+        <div class="gx-grid gx-grid-4">
+          <div class="gx-card gx-kpi">
+            <div class="kpi-label" data-i18n="pc.cv.terminals">Terminals</div>
+            <div class="kpi-value"><span id="c1">—</span><span class="kpi-unit" data-i18n="pc.cv.unit.node">nodes</span></div>
+            <div class="kpi-foot" id="c1f"></div>
+          </div>
+          <div class="gx-card gx-kpi">
+            <div class="kpi-label" data-i18n="pc.cv.storage">Pooled Storage</div>
+            <div class="kpi-value"><span id="c2">—</span><span class="kpi-unit">GB</span></div>
+            <div class="kpi-foot" id="c2f"></div>
+          </div>
+          <div class="gx-card gx-kpi">
+            <div class="kpi-label" data-i18n="pc.cv.bw">Pooled Bandwidth</div>
+            <div class="kpi-value"><span id="c3">—</span><span class="kpi-unit">Mbps</span></div>
+            <div class="kpi-foot" id="c3f"></div>
+          </div>
+          <div class="gx-card gx-kpi">
+            <div class="kpi-label" data-i18n="pc.cv.compute">Pooled Compute</div>
+            <div class="kpi-value"><span id="c4">—</span><span class="kpi-unit">TFLOPS</span></div>
+            <div class="kpi-foot" id="c4f"></div>
+          </div>
+        </div>
+
+        <div class="dv-note" id="cvNote" style="margin-top:14px"></div>
+
+        <div class="gx-grid gx-grid-2 gx-mt">
+          <div class="gx-card">
+            <div class="gx-card-head"><h3 data-i18n="pc.cv.mine.h3">My Position</h3><span class="gx-sub" data-i18n="pc.cv.mine.sub">Same server snapshot as the pool</span></div>
+            <div id="cvMine"></div>
+          </div>
+          <div class="gx-card">
+            <div class="gx-card-head"><h3 data-i18n="pc.cv.ruler.h3">Token Ruler</h3><span class="gx-sub" data-i18n="pc.cv.ruler.sub">Resource → token, line by line</span></div>
+            <div id="cvRuler"></div>
+          </div>
+        </div>
+
+        <div class="gx-card gx-mt">
+          <div class="gx-card-head"><h3 data-i18n="pc.cv.behavior.h3">My Behaviour Contribution</h3><span class="gx-sub" data-i18n="pc.cv.behavior.sub">Observation period · not settled</span></div>
+          <div id="cvBehavior"></div>
+        </div>
+
+        <div class="gx-card gx-mt">
+          <div class="gx-card-head"><h3 data-i18n="pc.cv.trend.h3">Network Growth</h3><span class="gx-sub" data-i18n="pc.cv.trend.sub">Last 30 days · vertical axis: terminals</span></div>
+          <canvas id="cvChart"></canvas>
+          <div class="dv-note" id="cvTrendFoot"></div>
+        </div>
+      </section>
+
       <section class="panel" data-panel="earn">
         <div class="gx-grid gx-grid-4">
           <div class="gx-card gx-kpi">
             <div class="kpi-label" data-i18n="pc.earn.balance">Wallet Balance</div>
-            <div class="kpi-value"><span id="e1">0</span><span class="kpi-unit">x</span></div>
-            <div class="kpi-foot" data-i18n="pc.earn.balance.foot">Withdrawable anytime</div>
+            <div class="kpi-value"><span id="e1">0</span><span class="kpi-unit">gx</span></div>
+            <div class="kpi-foot" id="e1f"></div>
           </div>
           <div class="gx-card gx-kpi">
             <div class="kpi-label" data-i18n="pc.earn.today">Today's Earnings</div>
-            <div class="kpi-value"><span id="e2">0</span><span class="kpi-unit">x</span></div>
-            <div class="kpi-foot" data-i18n="pc.earn.today.foot">+8.2% vs yesterday</div>
+            <div class="kpi-value"><span id="e2">0</span><span class="kpi-unit">gx</span></div>
+            <div class="kpi-foot" id="e2f"></div>
           </div>
           <div class="gx-card gx-kpi">
             <div class="kpi-label" data-i18n="pc.earn.pending">Pending Settlement</div>
-            <div class="kpi-value"><span id="e3">0</span><span class="kpi-unit">x</span></div>
-            <div class="kpi-foot" data-i18n="pc.earn.pending.foot">Credited at T+1</div>
+            <div class="kpi-value"><span id="e3">0</span><span class="kpi-unit">gx</span></div>
+            <div class="kpi-foot" id="e3f"></div>
           </div>
           <div class="gx-card gx-kpi">
             <div class="kpi-label" data-i18n="pc.earn.tax">Cumulative Tax Paid</div>
-            <div class="kpi-value"><span id="e4">0</span><span class="kpi-unit">x</span></div>
-            <div class="kpi-foot" data-i18n="pc.earn.tax.foot">1% trading tax + 0.5% transfer tax</div>
+            <div class="kpi-value"><span id="e4">0</span><span class="kpi-unit">gx</span></div>
+            <div class="kpi-foot" id="e4f"></div>
           </div>
+        </div>
+
+        <div class="dv-note" id="earnNote" style="margin-top:14px"></div>
+
+        <div class="gx-card gx-mt">
+          <div class="gx-card-head"><h3 data-i18n="pc.chain.h3">On-chain settlement</h3><span class="gx-sub" data-i18n="pc.chain.sub">BSC Mainnet · live read</span></div>
+          <div id="chainRows"></div>
         </div>
 
         <div class="gx-grid gx-grid-2 gx-mt">
@@ -193,21 +617,26 @@
         <div class="gx-card">
           <div class="gx-card-head"><h3 data-i18n="pc.policy.h3">Running Policies</h3><span class="gx-sub" data-i18n="pc.policy.sub">Decide when resources may be shared</span></div>
           <div id="policyList"></div>
+          <div class="dv-note" id="policyNote" style="margin-top:12px"></div>
         </div>
       </section>
     </main>
   </div>
 </div>
 
-<script src="../shared/guixu-i18n.js"></script>
-<script src="../shared/world-dots.js"></script>
-<script src="../shared/mock-data.js"></script>
-<script src="../shared/guixu-core.js"></script>
+<script src="../shared/guixu-i18n.js?v=20261115a"></script>
+<script src="../shared/world-dots.js?v=20260925h"></script>
+<script src="../shared/mock-data.js?v=20260929a"></script>
+<script src="../shared/guixu-core.js?v=20260925h"></script>
+<script src="../shared/gx-wallet.js?v=20261114dev"></script>
+<script src="../shared/gx-log.js?v=20261114a"></script>
+<script src="../shared/gx-notice.js?v=20260927a"></script>
+<script src="../shared/gx-firefly.js?v=20261031a"></script>
 <script>
 (function () {
   var D = window.GX_DATA, M = D.me, P = D.shareProfile.pc;
 
-  var PANEL_KEY = { status: 'pc.panel.status', share: 'pc.panel.share', earn: 'pc.panel.earn', policy: 'pc.panel.policy' };
+  var PANEL_KEY = { status: 'pc.panel.status', share: 'pc.panel.share', consensus: 'pc.panel.consensus', earn: 'pc.panel.earn', policy: 'pc.panel.policy' };
   var curPanel = 'status', paused = false, firstTop = true;
 
   /* ---------- 面板切换 ---------- */
@@ -218,112 +647,1147 @@
     var t = GX.t(PANEL_KEY[key] || '');
     GX.qs('#panelTitle').textContent = t;
     GX.qs('#crumb').textContent = GX.t('pc.crumb', { panel: t });
-    if (key === 'status') drawPcChart();
     if (key === 'earn') drawEarnChart();
+    if (key === 'consensus') { renderConsensus(); renderBehavior(); }
   }
   GX.qsa('.gx-side a.nav-item').forEach(function (a) {
     GX.on(a, 'click', function (e) { e.preventDefault(); switchPanel(a.dataset.panel); });
   });
 
-  /* ---------- 顶部 / 状态 ---------- */
-  function renderTop() {
-    GX.qs('#winNode').textContent = M.nodeId;
-    GX.qs('#ownerTag').textContent = GX.t('pc.owner', { name: GX.field(M, 'owner') });
-    GX.qs('#s1').textContent = GX.t(M.rank.levelKey);
-    GX.qs('#s1f').textContent = GX.t('pc.kpi.level.foot', {
-      v: GX.num(M.rank.score) + ' · ' + GX.t('pc.kpi.level.top', { p: M.rank.percentile })
+  /* ---------- 钱包身份贯通（来源：入口页 localStorage gx_terminal_wallet_v1 / gx_terminal_nodes_v1） ----------
+     未连接钱包（无记录 / 地址非法）时终端页完全保持原 mock 数据不变 */
+  var LS_WALLET = 'gx_terminal_wallet_v1';
+  var LS_NODES = 'gx_terminal_nodes_v1';
+
+  /* 本页新增文案内联注册进语言包（register 为合并写入，不改动 shared/i18n/*.js），随语言切换自动生效 */
+  if (GX.i18n && GX.i18n.register) {
+    GX.i18n.register('en', {
+      'wallet.h3': 'Wallet Identity',
+      'wallet.sub': 'Connected wallet · referral status from the server',
+      'wallet.addr': 'Wallet Address',
+      'wallet.name': 'Node Name',
+      'wallet.mail': 'Bound Email',
+      'wallet.unbound': 'Not bound',
+      'pc.owner.unnamed': 'Unnamed',
+      'pc.fs.on': 'Full screen',
+      'pc.fs.off': 'Exit full screen',
+      'pc.fs.on.tip': 'Enter full screen',
+      'pc.fs.off.tip': 'Exit full screen (Esc)'
     });
-    GX.qs('#s4').textContent = P.items.filter(function (i) { return i.enabled; }).length;
-    [
-      ['#s2', M.uptimeDays, 0], ['#s3', M.wallet.todayEarn, 2],
-      ['#e1', M.wallet.balance, 2], ['#e2', M.wallet.todayEarn, 2],
-      ['#e3', M.wallet.pending, 2], ['#e4', M.wallet.taxPaid, 2]
-    ].forEach(function (n) {
-      var el = GX.qs(n[0]);
-      if (firstTop) { GX.countUp(el, n[1], { decimals: n[2] }); } else { el.textContent = GX.num(n[1], n[2]); }
+    GX.i18n.register('zh', {
+      'wallet.h3': '钱包身份',
+      'wallet.sub': '本页连接的钱包 · 推荐关系以服务端为准',
+      'wallet.addr': '钱包地址',
+      'wallet.name': '节点名',
+      'wallet.mail': '绑定邮箱',
+      'wallet.unbound': '未绑定',
+      'pc.owner.unnamed': '待命名',
+      'pc.fs.on': '全屏',
+      'pc.fs.off': '退出全屏',
+      'pc.fs.on.tip': '进入全屏显示',
+      'pc.fs.off.tip': '退出全屏（Esc）'
     });
-    firstTop = false;
-    GX.qs('#btnPause').textContent = paused ? GX.t('pc.resume') : GX.t('pc.pause');
-    GX.qs('#btnPause').className = paused ? 'gx-btn gx-btn-primary gx-btn-sm' : 'gx-btn gx-btn-ghost gx-btn-sm';
+    /* 共识价值（P2）：全网总盘 / 我的位置 / 通证标尺 / 增长趋势 */
+    GX.i18n.register('en', {
+      'pc.nav.consensus': 'Consensus Value',
+      'pc.panel.consensus': 'Consensus Value',
+      'pc.cv.terminals': 'Terminals', 'pc.cv.unit.node': 'nodes',
+      'pc.cv.storage': 'Pooled Storage', 'pc.cv.bw': 'Pooled Bandwidth', 'pc.cv.compute': 'Pooled Compute',
+      'pc.cv.active': 'Active 7d', 'pc.cv.basis': 'Declared quota',
+      'pc.cv.updated': 'updated',
+      'pc.cv.err': 'Could not read the network metrics — nothing is shown rather than a placeholder zero.',
+      'pc.cv.loading': 'Reading network metrics…',
+      'pc.cv.empty': 'No terminal has reported yet — figures show “—” instead of a placeholder zero.',
+      'pc.cv.mine.h3': 'My Position', 'pc.cv.mine.sub': 'Same server snapshot as the pool',
+      'pc.cv.mine.nowallet': 'Connect a wallet to see where you stand in the network. Nothing is shown until the server returns real data.',
+      'pc.cv.mine.wait': 'Reading your position…',
+      'pc.cv.mine.err': 'Could not read your earnings data — retry after checking the connection.',
+      'pc.cv.mine.share': 'My share', 'pc.cv.mine.pct': 'Contribution percentile',
+      'pc.cv.mine.pctv': 'Ahead of {v}% of terminals', 'pc.cv.mine.decl': 'Declared quota',
+      'pc.cv.mine.rate7': 'Network online rate · 7d', 'pc.cv.mine.nodes': 'Network terminals',
+      'pc.cv.mine.note': 'Share and percentile come from the same server snapshot as the pool, so they always agree. Percentile is ranked by cumulative online time.',
+      'pc.cv.ip': 'Current IP', 'pc.cv.geo': 'Location', 'pc.cv.ip.wait': 'Reading your current IP…',
+      'pc.cv.ruler.h3': 'Token Ruler', 'pc.cv.ruler.sub': 'Resource → token, line by line',
+      'pc.cv.ruler.total': 'Total (today)', 'pc.cv.ruler.day': 'gx/day',
+      'pc.cv.ruler.nodata': 'No report yet today — turn on resource sharing and keep this client open.',
+      'pc.cv.ruler.note': 'Declared quota × settlement rate × online-time ratio. The total is the server figure; on-chain settlement is not connected yet (ledger only).',
+      'pc.cv.trend.h3': 'Network Growth', 'pc.cv.trend.sub': 'Last 30 days · vertical axis: terminals',
+      'pc.cv.trend.empty': 'Not enough history yet — the curve appears once terminals have reported for two or more days.',
+      /* 行为贡献（P7-a） */
+      'pc.cv.behavior.h3': 'My Behaviour Contribution', 'pc.cv.behavior.sub': 'Observation period · not settled',
+      'pc.bh.tier': 'Contributor tier', 'pc.bh.lv1': 'Lv1 Standard', 'pc.bh.lv2': 'Lv2 Premium',
+      'pc.bh.lv3': 'Lv3 Core', 'pc.bh.none': 'Not yet eligible',
+      'pc.bh.points': 'Contribution score · 7d', 'pc.bh.sess': 'Valid sessions / interactions · 7d',
+      'pc.bh.weight': 'Traffic pool weight', 'pc.bh.join': 'Qualified referrals · join bonus',
+      'pc.bh.online': 'Uptime · 7d (days reported)', 'pc.bh.state': 'Settlement',
+      'pc.bh.on': 'Enabled', 'pc.bh.observed': 'Observation period · not settled',
+      'pc.bh.err': 'Could not read this terminal\'s behaviour ledger.',
+      'pc.bh.note': 'A valid session is one visible visit of 15 seconds or more; interactions are clicks, typing and panel switches, debounced to 1.5s. Online time is NOT used here — it already scales resource settlement; counting it twice would pay the same contribution twice.'
+    });
+    GX.i18n.register('zh', {
+      'pc.nav.consensus': '共识价值',
+      'pc.panel.consensus': '共识价值',
+      'pc.cv.terminals': '接入终端', 'pc.cv.unit.node': '个',
+      'pc.cv.storage': '汇聚存储', 'pc.cv.bw': '汇聚带宽', 'pc.cv.compute': '汇聚算力',
+      'pc.cv.active': '近 7 日活跃', 'pc.cv.basis': '已申报额度',
+      'pc.cv.updated': '数据更新',
+      'pc.cv.err': '未能读取全网度量数据 —— 这里留空，不用占位数字填充。',
+      'pc.cv.loading': '正在读取全网度量…',
+      'pc.cv.empty': '暂无终端上报 —— 数字显示「—」，不用占位数字填充。',
+      'pc.cv.mine.h3': '我的位置', 'pc.cv.mine.sub': '与全网总盘同一份服务端快照',
+      'pc.cv.mine.nowallet': '连接钱包后，这里会显示你在全网中的位置；服务端返回真实数据之前不做任何填充。',
+      'pc.cv.mine.wait': '正在读取你在全网中的位置…',
+      'pc.cv.mine.err': '未能读取你的收益数据，请检查网络后重试。',
+      'pc.cv.mine.share': '我的占比', 'pc.cv.mine.pct': '贡献分位',
+      'pc.cv.mine.pctv': '超过全网 {v}% 的终端', 'pc.cv.mine.decl': '我的申报额度',
+      'pc.cv.mine.rate7': '全网在线率 · 近 7 日', 'pc.cv.mine.nodes': '全网终端数',
+      'pc.cv.mine.note': '占比与分位与全网总盘取自同一份服务端快照，两者天然一致；分位按累计在线时长排序。',
+      'pc.cv.ip': '当前 IP', 'pc.cv.geo': '归属地', 'pc.cv.ip.wait': '正在读取当前 IP…',
+      'pc.cv.ruler.h3': '通证标尺', 'pc.cv.ruler.sub': '资源 → 通证，逐项换算',
+      'pc.cv.ruler.total': '合计（今日）', 'pc.cv.ruler.day': 'gx/天',
+      'pc.cv.ruler.nodata': '今日尚未上报 —— 开启资源共享并保持本客户端打开，这里会显示逐项换算。',
+      'pc.cv.ruler.note': '已申报额度 × 结算系数 × 在线时长占比；合计取服务器数值。链上结算尚未接入（当前仅记账）。',
+      'pc.cv.trend.h3': '网络增长', 'pc.cv.trend.sub': '近 30 日 · 纵轴为接入终端数',
+      'pc.cv.trend.empty': '历史数据不足 —— 终端连续上报两天以上后这里会出现增长曲线。',
+      /* 行为贡献（P7-a） */
+      'pc.cv.behavior.h3': '我的行为贡献', 'pc.cv.behavior.sub': '观察期 · 未结算',
+      'pc.bh.tier': '贡献者等级', 'pc.bh.lv1': 'Lv1 普通', 'pc.bh.lv2': 'Lv2 优质',
+      'pc.bh.lv3': 'Lv3 核心', 'pc.bh.none': '尚未达标',
+      'pc.bh.points': '7 日贡献值', 'pc.bh.sess': '有效会话 / 交互 · 7 日',
+      'pc.bh.weight': '流量池权重', 'pc.bh.join': '合格下级 · 拉新贡献',
+      'pc.bh.online': '在线率 · 7 日（有上报天数）', 'pc.bh.state': '结算状态',
+      'pc.bh.on': '已开启', 'pc.bh.observed': '观察期 · 未结算',
+      'pc.bh.err': '未能读取该终端的行为账本。',
+      'pc.bh.note': '有效会话 = 一次可见停留 ≥ 15 秒；有效交互 = 点击 / 键盘输入 / 面板切换，1.5 秒去抖。在线时长不参与此项 —— 它已在资源结算中作为乘数，重复计入等于同一份贡献付两次钱。'
+    });
+
+    /* 设备信息：真实读取相关文案（同样内联注册，不改 shared/i18n/*.js） */
+    GX.i18n.register('en', {
+      'pc.card.dev.h3': 'Device Info · live',
+      'pc.card.dev.sub': 'Read live from this device, not mocked',
+      'pc.card.res.h3': 'Local Resources · live',
+      'pc.card.res.sub': 'Capability this device can contribute',
+      'dv.model': 'Device', 'dv.os': 'OS', 'dv.browser': 'Browser', 'dv.gpu': 'GPU',
+      'dv.screen': 'Screen', 'dv.dpr': 'Pixel ratio', 'dv.cores': 'CPU cores', 'dv.mem': 'Device memory',
+      'dv.quota': 'Storage quota', 'dv.down': 'Downlink', 'dv.net': 'Network', 'dv.rtt': 'Network latency',
+      'dv.lang': 'Language', 'dv.tz': 'Time zone', 'dv.env': 'Runtime', 'dv.batt': 'Battery',
+      'dv.used': 'used',
+      'dv.nosupport': 'Not exposed by this browser', 'dv.measured': 'measured', 'dv.charging': 'charging',
+      'dv.online': 'Online', 'dv.offline': 'Offline',
+      'dv.softgpu': 'Software renderer (no GPU on this device)',
+      'dv.walletbrowser': 'Wallet in-app browser', 'dv.plainbrowser': 'Browser (no wallet detected)',
+      'dv.note': 'Every value above is read live from this device through real browser APIs. Anything the browser does not expose is labelled as such — never filled with a placeholder or a mock number.',
+      'dv.res.note': 'CPU cores and device memory are the values the browser is willing to report — privacy rounding can make them lower than the hardware spec. Storage quota is the quota this browser grants the page, not the disk size.',
+      'pc.earn.tax': 'Total settled',
+      'pc.earn.balance.foot': 'Settled total · on-chain withdrawal not connected yet',
+      'pc.earn.today.foot': 'Live accrual · settled at T+1',
+      'pc.earn.pending.foot': 'Credited next day',
+      'pc.earn.trend.empty': 'No settled data yet',
+      'pc.chain.h3': 'On-chain settlement', 'pc.chain.sub': 'BSC Mainnet · live read',
+      'pc.chain.net': 'Network', 'pc.chain.addr': 'Settlement address', 'pc.chain.block': 'Block height',
+      'pc.chain.bal': 'Settlement wallet BNB', 'pc.chain.state': 'Settlement state',
+      'pc.chain.off': 'Not connected yet (ledger only)', 'pc.chain.on': 'Connected',
+      'pc.chain.readfail': 'RPC unavailable — reported as-is instead of guessed',
+      'pc.chain.loading': 'Reading chain state…',
+      'pc.tax.label': 'Pre-deducted tax (estimate)',
+      'pc.tax.line': 'by rule {r} → {t} gx · net {n} gx',
+      'pc.tax.note': 'Tax is computed from the platform rule; nothing is charged on chain yet.',
+      'pc.mv.h3': 'Measured on this device (browser)',
+      'pc.mv.used': 'Storage used / quota', 'pc.mv.link': 'Link downlink / RTT',
+      'pc.earn.note.empty': 'No wallet connected — connect and authorize to start resource reporting and settlement.',
+      'pc.earn.note.wait': 'Loading settlement data…',
+      'pc.earn.note.err': 'Settlement API unavailable; retrying later.',
+      'pc.earn.note.nosig': 'This wallet record has no connection signature — reconnect the wallet (top bar) to enable reporting.',
+      'pc.earn.note.live': 'Accrued as declared quota × settlement rate × actual online time. Real-usage metering and on-chain withdrawal are not connected yet.',
+      'pc.earn.note.report': 'Last report {t} · online today {m} min',
+      'pc.earn.note.days': '{n} day(s) settled',
+      'pc.earn.rec.online': 'online {v}', 'pc.earn.rec.declared': 'declared {v}',
+      'pc.share.note': 'Quota is what you declare to share on this device; earnings accrue by real online time.',
+      'pc.card.live.sub': 'Reported every 60s',
+      'pc.kpi.level': 'Settlement rate',
+      'pc.none': 'not connected',
+      'pc.kpi.rate.foot': 'storage {v} gx/GB·day · bandwidth {b} gx/Mbps·day · compute {c} gx/TFLOPS·day',
+      'pc.live.online': 'Online today', 'pc.live.last': 'Last report', 'pc.live.settled': 'Settled days',
+      'd.share.pc.bandwidth.hint': 'Cap derived from the network capability this device reports.',
+      'pc.share.policies.note': 'Reporting currently counts declared quota × online time only — the policy switches below are reserved and not wired into settlement yet.',
+      'pc.live.note': 'This card shows what this device has actually reported: declared quota, online minutes today, last report time and settled days. Real per-minute contribution sampling is taken over by the client runtime.',
+      'pc.share.declared': 'Declared now: {v}', 'pc.share.caps': 'Caps are derived from this device.',
+    });
+    GX.i18n.register('zh', {
+      'pc.card.dev.h3': '设备信息 · 实时读取',
+      'pc.card.dev.sub': '本机真实读取，非模拟数据',
+      'pc.card.res.h3': '本机资源 · 实时读取',
+      'pc.card.res.sub': '本机可贡献的资源能力',
+      'dv.model': '设备', 'dv.os': '操作系统', 'dv.browser': '浏览器', 'dv.gpu': '显卡',
+      'dv.screen': '屏幕', 'dv.dpr': '像素比', 'dv.cores': '逻辑核心', 'dv.mem': '设备内存',
+      'dv.quota': '存储配额', 'dv.down': '下行带宽', 'dv.net': '网络', 'dv.rtt': '网络延迟',
+      'dv.lang': '语言', 'dv.tz': '时区', 'dv.env': '运行环境', 'dv.batt': '电池',
+      'dv.used': '已用',
+      'dv.nosupport': '本浏览器未提供', 'dv.measured': '实测', 'dv.charging': '充电中',
+      'dv.online': '在线', 'dv.offline': '离线',
+      'dv.softgpu': '软件渲染（本机无 GPU）',
+      'dv.walletbrowser': '钱包内置浏览器', 'dv.plainbrowser': '普通浏览器（未检测到钱包）',
+      'dv.note': '以上均为本机浏览器接口实时读取的真实值；浏览器未开放的接口会明确标注，绝不用占位假值填充。',
+      'dv.res.note': '逻辑核心与设备内存是浏览器愿意上报的数值（隐私取整），可能低于硬件实际标称；存储配额是本浏览器给本页的配额，不等于磁盘容量。',
+      'pc.earn.tax': '累计已结算',
+      'pc.earn.balance.foot': '已结算合计 · 链上提现待接入',
+      'pc.earn.today.foot': '实时累计 · T+1 结算',
+      'pc.earn.pending.foot': '次日入账',
+      'pc.earn.trend.empty': '暂无结算数据',
+      'pc.chain.h3': '链上结算', 'pc.chain.sub': 'BSC 主网 · 实时读取',
+      'pc.chain.net': '网络', 'pc.chain.addr': '结算地址', 'pc.chain.block': '当前区块',
+      'pc.chain.bal': '结算钱包 BNB', 'pc.chain.state': '结算状态',
+      'pc.chain.off': '尚未接入（当前仅记账）', 'pc.chain.on': '已接入',
+      'pc.chain.readfail': 'RPC 读取失败 —— 如实留空，不做估算',
+      'pc.chain.loading': '正在读取链上状态……',
+      'pc.tax.label': '预扣税费（估算）',
+      'pc.tax.line': '按规则 {r} → {t} gx · 预计到账 {n} gx',
+      'pc.tax.note': '税费按平台规则估算，链上尚未实际扣缴。',
+      'pc.mv.h3': '本机实测',
+      'pc.mv.used': '浏览器存储占用 / 配额', 'pc.mv.link': '上报链路 / 时延',
+      'pc.earn.note.empty': '未连接钱包：连接并授权后开始资源上报与收益结算。',
+      'pc.earn.note.wait': '正在读取结算数据……',
+      'pc.earn.note.err': '结算接口读取失败，稍后重试。',
+      'pc.earn.note.nosig': '本机钱包记录缺少连接签名，请重新连接钱包（顶栏）以启用资源上报。',
+      'pc.earn.note.live': '按「已申报共享额度 × 结算系数 × 实际在线时长」实时累计；资源实际使用量与链上提现尚未接入。',
+      'pc.earn.note.report': '最近上报 {t} · 今日在线 {m} 分钟',
+      'pc.earn.note.days': '已结算 {n} 天',
+      'pc.earn.rec.online': '在线 {v}', 'pc.earn.rec.declared': '申报 {v}',
+      'pc.share.note': '额度为本机申报的共享上限，收益按实际在线时长计。',
+      'pc.card.live.sub': '每 60 秒上报一次',
+      'pc.kpi.level': '结算系数',
+      'pc.none': '未连接',
+      'pc.kpi.rate.foot': '存储 {v} gx/GB·天 · 带宽 {b} gx/Mbps·天 · 算力 {c} gx/TFLOPS·天',
+      'pc.live.online': '今日在线', 'pc.live.last': '最近上报', 'pc.live.settled': '已结算天数',
+      'd.share.pc.bandwidth.hint': '上限按本机上报的网络能力推算。',
+      'pc.share.policies.note': '当前上报只按「申报额度 × 在线时长」计收益；以下策略开关为预留，尚未接入结算。',
+      'pc.live.note': '本卡显示本机真实上报情况：申报额度、今日在线分钟、最近一次上报时间与已结算天数。逐分钟的实时采样由客户端运行时接管。',
+      'pc.share.declared': '当前申报：{v}', 'pc.share.caps': '上限按本机实测推算。',
+    });
   }
 
-  /* ---------- 设备信息 ---------- */
+  function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function readStore(k, d) { var v = lsGet(k); if (!v) return d; try { return JSON.parse(v) || d; } catch (e) { return d; } }
+  /* 兼容大小写：节点记录统一用小写键写入，这里容忍历史/异体大小写 */
+  function nodeRec(addr) {
+    var all = readStore(LS_NODES, {}), a = String(addr || '').toLowerCase(), k;
+    if (!a) { return {}; }
+    if (all[a]) { return all[a]; }
+    for (k in all) { if (Object.prototype.hasOwnProperty.call(all, k) && String(k).toLowerCase() === a) { return all[k]; } }
+    return {};
+  }
+  function shortAddr(a) { return a ? a.slice(0, 6) + '...' + a.slice(-4) : ''; }
+  function escHtml(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+
+  /* 与入口页同一判定：值为钱包地址字符串（兼容 JSON.stringify 包裹写法），不合法即视为未连接 */
+  function readWallet() {
+    var raw = lsGet(LS_WALLET);
+    if (!raw) return null;
+    raw = String(raw).trim();
+    if (raw.charAt(0) === '"') { try { var s = JSON.parse(raw); if (typeof s === 'string') raw = s.trim(); } catch (e) {} }
+    if (!/^0x[0-9a-fA-F]{40}$/.test(raw)) return null;
+    var nodes = readStore(LS_NODES, {});
+    var rec = (nodes && nodes[raw.toLowerCase()]) || {};
+    return {
+      addr: raw,
+      short: shortAddr(raw),
+      name: String(rec.name == null ? '' : rec.name).trim(),
+      email: String(rec.email == null ? '' : rec.email).trim()
+    };
+  }
+
+  /* 终端 ID：已连接钱包时恒显钱包短地址 0x1234...abcd（节点名仅在 owner 标签处体现）；邮箱取自节点记录 */
+  function renderWallet() {
+    var w = readWallet();
+    var node = GX.qs('#winNode'), tag = GX.qs('#ownerTag'), card = GX.qs('#walletCard');
+    node.textContent = w ? w.short : GX.t('pc.none');
+    if (w) { node.title = w.addr; } else { node.removeAttribute('title'); }
+    tag.textContent = GX.t('pc.owner', { name: w ? (w.name || w.short) : GX.t('pc.none') });
+    if (!w) { if (card) { card.style.display = 'none'; } return; }
+    if (card) { card.style.display = ''; }
+    GX.qs('#wiAddr').textContent = w.addr;
+    /* 节点名 / 邮箱：与手机端同一编辑组件（shared/gx-wallet.js → GX_WALLET.renderProfile） */
+    renderProfileForm(w);
+    /* 推荐码 / 邀请链接（完整链接，对方打开自动填入推荐人） */
+    var invBox = GX.qs('#wiInvite');
+    if (invBox) {
+      if (window.GX_WALLET && GX_WALLET.renderInvite) { GX_WALLET.renderInvite(invBox, w.addr); }
+      else { invBox.innerHTML = ''; }
+    }
+    /* 推荐人区块（服务端为准）：已绑定 → 只读展示，无绑定按钮；未绑定 → 提供绑定入口 */
+    var refBox = GX.qs('#wiRef');
+    if (refBox) {
+      if (window.GX_WALLET && GX_WALLET.renderReferrer) { GX_WALLET.renderReferrer(refBox, w.addr, true); }
+      else { refBox.innerHTML = ''; }
+    }
+    /* 直推 / 团队（与手机端一致，同一份数据源）：数值未到时显示「—」，不编造 0 */
+    var statBox = GX.qs('#wiStats');
+    if (statBox) {
+      if (window.GX_WALLET && GX_WALLET.renderStats) { GX_WALLET.renderStats(statBox, w.addr); }
+      else { statBox.innerHTML = ''; }
+    }
+  }
+
+  /* 档案编辑区（节点名 / 邮箱）——仅当「语言 / 钱包地址 / 本机已存档案」变化时重建，
+     避免其它重渲染把用户还没保存的输入清掉（同手机端 syncWalletCard 的去重思路）。 */
+  var _profLang = null, _profAddr = null, _profStamp = null;
+  function profileStamp(addr) {
+    var rec = readStore(LS_NODES, {})[String(addr).toLowerCase()] || {};
+    return String(rec.name || '') + '\u0001' + String(rec.email || '');
+  }
+  function renderProfileForm(w) {
+    var box = GX.qs('#wiProfile');
+    if (!box || !w) { return; }
+    var lg = (GX.lang && GX.lang()) || 'en';
+    var stamp = profileStamp(w.addr);
+    if (lg === _profLang && w.addr === _profAddr && stamp === _profStamp) { return; }
+    _profLang = lg; _profAddr = w.addr; _profStamp = stamp;
+    if (window.GX_WALLET && GX_WALLET.renderProfile) { GX_WALLET.renderProfile(box, w.addr, 'wi'); }
+    else { box.innerHTML = ''; }
+  }
+
+  /* ---------- 顶部 / 状态（真实值：在线天数 / 今日收益 / 当前共享项） ---------- */
+  function setX(el, v, dp) {
+    if (!el) { return; }
+    el.textContent = (v === null || v === undefined) ? '\u2014' : GX.num(v, dp || 0);
+  }
+  function renderTop() {
+    renderWallet();
+    var rates = (EARN && EARN.rates) ? EARN.rates : null;
+    setX(GX.qs('#s1'), rates ? rates.storage_rate : null, 5);
+    GX.qs('#s1f').textContent = rates
+      ? GX.t('pc.kpi.rate.foot', { v: rates.storage_rate, b: rates.bw_rate, c: rates.compute_rate })
+      : GX.t('pc.earn.note.empty');
+    var items = shareItems();
+    GX.qs('#s4').textContent = items.filter(function (i) { return i.on && i.val > 0; }).length;
+    var hasW = !!readWallet();
+    setX(GX.qs('#s2'), EARN ? EARN.online_days : (hasW ? null : 0), 0);
+    setX(GX.qs('#s3'), EARN ? EARN.today_x : (hasW ? null : 0), 4);
+  }
+
+  /* ---------- 本机设备信息（全部真实读取，不做任何模拟） ----------
+     真实来源：
+       · 设备 / 系统 / 浏览器   navigator.userAgent（+ userAgentData.platform）解析
+       · 显卡(GPU)              WebGL WEBGL_debug_renderer_info.UNMASKED_RENDERER_WEBGL
+       · 逻辑核心 / 设备内存     navigator.hardwareConcurrency / navigator.deviceMemory
+       · 存储配额               navigator.storage.estimate()
+       · 电池                   navigator.getBattery()（仅部分浏览器开放）
+       · 网络延迟               对本站 /api/health 的实测往返耗时（performance.now）
+       · 屏幕 / 像素比 / 语言 / 时区  screen / devicePixelRatio / navigator.language / Intl
+     浏览器未开放的接口一律显示「本浏览器未提供」，绝不填占位假值。 */
+  var CAP = {}, QUOTA = null, QUOTA_USED = null, RTT_MS = null, BATT = null;
+
+  /* 资源上报状态文案（后台可调参数在「运行参数」面板；此处只负责展示） */
+  if (GX.i18n && GX.i18n.register) {
+    GX.i18n.register('zh', { 'pc.kpi.report': '资源上报', 'pc.report.every': '正常 · 每 {v} 秒',
+                             'pc.report.paused': '全网已暂停',
+                             'pc.report.paused.note': '全网已暂停资源上报与计入，后台恢复后自动继续。' });
+    GX.i18n.register('en', { 'pc.kpi.report': 'Resource reporting', 'pc.report.every': 'Active · every {v}s',
+                             'pc.report.paused': 'Paused network-wide',
+                             'pc.report.paused.note': 'Resource reporting and accrual are paused network-wide; it resumes automatically once re-enabled.' });
+  }
+
+  function netConn() { return navigator.connection || navigator.mozConnection || navigator.webkitConnection || null; }
+  /* 网络代际：Network Information API 把 4G 与 5G 一律报成 effectiveType='4g'
+     （浏览器无法区分 4G/5G），所以 4G 档统一显示「4G/5G」；2G/3G 仍如实显示。 */
+  function netGen(c) {
+    var t = c && c.effectiveType ? String(c.effectiveType).toLowerCase() : '';
+    if (t === '4g') { return '4G/5G'; }
+    if (t === '3g') { return '3G'; }
+    if (t === '2g' || t === 'slow-2g') { return '2G'; }
+    return '';
+  }
+  /* 与手机端同一口径（用户 2026-10-03）：都以「在线 ·」开头，
+       蜂窝/其它 → 「在线 · 4G/5G」，Wi-Fi → 「在线 · WiFi」。 */
+  function netText() {
+    if (navigator.onLine === false) { return GX.t('dv.offline'); }
+    var c = netConn();
+    var type = c && c.type ? String(c.type).toLowerCase() : '';
+    var mid = (type === 'wifi') ? 'WiFi' : netGen(c);
+    return GX.t('dv.online') + (mid ? ' · ' + mid : '');
+  }
+  /* 网络延迟：优先用对本站 API 的实测往返耗时，其次才退回浏览器上报的 connection.rtt */
+  function rttText() {
+    if (RTT_MS != null) { return RTT_MS + ' ms · ' + GX.t('dv.measured'); }
+    var c = netConn();
+    if (c && c.rtt) { return c.rtt + ' ms'; }
+    return GX.t('dv.nosupport');
+  }
+  /* 钱包内置浏览器品牌：优先读注入的 provider 标识（window.ethereum.isXxx），UA 关键字兜底 */
+  var WALLET_UA = [
+    [/TokenPocket/i, 'TokenPocket'], [/MetaMask/i, 'MetaMask'], [/OKApp|OKX/i, 'OKX Wallet'],
+    [/imToken/i, 'imToken'], [/TrustWallet|Trust Wallet/i, 'Trust Wallet'],
+    [/BitKeep/i, 'BitKeep'], [/Bitget/i, 'Bitget Wallet'], [/MathWallet/i, 'MathWallet'],
+    [/CoinbaseWallet/i, 'Coinbase Wallet'], [/Rabby/i, 'Rabby'], [/OneKey/i, 'OneKey'],
+    [/Bitpie/i, 'Bitpie'], [/AlphaWallet/i, 'AlphaWallet']
+  ];
+  function walletBrand() {
+    var e = window.ethereum || (window.web3 && window.web3.currentProvider);
+    if (!e) { return ''; }
+    if (e.isTokenPocket) { return 'TokenPocket'; }
+    if (e.isMetaMask) { return 'MetaMask'; }
+    if (e.isOKExWallet || e.isOkxWallet) { return 'OKX Wallet'; }
+    if (e.isImToken) { return 'imToken'; }
+    if (e.isTrust || e.isTrustWallet) { return 'Trust Wallet'; }
+    if (e.isBitKeep) { return 'BitKeep'; }
+    if (e.isBitget || e.isBitgetWallet) { return 'Bitget Wallet'; }
+    if (e.isMathWallet) { return 'MathWallet'; }
+    if (e.isCoinbaseWallet) { return 'Coinbase Wallet'; }
+    if (e.isRabby) { return 'Rabby'; }
+    if (e.isOneKey) { return 'OneKey'; }
+    if (e.isBitpie) { return 'Bitpie'; }
+    return '';
+  }
+  /* UA 解析：设备 / 系统 / 浏览器（浏览器真实上报，不做猜测） */
+  function uaInfo() {
+    var ua = navigator.userAgent, model = '', os = '', br = '', m, mm;
+    if (/Android/i.test(ua)) {
+      m = ua.match(/Android\s([\d.]+)/); os = 'Android' + (m ? ' ' + m[1] : '');
+      mm = ua.match(/Android[^;)]*;\s*([^;)]+?)(?:\s+Build|\s*\)|;)/i);
+      model = mm ? String(mm[1]).replace(/^\s+|\s+$/g, '') : 'Android';
+      if (!model || /^(wv|en|zh|ja|ko)[-\w]*$/i.test(model)) { model = 'Android'; }
+    } else if (/iPad/i.test(ua)) {
+      model = 'iPad'; m = ua.match(/OS\s([\d_]+)/); os = 'iPadOS' + (m ? ' ' + m[1].replace(/_/g, '.') : '');
+    } else if (/iPhone|iPod/i.test(ua)) {
+      model = 'iPhone'; m = ua.match(/OS\s([\d_]+)/); os = 'iOS' + (m ? ' ' + m[1].replace(/_/g, '.') : '');
+    } else if (/Windows NT 10/i.test(ua)) { model = 'PC'; os = 'Windows 10/11'; }
+    else if (/Windows/i.test(ua)) { model = 'PC'; os = 'Windows'; }
+    else if (/CrOS/i.test(ua)) { model = 'Chromebook'; os = 'ChromeOS'; }
+    else if (/Mac OS X/i.test(ua)) { model = 'Mac'; os = 'macOS'; }
+    else if (/Linux/i.test(ua)) { model = 'PC'; os = 'Linux'; }
+    /* 兜底：UA 解析不出系统时用 Client Hints 上报的平台名（Firefox/Safari 无此接口） */
+    var ud = navigator.userAgentData;
+    if (!os && ud && ud.platform) { os = String(ud.platform); }
+    if (/MicroMessenger/i.test(ua)) { br = 'WeChat'; }
+    else if (/Edg\//.test(ua)) { br = 'Edge'; }
+    else if (/OPR\//.test(ua)) { br = 'Opera'; }
+    else if (/Chrome\//.test(ua)) { br = 'Chrome'; }
+    else if (/Firefox\//.test(ua)) { br = 'Firefox'; }
+    else if (/Safari\//.test(ua)) { br = 'Safari'; }
+    /* 钱包内置浏览器：provider 标识优先，其次 UA 关键字 */
+    var wb = walletBrand();
+    if (!wb) {
+      for (var wi = 0; wi < WALLET_UA.length; wi++) {
+        if (WALLET_UA[wi][0].test(ua)) { wb = WALLET_UA[wi][1]; break; }
+      }
+    }
+    if (wb) { br = wb; }
+    /* 桌面浏览器补版本号（如 Chrome 140） */
+    if (br === 'Chrome' || br === 'Edge' || br === 'Opera') {
+      mm = ua.match(/(?:Chrome|Edg|OPR)\/([\d]+)/);
+      if (mm) { br += ' ' + mm[1]; }
+    } else if (br === 'Firefox') {
+      mm = ua.match(/Firefox\/([\d]+)/);
+      if (mm) { br += ' ' + mm[1]; }
+    } else if (br === 'Safari') {
+      mm = ua.match(/Version\/([\d.]+)/);
+      if (mm) { br += ' ' + mm[1]; }
+    }
+    return { model: model, os: os, browser: br, wallet: wb };
+  }
+  /* 显卡：WebGL 真实渲染器串，只留「厂商 + 设备」，去掉驱动/API 版本噪音；
+     命中软件渲染（SwiftShader/llvmpipe）返回语言无关的哨兵 '#soft'，文案渲染时按当前语言取 */
+  function gpuText() {
+    try {
+      var cv = document.createElement('canvas');
+      var gl = cv.getContext('webgl') || cv.getContext('experimental-webgl');
+      if (!gl) { return ''; }
+      var ext = gl.getExtension('WEBGL_debug_renderer_info');
+      var s = String((ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER)) || '');
+      s = s.replace(/^\s+|\s+$/g, '');
+      if (!s) { return ''; }
+      /* macOS Chrome/Safari：去掉 "ANGLE Metal Renderer:" 前缀，避免与厂商名重复（Apple Apple M2） */
+      s = s.replace(/ANGLE\s+Metal Renderer:\s*/gi, '');
+      var m = s.match(/^ANGLE\s*\((.*)\)\s*$/i);
+      if (m) {
+        var parts = m[1].split(',');
+        var head = String(parts[0] || '').replace(/^\s+|\s+$/g, '');
+        var dev = String(parts[1] || '').replace(/^\s+|\s+$/g, '');
+        dev = dev.replace(/\s*(Direct3D\d*|D3D\d+|vs_\d+_\d+|ps_\d+_\d+|Vulkan[\d.\s]*|OpenGL[\w\s.]*|Metal.*)$/i, '').replace(/^\s+|\s+$/g, '');
+        if (!dev) { dev = head; head = ''; }
+        s = (head && dev.toLowerCase().indexOf(head.toLowerCase()) !== 0 ? head + ' ' : '') + dev;
+      }
+      s = s.replace(/\(0x[0-9A-Fa-f]+\)/g, '').replace(/\s{2,}/g, ' ').replace(/^\s+|\s+$/g, '');
+      if (!s || /^(WebKit WebGL|WebGL)$/i.test(s)) { return ''; }
+      if (/SwiftShader|llvmpipe|Software|Mesa OffScreen/i.test(s)) { return '#soft'; }
+      /* 驱动/API 版本噪音会成串出现（如 "Direct3D11 vs_5_0 ps_5_0"），剥到稳定为止 */
+      var NOISE = /\s*(Direct3D\d*|D3D\d+|vs_\d+_\d+|ps_\d+_\d+|Vulkan[\d.\s]*|OpenGL[\w\s.\/]*|Metal[\w\s.]*|Unspecified\s+Version)\s*$/i;
+      var prev = '';
+      while (prev !== s) { prev = s; s = s.replace(NOISE, '').replace(/^\s+|\s+$/g, ''); }
+      if (!s) { return ''; }
+      return s.length > 58 ? s.slice(0, 58) : s;
+    } catch (e) { return ''; }
+  }
+  /* 电池：仅部分浏览器开放（Chrome 有，Firefox/Safari 无），带实时监听 */
+  function probeBattery() {
+    if (!navigator.getBattery) { return; }
+    try {
+      navigator.getBattery().then(function (b) {
+        function upd() {
+          BATT = { level: Math.round(b.level * 100), charging: !!b.charging };
+          renderDevice();
+        }
+        upd();
+        b.addEventListener('levelchange', upd);
+        b.addEventListener('chargingchange', upd);
+      }).catch(function () {});
+    } catch (e) {}
+  }
+  /* 运行环境文案随语言切换实时取值（不缓存进 CAP，否则切语言后仍是旧语言） */
+  function envText() { return window.ethereum ? GX.t('dv.walletbrowser') : GX.t('dv.plainbrowser'); }
+  /* 真实值取用：浏览器没开放就明确说明，不显示 "--" 也不编造 */
+  function V(x) { return (x === null || x === undefined || x === '') ? GX.t('dv.nosupport') : escHtml(String(x)); }
+  function fmtBytes(b) {
+    if (b == null || isNaN(b)) { return ''; }
+    var u = ['B', 'KB', 'MB', 'GB', 'TB'], i = 0, v = Number(b);
+    while (v >= 1024 && i < u.length - 1) { v /= 1024; i++; }
+    return (i >= 3 ? v.toFixed(2) : v.toFixed(0)) + ' ' + u[i];
+  }
+  function readCapacity() {
+    var u = uaInfo();
+    CAP = {
+      model: u.model, os: u.os, browser: u.browser,
+      gpu: gpuText(),
+      screen: (window.screen ? screen.width + '\u00d7' + screen.height : ''),
+      dpr: (window.devicePixelRatio ? window.devicePixelRatio + 'x' : ''),
+      cores: (navigator.hardwareConcurrency ? String(navigator.hardwareConcurrency) : ''),
+      mem: (navigator.deviceMemory ? navigator.deviceMemory + ' GB' : ''),
+      lang: (navigator.language || ''),
+      tz: (function () { try { return Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (e) { return ''; } })(),
+      down: (netConn() && netConn().downlink ? netConn().downlink + ' Mbps' : '')
+      /* 网络文案不进 CAP：原先写的 CAP.net = netText() 是在 GX.i18n.init() 之前求值的，
+         拿到的是默认英文 ⇒ 中文页面 / 切语言后「网络」行永远是 Online · …。
+         渲染时实时取（见 renderResource），语言与接入方式都跟得上。 */
+    };
+    if (navigator.storage && navigator.storage.estimate) {
+      navigator.storage.estimate().then(function (e) {
+        QUOTA = e.quota; QUOTA_USED = e.usage; renderLive();
+      }).catch(function () {});
+    }
+    if (netConn() && netConn().addEventListener) {
+      netConn().addEventListener('change', function () { renderLive(); });
+    }
+    window.addEventListener('online', function () { renderLive(); });
+    window.addEventListener('offline', function () { renderLive(); });
+  }
+  /* 网络延迟实测：用 performance.now() 包住对本站 /api/health 的真实请求，不额外发明数据 */
+  function loadHealth() {
+    if (!window.fetch) { return; }
+    var now = function () { return (window.performance && performance.now) ? performance.now() : Date.now(); };
+    var t0 = now();
+    try {
+      fetch('/api/health', { cache: 'no-store' }).then(function (r) {
+        if (RTT_MS == null) { RTT_MS = Math.max(1, Math.round(now() - t0)); renderLive(); }
+        return r.text();
+      }).catch(function () {});
+    } catch (e) {}
+  }
+
+  /* 卡片①：设备信息（这台设备是什么） */
   function renderDevice() {
-    var d = M.devicePC;
-    GX.qs('#deviceInfo').innerHTML = [
-      ['pc.dev.name', d.name], ['pc.dev.os', d.os], ['pc.dev.cpu', d.cpu],
-      ['pc.dev.gpu', d.gpu], ['pc.dev.mem', d.mem], ['pc.dev.disk', d.disk]
-    ].map(function (r) {
-      return '<div class="flow-line"><span class="gx-dim">' + GX.t(r[0]) + '</span><span>' + r[1] + '</span></div>';
+    var gpuCell = (CAP.gpu === '#soft') ? escHtml(GX.t('dv.softgpu')) : V(CAP.gpu);
+    var battCell = BATT ? escHtml(BATT.level + '%' + (BATT.charging ? ' · ' + GX.t('dv.charging') : '')) : escHtml(GX.t('dv.nosupport'));
+    var rows = [
+      ['dv.model', V(CAP.model)],
+      ['dv.os', V(CAP.os)],
+      ['dv.browser', V(CAP.browser)],
+      ['dv.gpu', gpuCell],
+      ['dv.screen', V(CAP.screen)],
+      ['dv.dpr', V(CAP.dpr)],
+      ['dv.lang', V(CAP.lang)],
+      ['dv.tz', V(CAP.tz)],
+      ['dv.batt', battCell],
+      ['dv.env', escHtml(envText())]
+    ];
+    GX.qs('#deviceInfo').innerHTML = rowsHTML(rows) +
+      '<div class="dv-note">' + GX.t('dv.note') + '</div>' +
+      '<div class="dv-src">navigator.userAgent / WebGL / getBattery / Intl / screen</div>';
+  }
+
+  /* 卡片②：本机资源（这台设备能贡献什么），与手机端同一套真实来源 */
+  function renderResource() {
+    var el = GX.qs('#deviceRes');
+    if (!el) { return; }
+    var quotaCell = escHtml(GX.t('dv.nosupport'));
+    if (QUOTA != null) {
+      quotaCell = escHtml(fmtBytes(QUOTA));
+      if (QUOTA_USED != null) { quotaCell += ' · ' + escHtml(GX.t('dv.used')) + ' ' + escHtml(fmtBytes(QUOTA_USED)); }
+    }
+    var rows = [
+      ['dv.cores', V(CAP.cores)],
+      ['dv.mem', V(CAP.mem)],
+      ['dv.quota', quotaCell],
+      ['dv.net', escHtml(netText())],
+      ['dv.down', V(CAP.down)],
+      ['dv.rtt', escHtml(rttText())]
+    ];
+    el.innerHTML = rowsHTML(rows) +
+      '<div class="dv-note">' + GX.t('dv.res.note') + '</div>' +
+      '<div class="dv-src">hardwareConcurrency / deviceMemory / storage.estimate / navigator.connection / performance.now()</div>';
+  }
+
+  /* 值偏长（按中英文宽度估算）时自动缩一号字体，避免换行后大小与短值不一致 */
+  function valIsLong(html) {
+    var t = String(html == null ? '' : html).replace(/<[^>]*>/g, '');
+    var n = 0;
+    for (var i = 0; i < t.length; i++) { n += (t.charCodeAt(i) > 0x2e80) ? 2 : 1; }
+    return n > 22;
+  }
+  function rowsHTML(rows) {
+    return rows.map(function (r) {
+      var sm = (r[2] === 'sm') || valIsLong(r[1]);
+      return '<div class="flow-line"><span class="gx-dim">' + GX.t(r[0]) + '</span><span class="dv-val' + (sm ? ' gx-val-sm' : '') + '">' + r[1] + '</span></div>';
     }).join('');
   }
-
-  function drawPcChart() {
-    GX.lineChart(GX.qs('#pcChart'), [
-      { data: GX.wobble(62, 40, 6), color: '#a3bffa' }
-    ], { min: 0, max: 100 });
+  /* 异步项（配额 / 电池 / 延迟 / 网络状态）到位后两张卡片一起刷新 */
+  function renderLive() { renderDevice(); renderResource(); renderLiveReport(); }
+  /* 本机贡献卡：显示真实上报状态（无实时采样数据就不画曲线，避免假图） */
+  var CHAIN = null, CHAIN_ERR = false;
+  function loadChain() {
+    fetch('/api/node/chain', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (j) {
+      if (j && j.ok && j.chain) { CHAIN = j.chain; CHAIN_ERR = false; } else { CHAIN = null; CHAIN_ERR = true; }
+      renderChainRows();
+    }).catch(function () { CHAIN = null; CHAIN_ERR = true; renderChainRows(); });
   }
+  function renderChainRows() {
+    var el = GX.qs('#chainRows');
+    if (!el) { return; }
+    var c = (EARN && EARN.chain) ? EARN.chain : CHAIN;
+    var t = EARN && EARN.tax ? EARN.tax : null;
+    function line(k, v) {
+      return '<div class="flow-line"><span class="gx-dim">' + GX.t(k) + '</span><span class="dv-val">' + v + '</span></div>';
+    }
+    var h = '';
+    if (!c) {
+      h += line('pc.chain.state', escHtml(GX.t(CHAIN_ERR ? 'pc.chain.readfail' : 'pc.chain.loading')));
+    } else if (!c.ok) {
+      h += line('pc.chain.state', escHtml(GX.t('pc.chain.readfail')));
+    } else {
+      h += line('pc.chain.net', escHtml(String(c.network || '')) + (c.chain_id ? ' · chainId ' + c.chain_id : ''));
+      h += line('pc.chain.addr', '<span class="gx-mono">' + escHtml(c.settle_address || '') + '</span>');
+      h += line('pc.chain.block', c.block ? String(c.block) : '\u2014');
+      h += line('pc.chain.bal', (c.bnb_balance === null || c.bnb_balance === undefined) ? '\u2014' : GX.num(c.bnb_balance, 6) + ' BNB');
+      h += line('pc.chain.state', escHtml(GX.t(c.settlement_on_chain ? 'pc.chain.on' : 'pc.chain.off')));
+    }
+    if (t) {
+      h += line('pc.tax.label', GX.t('pc.tax.line', { r: (Number(t.rate || 0) * 100).toFixed(1) + '%',
+                                                     t: fmtX(t.tax_estimate_x), n: fmtX(t.net_estimate_x) }));
+    }
+    h += '<div class="dv-note" style="margin-top:8px">' + GX.t('pc.tax.note') + (c && c.checked_at ? ' · ' + escHtml(c.checked_at) : '') + '</div>';
+    el.innerHTML = h;
+  }
+
+  function renderLiveReport() {
+    var el = GX.qs('#liveReport');
+    if (!el) { return; }
+    var w = readWallet(), st = shareState();
+    var rows = [
+      ['pc.kpi.report', RT.paused ? GX.t('pc.report.paused') : GX.t('pc.report.every', { v: RT.report_interval_sec })],
+      ['pc.kpi.share', declaredText()],
+      ['pc.live.settled', EARN ? String(EARN.settled_days) : (w ? '\u2014' : '0')],
+      ['pc.live.online', EARN ? String(EARN.online_minutes_today) + ' min' : (w ? '\u2014' : '0 min')],
+      ['pc.live.last', (EARN && EARN.reported && EARN.reported.at) ? String(EARN.reported.at).slice(11, 16) : (w ? '\u2014' : '\u2014')],
+      ['pc.mv.used', (EARN && EARN.measured) ? (GX.num(EARN.measured.used_gb, 3) + ' GB / ' + GX.num(EARN.measured.quota_gb, 2) + ' GB') : (w ? '\u2014' : '\u2014')],
+      ['pc.mv.link', (EARN && EARN.measured && (EARN.measured.downlink_mbps || EARN.measured.rtt_ms)) ? (GX.num(EARN.measured.downlink_mbps, 1) + ' Mbps / ' + String(EARN.measured.rtt_ms) + ' ms') : (w ? '\u2014' : '\u2014')]
+    ];
+    el.innerHTML = rows.map(function (r) {
+      return '<div class="flow-line"><span class="gx-dim">' + GX.t(r[0]) + '</span><span class="dv-val">' + escHtml(r[1]) + '</span></div>';
+    }).join('')
+      + (RT.paused ? '<div class="dv-note">' + escHtml(runtimeNote()) + '</div>' : '')
+      + '<div class="dv-note">' + GX.t('pc.live.note') + '</div>';
+  }
+
   function drawEarnChart() {
-    GX.lineChart(GX.qs('#earnChart'), [
-      { data: D.earnings.series, color: '#7ee0c8' }
-    ], { min: 0 });
+    var cv = GX.qs('#earnChart');
+    if (!cv) { return; }
+    var series = (EARN && EARN.series) ? EARN.series.map(function (d) { return Number(d.x) || 0; }) : [];
+    if (!series.length) { series = [0, 0, 0, 0, 0, 0, 0]; }
+    GX.lineChart(cv, [{ data: series, color: '#7ee0c8' }], { min: 0 });
   }
 
-  /* ---------- 资源共享 ---------- */
+  /* ---------- 有效流量信标（P7-a）----------
+     一次可见停留 ≥ 15 秒 = 1 次有效会话；有效交互 = 点击/键盘/面板切换，1.5 秒去抖。
+     只统计页面可见期间的行为；上报为「自上次上报以来的增量」，服务端累加。 */
+  var BEH = { dwellMs: 0, counted: false, pSess: 0, pInter: 0, lastInter: 0 };
+  function behTick() {
+    if (document.hidden) { BEH.dwellMs = 0; BEH.counted = false; return; }
+    BEH.dwellMs += 1000;
+    if (!BEH.counted && BEH.dwellMs >= 15000) { BEH.counted = true; BEH.pSess += 1; }
+  }
+  function behInteract() {
+    if (document.hidden) { return; }
+    var now = Date.now();
+    if (now - BEH.lastInter < 1500) { return; }
+    BEH.lastInter = now;
+    BEH.pInter += 1;
+  }
+  function behFlush() {
+    var d = { sessions: BEH.pSess, interactions: BEH.pInter };
+    BEH.pSess = 0; BEH.pInter = 0;
+    return d;
+  }
+  document.addEventListener('click', behInteract, true);
+  document.addEventListener('keydown', behInteract, true);
+
+  /* ---------- 共识价值（真实 /api/platform/metrics + earnings.platform） ----------
+     呈现：① 全网总盘 ② 我的位置 ③ 通证标尺（资源 → 通证换算拆解）④ 网络增长趋势
+     硬规则：无数据 → 显「—」并说明原因，绝不回落 0 或 mock；不足两天数据不硬画曲线。 */
+  var CV = null, CV_ERR = false, CV_LOADED = false;
+
+  function cvPct(v) {
+    if (v === null || v === undefined || v === '' || !isFinite(Number(v))) { return '—'; }
+    return GX.num(Number(v), 2) + '%';
+  }
+  function declaredPc() {
+    var st = shareState(), parts = [];
+    if (st.stOn && Number(st.stMax) > 0) { parts.push(GX.num(st.stMax) + ' GB'); }
+    if (st.bwOn && Number(st.bwMax) > 0) { parts.push(GX.num(st.bwMax) + ' Mbps'); }
+    if (st.cpOn && Number(st.cpMax) > 0) { parts.push(GX.num(st.cpMax, 1) + ' TFLOPS'); }
+    return parts.length ? parts.join(' / ') : '—';
+  }
+  function loadConsensus(force) {
+    if (CV_LOADED && !force) { renderConsensus(); return; }
+    CV_LOADED = true;
+    fetch('/api/platform/metrics', { cache: 'no-store' })
+      .then(function (r) { return r.json(); })
+      .then(function (j) { CV = (j && j.ok) ? j : null; CV_ERR = !CV; renderConsensus(); })
+      .catch(function () { CV = null; CV_ERR = true; renderConsensus(); });
+  }
+  /* ---------- 我的行为贡献（真实 /api/node/behavior） ---------- */
+  var BH = null, BH_ERR = false, BH_ADDR = '';
+  function loadBehavior(force) {
+    var w = readWallet();
+    if (!w) { BH = null; BH_ERR = false; BH_ADDR = ''; renderBehavior(); return; }
+    if (BH_ADDR === w.addr && !force) { renderBehavior(); return; }
+    BH_ADDR = w.addr; BH = null; BH_ERR = false; renderBehavior();
+    fetch('/api/node/behavior?terminal=' + encodeURIComponent(w.addr), { cache: 'no-store' })
+      .then(function (r) { return r.json(); })
+      .then(function (j) { if (BH_ADDR !== w.addr) { return; } BH = (j && j.ok) ? j : null; BH_ERR = !BH; renderBehavior(); })
+      .catch(function () { if (BH_ADDR === w.addr) { BH = null; BH_ERR = true; renderBehavior(); } });
+  }
+  function behTierLabel(t) {
+    if (t === 'lv3') { return GX.t('pc.bh.lv3'); }
+    if (t === 'lv2') { return GX.t('pc.bh.lv2'); }
+    if (t === 'lv1') { return GX.t('pc.bh.lv1'); }
+    return GX.t('pc.bh.none');
+  }
+  function renderBehavior() {
+    var el = GX.qs('#cvBehavior');
+    if (!el) { return; }
+    var w = readWallet();
+    if (!w) { el.innerHTML = '<div class="dv-note">' + GX.t('pc.cv.mine.nowallet') + '</div>'; return; }
+    if (!BH) {
+      el.innerHTML = '<div class="dv-note">' + GX.t(BH_ERR ? 'pc.bh.err' : 'pc.cv.mine.wait') + '</div>';
+      return;
+    }
+    var rows = [
+      ['pc.bh.tier', '<span class="gx-tag' + (BH.tier === 'none' ? '' : ' gx-tag-ok') + '">' + behTierLabel(BH.tier) + '</span>'],
+      ['pc.bh.points', GX.num(BH.points_7d, 1)],
+      ['pc.bh.sess', GX.num(BH.sessions_7d, 0) + ' / ' + GX.num(BH.interactions_7d, 0)],
+      ['pc.bh.weight', GX.num(BH.pool_weight_7d, 1)],
+      ['pc.bh.join', GX.num(BH.referee_qualified, 0) + ' · ' + fmtX(BH.join_x_total) + ' gx'],
+      ['pc.bh.online', GX.num(Number(BH.online_rate_7d || 0) * 100, 2) + '% · ' + GX.num(BH.days_active_7d, 0) + '/7'],
+      ['pc.bh.state', BH.settlement_enabled ? GX.t('pc.bh.on') : GX.t('pc.bh.observed')]
+    ];
+    el.innerHTML = rowsHTML(rows) + '<div class="dv-note">' + GX.t('pc.bh.note') + '</div>';
+  }
+
+  function drawCvChart() {
+    var cv = GX.qs('#cvChart');
+    if (!cv || !GX.lineChart || !cv.clientWidth) { return; }     /* 面板隐藏时 clientWidth=0，留给 switchPanel 重绘 */
+    var series = (CV && CV.trend) ? CV.trend.map(function (d) { return Number(d.terminals) || 0; }) : [];
+    if (series.length < 2) { return; }
+    GX.lineChart(cv, [{ data: series, color: '#a3bffa' }], { min: 0 });
+  }
+  function renderConsensus() {
+    var tk = CV ? (CV.terminals || {}) : {}, rs = CV ? (CV.resources || {}) : {};
+    var on = !!(CV && CV.data_available), dash = '—';
+    function put(id, txt) { var el = GX.qs('#' + id); if (el) { el.textContent = txt; } }
+    put('c1', on ? GX.num(tk.total, 0) : dash);
+    put('c2', on ? GX.num(rs.storage_gb, 2) : dash);
+    put('c3', on ? GX.num(rs.bw_mbps, 1) : dash);
+    put('c4', on ? GX.num(rs.compute_tflops, 2) : dash);
+    put('c1f', on ? (GX.t('pc.cv.active') + ' ' + GX.num(tk.active_7d, 0)) : '');
+    put('c2f', on ? GX.t('pc.cv.basis') : '');
+    put('c3f', ''); put('c4f', '');
+
+    var note = GX.qs('#cvNote');
+    if (note) {
+      note.textContent = CV_ERR ? GX.t('pc.cv.err')
+        : (!CV ? GX.t('pc.cv.loading')
+          : (!on ? GX.t('pc.cv.empty')
+            : (GX.t('pc.cv.basis') + ' · ' + GX.t('pc.cv.updated') + ' ' + (CV.updated_at || dash))));
+    }
+
+    /* 我的位置 */
+    var mine = GX.qs('#cvMine'), w = readWallet();
+    if (mine) {
+      if (!w) { mine.innerHTML = '<div class="dv-note">' + GX.t('pc.cv.mine.nowallet') + '</div>' + ipRowsHTML(); }
+      else if (!EARN) { mine.innerHTML = '<div class="dv-note">' + GX.t(EARN_ERR ? 'pc.cv.mine.err' : 'pc.cv.mine.wait') + '</div>' + ipRowsHTML(); }
+      else {
+        var p = EARN.platform || {}, sh = p.share || {};
+        mine.innerHTML = rowsHTML([
+          ['pc.cv.mine.share', GX.t('d.earn.bd.storage') + ' ' + cvPct(sh.storage_pct) + ' · ' + GX.t('d.earn.bd.bandwidth') + ' ' +
+                               cvPct(sh.bw_pct) + ' · ' + GX.t('d.earn.bd.compute') + ' ' + cvPct(sh.compute_pct)],
+          ['pc.cv.mine.pct', (p.percentile === null || p.percentile === undefined) ? dash : GX.t('pc.cv.mine.pctv', { v: p.percentile })],
+          ['pc.cv.mine.decl', declaredPc()],
+          ['pc.cv.mine.rate7', (p.online_rate_7d === undefined || p.online_rate_7d === null) ? dash : cvPct(Number(p.online_rate_7d) * 100)],
+          ['pc.cv.mine.nodes', p.terminals_total === undefined ? dash : GX.num(p.terminals_total, 0)]
+        ]) + '<div class="dv-note">' + GX.t('pc.cv.mine.note') + '</div>' + ipRowsHTML();
+      }
+    }
+
+    /* 通证标尺 */
+    var ruler = GX.qs('#cvRuler');
+    if (ruler) {
+      if (!w) { ruler.innerHTML = '<div class="dv-note">' + GX.t('pc.cv.mine.nowallet') + '</div>'; }
+      else if (!EARN) { ruler.innerHTML = '<div class="dv-note">' + GX.t(EARN_ERR ? 'pc.cv.mine.err' : 'pc.cv.mine.wait') + '</div>'; }
+      else if (!EARN.reported) { ruler.innerHTML = '<div class="dv-note">' + GX.t('pc.cv.ruler.nodata') + '</div>'; }
+      else {
+        var rt = EARN.rates || {}, rep = EARN.reported || {};
+        var ratio = Math.max(0, Math.min(1, Number(EARN.online_minutes_today || 0) / 1440));
+        var items = [['d.earn.bd.storage', Number(rep.storage_gb) || 0, 'GB', Number(rt.storage_rate) || 0],
+                     ['d.earn.bd.bandwidth', Number(rep.bw_mbps) || 0, 'Mbps', Number(rt.bw_rate) || 0],
+                     ['d.earn.bd.compute', Number(rep.compute_tflops) || 0, 'TFLOPS', Number(rt.compute_rate) || 0]];
+        var rows = items.map(function (it) {
+          var x = it[1] * it[3] * ratio;
+          return [it[0], GX.num(it[1], 2) + ' ' + it[2] + ' × ' + GX.num(it[3], 5) + ' × ' + cvPct(ratio * 100) +
+                           ' = <b class="gx-accent">' + fmtX(x) + '</b> gx'];
+        });
+        rows.push(['pc.cv.ruler.total', '<b class="gx-accent">' + fmtX(EARN.today_x) + '</b> ' + GX.t('pc.cv.ruler.day')]);
+        ruler.innerHTML = rowsHTML(rows) + '<div class="dv-note">' + GX.t('pc.cv.ruler.note') + '</div>';
+      }
+    }
+
+    /* 网络增长趋势 */
+    var cvEl = GX.qs('#cvChart');
+    var canDraw = !!(CV && CV.trend && CV.trend.length >= 2);
+    if (cvEl) { cvEl.style.display = canDraw ? '' : 'none'; }
+    var tf = GX.qs('#cvTrendFoot');
+    if (tf) {
+      tf.textContent = canDraw
+        ? ('API /api/platform/metrics · ' + (CV.trend[0].day || '') + ' → ' + (CV.trend[CV.trend.length - 1].day || ''))
+        : (CV_ERR ? GX.t('pc.cv.err') : (!CV ? GX.t('pc.cv.loading') : GX.t('pc.cv.trend.empty')));
+    }
+    if (canDraw) { drawCvChart(); }
+  }
+
+  /* ---------- 资源共享（额度本机持久化 + 上限按本机实测推算） ----------
+     上报口径：把用户在本页申报的共享额度提交服务器，按实际在线时长计收益。
+     设备上限来源：浏览器存储配额 / navigator.connection.downlink / hardwareConcurrency（均真实读取）。 */
+  var LS_SHARE = 'gx_pc_share_v1';
+  var SHARE_DEF = { stOn: true, stMax: 100, bwOn: true, bwMax: 50, cpOn: true, cpMax: 2 };
+
+  function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  function shareCaps() {
+    var caps = { stMax: 500, bwMax: 100, cpMax: 8 };
+    var qgb = QUOTA ? QUOTA / (1024 * 1024 * 1024) : 0;
+    if (qgb > 0) { caps.stMax = Math.max(50, Math.min(2000, Math.round(qgb * 0.25 / 50) * 50)); }
+    var dl = (netConn() && netConn().downlink) ? Number(netConn().downlink) : 0;
+    caps.bwMax = Math.max(20, Math.min(1000, Math.round(dl || 100)));
+    var cores = parseInt(CAP.cores, 10) || navigator.hardwareConcurrency || 4;
+    caps.cpMax = Math.max(1, Math.min(24, Math.round(cores * 0.6 * 2) / 2));   /* 每核约 0.6 TFLOPS 的粗略估算 */
+    return caps;
+  }
+  function shareDefaults() {
+    var c = shareCaps();
+    return {
+      stOn: true, stMax: Math.max(10, Math.min(c.stMax, Math.round(c.stMax * 0.2 / 10) * 10)),
+      bwOn: true, bwMax: Math.max(10, Math.min(c.bwMax, Math.round(c.bwMax / 2))),
+      cpOn: true, cpMax: Math.max(0.5, Math.min(c.cpMax, Math.round(c.cpMax * 0.5 * 2) / 2))
+    };
+  }
+  function shareState() {
+    var v = readStore(LS_SHARE, null), out = shareDefaults(), k;
+    if (v && typeof v === 'object') { for (k in out) { if (v[k] !== undefined && v[k] !== null) { out[k] = v[k]; } } }
+    return out;
+  }
+  function saveShare(patch) {
+    var st = shareState();
+    for (var k in patch) { if (patch.hasOwnProperty(k)) { st[k] = patch[k]; } }
+    lsSet(LS_SHARE, JSON.stringify(st));
+    return st;
+  }
+  var SHARE_META = [
+    { key: 'storage',   on: 'stOn', val: 'stMax', step: 50,  unit: 'GB',
+      labelKey: 'd.share.pc.storage.label', descKey: 'd.share.pc.storage.desc', hintKey: 'd.share.pc.storage.hint', weightKey: 'd.weight.high' },
+    { key: 'bandwidth', on: 'bwOn', val: 'bwMax', step: 10,  unit: 'Mbps',
+      labelKey: 'd.share.pc.bandwidth.label', descKey: 'd.share.pc.bandwidth.desc', hintKey: 'd.share.pc.bandwidth.hint', weightKey: 'd.weight.high' },
+    { key: 'compute',   on: 'cpOn', val: 'cpMax', step: 0.5, unit: 'TFLOPS',
+      labelKey: 'd.share.pc.compute.label', descKey: 'd.share.pc.compute.desc', hintKey: 'd.share.pc.compute.hint', weightKey: 'd.weight.mid' }
+  ];
+  function shareItems() {
+    var caps = shareCaps(), st = shareState();
+    return SHARE_META.map(function (m) {
+      var cap = (m.key === 'storage') ? caps.stMax : (m.key === 'bandwidth' ? caps.bwMax : caps.cpMax);
+      return { key: m.key, on: !!st[m.on], val: Math.max(0, Math.min(Number(st[m.val]) || 0, cap)), max: cap,
+               step: m.step, unit: m.unit, labelKey: m.labelKey, descKey: m.descKey, hintKey: m.hintKey, weightKey: m.weightKey };
+    });
+  }
   function unitText(item, v) {
-    if (item.key === 'compute') return v.toFixed(1) + ' TFLOPS';
+    if (item.key === 'compute') return (Math.round(Number(v) * 10) / 10).toFixed(1) + ' TFLOPS';
     if (item.key === 'storage') return GX.num(v) + ' GB';
     return GX.num(v) + ' Mbps';
   }
+  function declaredText() {
+    var parts = shareItems().filter(function (i) { return i.on && i.val > 0; })
+      .map(function (i) { return unitText(i, i.val); });
+    return parts.length ? parts.join(' / ') : GX.t('dv.nosupport');
+  }
   function renderShares() {
-    GX.qs('#shareList').innerHTML = P.items.map(function (it) {
-      return '<div class="res-item' + (it.enabled ? '' : ' off') + '" data-item="' + it.key + '">' +
+    var items = shareItems();
+    GX.qs('#shareList').innerHTML = items.map(function (it) {
+      return '<div class="res-item' + (it.on ? '' : ' off') + '" data-item="' + it.key + '">' +
         '<div class="rhead">' +
           '<div><div class="rname">' + GX.t(it.labelKey) + '</div><div class="rdesc">' + GX.t(it.descKey) + '</div></div>' +
-          '<button class="gx-switch' + (it.enabled ? ' on' : '') + '" data-share="' + it.key + '"' + (it.enabled ? '' : ' disabled') + '></button>' +
+          '<button class="gx-switch' + (it.on ? ' on' : '') + '" data-share="' + it.key + '"></button>' +
         '</div>' +
-        '<div style="margin:16px 0 2px" class="rval"><span data-val="' + it.key + '">' + unitText(it, it.limit) + '</span></div>' +
-        '<input class="gx-range" type="range" min="0" max="' + it.max + '" step="' + it.step + '" value="' + it.limit + '" data-range="' + it.key + '"' + (it.enabled ? '' : ' disabled') + '>' +
+        '<div style="margin:16px 0 2px" class="rval"><span data-val="' + it.key + '">' + unitText(it, it.val) + '</span></div>' +
+        '<input class="gx-range" type="range" min="0" max="' + it.max + '" step="' + it.step + '" value="' + it.val + '" data-range="' + it.key + '"' + (it.on ? '' : ' disabled') + '>' +
         '<div class="rscale"><span>0</span><span>' + GX.t('pc.share.upper', { v: unitText(it, it.max) }) + '</span></div>' +
         '<div class="rhint">' + GX.t(it.hintKey) + GX.t('pc.share.weight', { v: '<b class="gx-accent">' + GX.t(it.weightKey) + '</b>' }) + '</div>' +
         '</div>';
     }).join('');
-
+    var note = GX.qs('#shareNote');
+    if (note) { note.textContent = GX.t('pc.share.note') + ' ' + GX.t('pc.share.declared', { v: declaredText() }) + ' ' + GX.t('pc.share.caps'); }
     GX.qsa('[data-range]').forEach(function (r) {
       GX.on(r, 'input', function () {
-        var it = P.items.filter(function (x) { return x.key === r.dataset.range; })[0];
-        GX.qs('[data-val="' + it.key + '"]').textContent = unitText(it, parseFloat(r.value));
+        var key = r.dataset.range;
+        var it = items.filter(function (x) { return x.key === key; })[0];
+        GX.qs('[data-val="' + key + '"]').textContent = unitText(it, parseFloat(r.value));
+      });
+      GX.on(r, 'change', function () {
+        var key = r.dataset.range;
+        var it = items.filter(function (x) { return x.key === key; })[0];
+        var patch = {}; patch[it.valKey || ({ storage: 'stMax', bandwidth: 'bwMax', compute: 'cpMax' }[key])] = parseFloat(r.value);
+        saveShare(patch); renderShares(); reportTick(true);
       });
     });
-    GX.qsa('[data-share]').forEach(function (s) {
-      GX.on(s, 'click', function () {
-        if (s.disabled) return;
-        s.classList.toggle('on');
-        s.closest('.res-item').classList.toggle('off', !s.classList.contains('on'));
+    GX.qsa('[data-share]').forEach(function (sw) {
+      GX.on(sw, 'click', function () {
+        var key = sw.dataset.share;
+        var onKey = { storage: 'stOn', bandwidth: 'bwOn', compute: 'cpOn' }[key];
+        var patch = {}; patch[onKey] = !shareState()[onKey];
+        saveShare(patch); renderShares(); reportTick(true);
       });
     });
   }
 
-  /* ---------- 收益 ---------- */
+  /* ---------- 收益与结算（真实接口 /api/node/earnings）+ 资源上报 ----------
+     口径：收益 = 已申报共享额度 × 结算系数 × 实际在线时长占比(≤1)。
+     申报额度来自本页「资源共享」的开关/滑块（本机持久化）；在线时长由本页定时上报累计。
+     未连接钱包或未上报 → 显示 “—” 与提示，绝不回落到 mock 数字。 */
+  var EARN = null, EARN_ERR = false, EARN_ADDR = '', REPORT_TIMER = null;
+
+  function fmtX(v) {
+    var n = Number(v || 0);
+    if (!isFinite(n) || n === 0) { return '0'; }
+    var a = Math.abs(n);
+    if (a < 0.001) { return n.toFixed(6); }
+    if (a < 1) { return n.toFixed(4); }
+    return n.toFixed(2);
+  }
+  /* 浏览器实测计量（非申报）：存储配额与占用、链路下行、时延 —— 供上报与展示 */
+  var MEASURED = { used_gb: 0, quota_gb: 0, downlink_mbps: 0, rtt_ms: 0 };
+  function refreshMeasured(cb) {
+    var done = false;
+    function fin() { if (cb && !done) { done = true; cb(); } }
+    try {
+      var c = navigator.connection || navigator.mozConnection || null;
+      MEASURED.downlink_mbps = c && c.downlink ? Number(c.downlink) : 0;
+      MEASURED.rtt_ms = c && c.rtt ? Number(c.rtt) : 0;
+      if (navigator.storage && navigator.storage.estimate) {
+        navigator.storage.estimate().then(function (e) {
+          if (e) {
+            MEASURED.used_gb = e.usage ? Math.round(e.usage / 1073741824 * 1000) / 1000 : 0;
+            MEASURED.quota_gb = e.quota ? Math.round(e.quota / 1073741824 * 100) / 100 : 0;
+          }
+          fin();
+        }).catch(fin);
+      } else { fin(); }
+    } catch (e) { fin(); }
+    setTimeout(fin, 1500);
+  }
+
+  function reportPayload() {
+    var w = readWallet();
+    if (!w) { return null; }
+    var rec = nodeRec(w.addr);
+    if (!rec.authSig || !rec.authMsg) { return null; }   /* 需连接钱包时拿到的授权签名 */
+    var st = shareState();
+    var bd = behFlush();                                  /* 有效会话 / 有效交互增量 */
+    return {
+      sessions: bd.sessions, interactions: bd.interactions,
+      terminal: w.addr, sig: rec.authSig, sig_msg: rec.authMsg,
+      storage_gb: st.stOn ? Number(st.stMax) || 0 : 0,
+      bw_mbps: st.bwOn ? Number(st.bwMax) || 0 : 0,
+      compute_tflops: st.cpOn ? Number(st.cpMax) || 0 : 0,
+      client: 'pc-web',
+      tz: (function () { try { return Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (e) { return ''; } })(),
+      lang: String(navigator.language || ''),
+      used_gb: MEASURED.used_gb, quota_gb: MEASURED.quota_gb,
+      downlink_mbps: MEASURED.downlink_mbps, rtt_ms: MEASURED.rtt_ms
+    };
+  }
+  function reportTick(force) {
+    refreshMeasured(function () {
+      var payload = reportPayload();
+      if (!payload) { return; }
+      sendReport(payload, force);
+    });
+  }
+  /* ---------------- 全局运行参数（后台「运行参数」面板可调） ----------------
+     与手机端同一套逻辑：先读 GET /api/node/runtime（上报周期 + 全网暂停）再决定是否上报。
+     暂停期间停止定时上报，改为每 5 分钟问一次是否恢复（切回前台 / 网络恢复也立刻问一次），
+     后台一恢复就自动接着上报。硬编码 60 秒只作兜底，取不到参数时不至于让上报停摆。 */
+  var RT = { report_interval_sec: 60, paused: false, note: '', loaded: false };
+  var PAUSE_TIMER = null, PAUSE_RECHECK_MS = 5 * 60 * 1000;
+
+  function runtimeNote() { return RT.note || GX.t('pc.report.paused.note'); }
+  function syncReporting() {
+    if (REPORT_TIMER) { clearInterval(REPORT_TIMER); REPORT_TIMER = null; }
+    if (PAUSE_TIMER) { clearTimeout(PAUSE_TIMER); PAUSE_TIMER = null; }
+    if (RT.paused) { PAUSE_TIMER = setTimeout(function () { loadRuntime(); }, PAUSE_RECHECK_MS); return; }
+    REPORT_TIMER = setInterval(function () { reportTick(false); }, Math.max(10, RT.report_interval_sec) * 1000);
+  }
+  function applyRuntime(j) {
+    if (!j || j.ok !== true) { return false; }
+    var wasPaused = RT.paused;
+    var iv = Number(j.report_interval_sec);
+    if (isFinite(iv) && iv > 0) { RT.report_interval_sec = Math.max(10, Math.min(3600, Math.round(iv))); }
+    RT.paused = !!j.paused;
+    if (j.pause_note) { RT.note = String(j.pause_note.zh || j.pause_note.en || '').trim(); }
+    RT.loaded = true;
+    syncReporting();
+    renderLiveReport();
+    /* 后台刚恢复（暂停 → 运行）：立刻补报一次，不必干等到下一个周期 */
+    if (wasPaused && !RT.paused && !document.hidden) { reportTick(true); }
+    return true;
+  }
+  function loadRuntime(cb) {
+    try {
+      fetch('/api/node/runtime', { cache: 'no-store' }).then(function (r) { return r.json(); })
+        .then(function (j) { applyRuntime(j); if (cb) { cb(); } })
+        .catch(function () { if (cb) { cb(); } });
+    } catch (e) { if (cb) { cb(); } }
+  }
+  function sendReport(payload, force) {
+    if (!force && document.hidden) { return; }
+    if (RT.paused) { return; }                    /* 全网暂停：不再上报，等后台恢复 */
+    try {
+      fetch('/api/node/report', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload), cache: 'no-store'
+      }).then(function (r) { return r.json(); }).then(function (j) {
+        if (j && j.ok) {
+          /* 后台可能刚改了周期或刚按下暂停：用响应里的值即时生效 */
+          applyRuntime({ ok: true, paused: !!j.paused, report_interval_sec: j.report_interval_sec, pause_note: j.pause_note });
+          loadEarnings(true); loadBehavior(true);
+        }
+        loadChain();
+      }).catch(function () { loadChain(); });
+    } catch (e) {}
+  }
+  function startReporting() {
+    if (REPORT_TIMER) { clearInterval(REPORT_TIMER); REPORT_TIMER = null; }
+    var kick = function () { if (RT.paused) { loadRuntime(); } else { reportTick(true); } };
+    document.addEventListener('visibilitychange', function () { if (!document.hidden) { kick(); } });
+    window.addEventListener('online', kick);
+    loadRuntime(function () { kick(); });         /* 先取全局参数（含暂停态），再决定是否上报 */
+  }
+  window.GX_RUNTIME = { state: RT, refresh: loadRuntime };
+  function loadEarnings(force) {
+    var w = readWallet();
+    if (!w) { EARN = null; EARN_ERR = false; EARN_ADDR = ''; renderEarnPanel(); renderConsensus(); return; }
+    if (EARN_ADDR === w.addr && !force) { renderEarnPanel(); renderConsensus(); return; }
+    EARN_ADDR = w.addr; EARN = null; EARN_ERR = false; renderEarnPanel(); renderConsensus();
+    try {
+      fetch('/api/node/earnings?terminal=' + encodeURIComponent(w.addr) + '&days=15', { cache: 'no-store' })
+        .then(function (r) { return r.json(); }).then(function (j) {
+          if (EARN_ADDR !== w.addr) { return; }
+          if (j && j.ok) { EARN = j; EARN_ERR = false; } else { EARN = null; EARN_ERR = true; }
+          renderEarnPanel(); renderConsensus();
+        }).catch(function () { if (EARN_ADDR === w.addr) { EARN = null; EARN_ERR = true; renderEarnPanel(); renderConsensus(); } });
+    } catch (e) { EARN_ERR = true; renderEarnPanel(); }
+  }
+  function refreshEarnings() { EARN_ADDR = ''; loadEarnings(); }
+
+  function renderEarnPanel() {
+    var w = readWallet(), note = GX.qs('#earnNote'), ids = ['e1', 'e2', 'e3', 'e4'], fids = ['e1f', 'e2f', 'e3f', 'e4f'];
+    function feet(a, b, c, d) {
+      var v = [a, b, c, d];
+      fids.forEach(function (id, k) { var el = GX.qs('#' + id); if (el) { el.textContent = v[k] || ''; } });
+    }
+    if (!w) {
+      ids.forEach(function (id) { setX(GX.qs('#' + id), null, 0); });
+      feet();
+      if (note) { note.textContent = GX.t('pc.earn.note.empty'); }
+    } else if (!EARN) {
+      ids.forEach(function (id) { setX(GX.qs('#' + id), null, 0); });
+      feet();
+      if (note) { note.textContent = EARN_ERR ? GX.t('pc.earn.note.err') : GX.t('pc.earn.note.wait'); }
+    } else {
+      setX(GX.qs('#e1'), EARN.settled_total, 6);
+      setX(GX.qs('#e2'), EARN.today_x, 6);
+      setX(GX.qs('#e3'), EARN.pending_x, 6);
+      setX(GX.qs('#e4'), EARN.settled_total, 6);
+      feet(GX.t('pc.earn.balance.foot'), GX.t('pc.earn.today.foot'), GX.t('pc.earn.pending.foot'),
+           GX.t('pc.earn.note.days', { n: EARN.settled_days }));
+      if (note) {
+        var rec = nodeRec(w.addr), parts = [];
+        if (!rec.authSig || !rec.authMsg) { parts.push(GX.t('pc.earn.note.nosig')); }
+        parts.push(GX.t('pc.earn.note.live'));
+        if (EARN.reported && EARN.reported.at) {
+          parts.push(GX.t('pc.earn.note.report', { t: String(EARN.reported.at).slice(11, 16), m: EARN.online_minutes_today }));
+        }
+        note.textContent = parts.join(' ');
+      }
+    }
+    drawEarnChart();
+    renderBreakdown();
+    renderHistory();
+    renderLiveReport();
+    renderChainRows();
+    renderTop();
+  }
+
   function renderBreakdown() {
-    var maxB = Math.max.apply(null, D.earnings.breakdown.map(function (b) { return b.month; }));
-    GX.qs('#breakdown').innerHTML = D.earnings.breakdown.map(function (b) {
+    var b = (EARN && EARN.breakdown) ? EARN.breakdown : null;
+    var rows = [
+      { k: 'd.earn.bd.storage', v: b ? Number(b.storage_x) : 0, color: '#a3bffa' },
+      { k: 'd.earn.bd.bandwidth', v: b ? Number(b.bandwidth_x) : 0, color: '#7ee0c8' },
+      { k: 'd.earn.bd.compute', v: b ? Number(b.compute_x) : 0, color: '#ffb86b' }
+    ];
+    var maxB = Math.max.apply(null, rows.map(function (r) { return r.v; })) || 1;
+    var html = rows.map(function (r) {
       return '<div class="flow-line" style="display:block">' +
-        '<div class="gx-row-between" style="margin-bottom:6px">' +
-          '<span>' + GX.t(b.labelKey) + '</span>' +
-          '<span class="gx-accent" style="font-variant-numeric:tabular-nums">' + GX.num(b.month, 2) + ' x</span>' +
-        '</div>' +
-        '<span class="gx-bar"><i style="width:' + (b.month / maxB * 100).toFixed(1) + '%;background:' + b.color + '"></i></span>' +
+        '<div class="gx-row-between" style="margin-bottom:6px"><span>' + GX.t(r.k) + '</span>' +
+        '<span class="gx-accent" style="font-variant-numeric:tabular-nums">' + fmtX(r.v) + ' gx</span></div>' +
+        '<span class="gx-bar"><i style="width:' + (r.v / maxB * 100).toFixed(1) + '%;background:' + r.color + '"></i></span>' +
         '</div>';
     }).join('');
+    if (!b || !(rows[0].v || rows[1].v || rows[2].v)) {
+      html += '<div class="gx-dim" style="font-size:.8em;margin-top:10px">' + GX.t('pc.earn.trend.empty') + '</div>';
+    }
+    GX.qs('#breakdown').innerHTML = html;
   }
 
   function renderHistory() {
-    GX.qs('#history').innerHTML = D.earnings.history.map(function (h) {
+    var el = GX.qs('#history'), recs = (EARN && EARN.records) ? EARN.records : [];
+    if (!recs.length) {
+      el.innerHTML = '<div class="gx-dim" style="font-size:.85em;padding:12px 0">' + GX.t('pc.earn.trend.empty') + '</div>';
+      return;
+    }
+    el.innerHTML = recs.map(function (r) {
+      var mins = r.online_minutes || 0, hh = Math.floor(mins / 60), mm = mins % 60, decl = [];
+      if (r.storage_gb) { decl.push(GX.num(r.storage_gb, 1) + 'GB'); }
+      if (r.bw_mbps) { decl.push(GX.num(r.bw_mbps, 0) + 'Mbps'); }
+      if (r.compute_tflops) { decl.push(GX.num(r.compute_tflops, 1) + 'TF'); }
       return '<div class="flow-line">' +
-        '<span style="flex:1"><span class="gx-mono" style="font-size:.9em">' + GX.t(h.labelKey) + '</span>' +
-        '<br><span class="fl-type">' + h.time + ' · ' + GX.t(h.typeKey) + '</span></span>' +
-        '<span class="fl-amt">+' + h.amount.toFixed(2) + ' x</span></div>';
+        '<span style="flex:1"><span class="gx-mono" style="font-size:.9em">' + r.day + '</span><br>' +
+        '<span class="fl-type">' + GX.t('pc.earn.rec.online', { v: hh + 'h' + (mm < 10 ? '0' : '') + mm + 'm' }) +
+        (decl.length ? ' · ' + GX.t('pc.earn.rec.declared', { v: decl.join(' / ') }) : '') + '</span></span>' +
+        '<span class="fl-amt">+' + fmtX(r.total_x) + ' gx</span></div>';
     }).join('');
   }
 
@@ -336,30 +1800,152 @@
         '<button class="gx-switch' + (p.on ? ' on' : '') + '" data-policy="' + p.key + '"></button></div>';
     }).join('');
     GX.qsa('[data-policy]').forEach(function (s) { GX.bindSwitch(s); });
+    var pn = GX.qs('#policyNote');
+    if (pn) { pn.textContent = GX.t('pc.share.policies.note'); }
   }
 
-  /* ---------- 暂停按钮 ---------- */
+  /* ---------- 暂停按钮 ----------
+     文案由 renderPauseBtn() 独占维护：① 点击切换 ② renderAll()（语言切换 / 钱包变化）时重放。
+     坑（2026-10-03 用户报障）：原先文案只在点击时写一次、没有进 renderAll ⇒ 切语言后按钮
+     仍是旧语言（中文页面看到的还是 Pause sharing / 切英文后仍是「暂停共享」）。
+     ⚠️ 别给这个按钮加 data-i18n：静态填充会把「已暂停」态误写成「暂停共享」，
+        必须由这里按 paused 状态自己出词。 */
+  function renderPauseBtn() {
+    var b = GX.qs('#btnPause');
+    if (!b) { return; }
+    b.textContent = paused ? GX.t('pc.resume') : GX.t('pc.pause');
+    b.className = paused ? 'gx-btn gx-btn-primary gx-btn-sm' : 'gx-btn gx-btn-ghost gx-btn-sm';
+  }
   GX.on(GX.qs('#btnPause'), 'click', function () {
     paused = !paused;
-    GX.qs('#btnPause').textContent = paused ? GX.t('pc.resume') : GX.t('pc.pause');
-    GX.qs('#btnPause').className = paused ? 'gx-btn gx-btn-primary gx-btn-sm' : 'gx-btn gx-btn-ghost gx-btn-sm';
+    renderPauseBtn();
   });
+
+  /* 语言切换时重建内联钱包（「连接钱包」按钮与提示文案跟随语言）；
+     同语言不重复渲染，避免把未保存的输入清掉 */
+  var _wLang = null;
+  function syncWalletLang() {
+    var lg = (GX.lang && GX.lang()) || 'en';
+    if (lg === _wLang) { return; }
+    _wLang = lg;
+    if (window.GX_WALLET && GX_WALLET.render) { GX_WALLET.render(); }
+  }
+
+  /* ---------- 当前 IP 与归属地（共识 → 我的位置） ----------
+     只回显访问者自己的 IP：IP 由服务端从 nginx 传入的 X-Real-IP 取，归属地由服务端代查
+     （ip-api 同源出中英两份，ipinfo 兜底）。中文界面显示中文地名，英文界面显示英文地名；
+     数据源不可达或内网地址时显示「—」，不编造。 */
+  var IPINFO = null, IP_ERR = false, IP_DONE = false;
+  function geoText(g) {
+    if (!g) return '—';
+    var zh = ((GX.lang && GX.lang()) || 'zh') === 'zh';
+    return (zh ? (g.text || g.text_en) : (g.text_en || g.text)) || '—';
+  }
+  function ipRowsHTML() {
+    if (!IP_DONE) {
+      return rowsHTML([['pc.cv.ip', '<span class="gx-dim">' + GX.t('pc.cv.ip.wait') + '</span>', 'sm']]);
+    }
+    if (IP_ERR || !IPINFO || !IPINFO.ip) {
+      return rowsHTML([['pc.cv.ip', '—', 'sm'], ['pc.cv.geo', '—', 'sm']]);
+    }
+    return rowsHTML([['pc.cv.ip', escHtml(IPINFO.ip), 'sm'],
+                     ['pc.cv.geo', escHtml(geoText(IPINFO.geo)), 'sm']]);
+  }
+  function loadIp() {
+    fetch('/api/node/ip', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (j) {
+      if (j && j.ok) { IPINFO = j; IP_ERR = false; } else { IP_ERR = true; }
+      IP_DONE = true; renderConsensus();
+    }).catch(function () { IP_ERR = true; IP_DONE = true; renderConsensus(); });
+  }
 
   /* ---------- 统一重渲染（语言切换时整体重跑） ---------- */
   function renderAll() {
+    syncWalletLang();
     renderTop();
     renderDevice();
+    renderResource();
     renderShares();
     renderBreakdown();
     renderHistory();
     renderPolicies();
+    renderPauseBtn();      /* 按钮文案随语言切换重放（状态 paused 保留） */
+    loadEarnings();
+    renderConsensus();
+    renderBehavior();
     switchPanel(curPanel);
+  }
+
+  /* 入口页在其它标签页连接 / 断开钱包时同步刷新身份显示 */
+  window.addEventListener('storage', function (e) {
+    if (!e || !e.key || e.key === LS_WALLET || e.key === LS_NODES) { renderAll(); }
+  });
+
+  /* 本机真实信息：先读同步可得的（UA/GPU/核心/内存/屏幕…），异步项（存储配额/电池/延迟）到位后再重渲染 */
+  readCapacity();
+  probeBattery();
+  loadHealth();
+  /* 收益与资源上报：连接钱包后按申报额度定时上报，收益面板读真实接口 */
+  loadEarnings();
+  loadConsensus();
+  loadBehavior();
+  setInterval(behTick, 1000);
+  loadChain();
+  loadIp();
+  startReporting();
+
+
+  /* ---------- 一键满屏（Fullscreen API）----------
+     进入后 document 元素占据整块屏幕，布局按窗口宽度自适应铺满；
+     状态与语言切换时同步按钮文案（全屏 / 退出全屏）与图标。 */
+  function initFullscreen() {
+    var btn = GX.qs('#btnFull');
+    if (!btn) { return; }
+    var txt = btn.querySelector('.gx-fs-txt');
+    var icoOut = btn.querySelector('.fs-out'), icoIn = btn.querySelector('.fs-in');
+    var root = document.documentElement;
+    var req = root.requestFullscreen || root.webkitRequestFullscreen || root.msRequestFullscreen;
+    var leave = document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen;
+    if (!req) { btn.style.display = 'none'; return; }
+    function fsEl() {
+      return document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement || null;
+    }
+    function sync() {
+      var on = !!fsEl();
+      btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+      var k = on ? 'pc.fs.off' : 'pc.fs.on';
+      if (txt) { txt.setAttribute('data-i18n', k); txt.textContent = GX.t(k); }
+      btn.setAttribute('title', GX.t(on ? 'pc.fs.off.tip' : 'pc.fs.on.tip'));
+      btn.setAttribute('aria-label', GX.t(k));
+      if (icoOut) { icoOut.style.display = on ? 'none' : ''; }
+      if (icoIn) { icoIn.style.display = on ? '' : 'none'; }
+    }
+    GX.on(btn, 'click', function (e) {
+      if (e && e.preventDefault) { e.preventDefault(); }
+      try {
+        if (fsEl()) {
+          if (leave) { var r = leave.call(document); if (r && r.catch) { r.catch(function () {}); } }
+        } else {
+          var pm = req.call(root);
+          if (pm && pm.catch) { pm.catch(function () { sync(); }); }
+        }
+      } catch (err) { /* 浏览器拒绝全屏时不打断页面 */ }
+    });
+    ['fullscreenchange', 'webkitfullscreenchange', 'MSFullscreenChange'].forEach(function (ev) {
+      document.addEventListener(ev, sync);
+    });
+    GX.i18n.onChange(sync);
+    sync();
   }
 
   GX.i18n.onChange(renderAll);
   GX.i18n.init();
   renderAll();
+  initFullscreen();
+
+  /* 钱包模块（shared/gx-wallet.js）写入 localStorage 后即时刷新本页身份显示 */
+  window.GX_WALLET_REFRESH = renderAll;
 })();
 </script>
+<script src="../shared/gx-pauseflag.js?v=20261114b"></script>
 </body>
 </html>

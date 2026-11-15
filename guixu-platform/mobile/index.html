@@ -2,12 +2,28 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png?v=20260925c">
+<link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png?v=20260925c">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=20260925c">
 <title data-i18n="app.title">Guixu Consensus · Mobile App</title>
-<link rel="stylesheet" href="../shared/guixu-theme.css">
+<link rel="stylesheet" href="../shared/guixu-theme.css?v=20260925j">
+<link rel="preload" as="image" href="/guixu800tm-320.webp?v=20260925a">
+<link rel="preload" as="image" href="/guixu800tm-96.webp?v=20260928a">
 <style>
   body { background: radial-gradient(ellipse at 50% 0%, #16304a 0%, #0a1520 60%, #060d14 100%); min-height: 100vh; padding: 34px 20px 48px; }
   .phone-stage { display: flex; flex-direction: column; align-items: center; gap: 18px; }
+  /* ---- 顶部品牌徽标：圆形 + 光影（与平台总览页同一套视觉） ---- */
+  .phone-stage .gx-emblem-wrap { position: relative; width: 110px; height: 110px; margin: 4px auto 0; display: grid; place-items: center; text-decoration: none; }
+  .phone-stage .gx-emblem-halo { position: absolute; inset: -50%; border-radius: 50%; pointer-events: none;
+    background: radial-gradient(circle, rgba(163,191,250,.5) 0%, rgba(163,191,250,.18) 36%, rgba(163,191,250,0) 70%);
+    will-change: opacity; animation: gxHaloPulse 4.6s ease-in-out infinite; }
+  .phone-stage .gx-emblem { position: relative; width: 100%; height: 100%; display: block; object-fit: contain;
+    filter: drop-shadow(0 0 10px rgba(163,191,250,.72)) drop-shadow(0 0 24px rgba(163,191,250,.5)) drop-shadow(0 14px 22px rgba(0,0,0,.6));
+    will-change: transform; backface-visibility: hidden; animation: gxEmblemFloat 6.5s ease-in-out infinite; }
+  @keyframes gxEmblemFloat { 0%, 100% { transform: translate3d(0,0,0); } 50% { transform: translate3d(0,-8px,0); } }
+  @keyframes gxHaloPulse { 0%, 100% { opacity: .7; } 50% { opacity: 1; } }
   .phone-note { font-size: .8em; color: var(--gx-faint); text-align: center; }
   .gx-phone .gx-card { padding: 14px; border-radius: 10px; }
   .gx-phone .gx-card-head { margin-bottom: 12px; }
@@ -19,13 +35,13 @@
   .m-panel.active { display: block; }
   .m-hello { padding: 14px 2px 12px; }
   .m-hello .hi { font-size: .76em; color: var(--gx-faint); }
-  .m-hello .nm { font-size: 1.1em; font-weight: 700; margin-top: 2px; display: flex; align-items: center; gap: 7px; }
+  .m-hello .nm { font-size: 1.1em; font-weight: 700; margin-top: 2px; display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
   .m-big { font-size: 2.05em; font-weight: 700; color: var(--gx-accent); line-height: 1.15; font-variant-numeric: tabular-nums; }
-  .m-big small { font-size: .35em; font-weight: 500; color: var(--gx-dim); margin-left: 5px; }
-  .m-line { display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid rgba(163,191,250,.07); font-size: .84em; }
+  .m-line { display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid rgba(163,191,250,.07); font-size: .84em; gap: 10px; }
   .m-line:last-child { border-bottom: none; }
-  .m-line .k { color: var(--gx-dim); }
-  .m-line .v { text-align: right; }
+  .m-line .k { color: var(--gx-dim); flex: none; }
+  .m-line .v { text-align: right; min-width: 0; word-break: break-word; }
+  .m-line .v.gx-val-sm, .dv-val.gx-val-sm { font-size: .9em; }
   .m-sub { font-size: .7em; color: var(--gx-faint); display: block; margin-top: 1px; }
   .m-item { border: 1px solid var(--gx-line); border-radius: 10px; padding: 14px; background: rgba(255,255,255,.035); }
   .m-item.off { opacity: .48; }
@@ -34,291 +50,2155 @@
   .m-item .it-desc { font-size: .74em; color: var(--gx-dim); margin-top: 2px; line-height: 1.5; }
   .m-item .it-val { font-size: 1.28em; font-weight: 700; color: var(--gx-accent); margin: 12px 0 2px; font-variant-numeric: tabular-nums; }
   .m-item .it-hint { font-size: .72em; color: var(--gx-faint); margin-top: 10px; padding-top: 8px; border-top: 1px solid rgba(163,191,250,.08); line-height: 1.5; }
-  #mEarnChart { width: 100%; height: 118px; display: block; }
   .m-sec-title { font-size: .78em; color: var(--gx-faint); letter-spacing: 1.2px; text-transform: uppercase; margin: 18px 0 9px; }
+  /* ---- 真实连接版新增 ---- */
+  .m-steps { margin: 0; padding-left: 18px; font-size: .78em; color: var(--gx-dim); line-height: 1.85; }
+  .m-steps li { margin-bottom: 3px; }
+  .m-hint { font-size: .72em; color: var(--gx-faint); line-height: 1.65; margin-top: 10px; padding-top: 9px; border-top: 1px solid rgba(163,191,250,.08); }
+  .m-empty { text-align: left; padding: 4px 0 2px; }
+  .m-empty .t { font-size: .86em; color: var(--gx-text); font-weight: 600; }
+  .m-empty .d { font-size: .72em; color: var(--gx-faint); margin-top: 6px; line-height: 1.65; text-align: left; }
+  .m-copy { background: rgba(163,191,250,.09); border: 1px solid var(--gx-line); color: var(--gx-accent);
+    font-size: .68em; padding: 3px 9px; border-radius: 6px; margin-left: 7px; cursor: pointer; font-family: var(--gx-font); flex: none; }
+  .m-copy:active { transform: scale(.96); }
+  .m-invite-block { margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(163,191,250,.08); }
+  .m-invite-k { font-size: .74em; color: var(--gx-dim); }
+  .m-invite-url { font-size: .76em; line-height: 1.55; word-break: break-all; margin-top: 4px; color: var(--gx-accent); }
+  .m-invite-btn { margin-left: 0; margin-top: 9px; font-size: .72em; padding: 5px 12px; }
+  .m-retry { background: none; border: 1px solid var(--gx-line); color: var(--gx-accent); font-size: .7em;
+    padding: 4px 10px; border-radius: 6px; cursor: pointer; font-family: var(--gx-font); margin-top: 10px; }
+  .m-lvl { display: flex; align-items: center; gap: 8px; font-size: .74em; color: var(--gx-dim); margin-bottom: 8px; }
+  .m-lvl .n { flex: none; width: 52px; }
+  .m-lvl .gx-bar { flex: 1; }
+  .m-lvl .c { flex: none; color: var(--gx-accent); font-variant-numeric: tabular-nums; }
+  .m-toast { position: absolute; left: 50%; bottom: 92px; transform: translate(-50%, 10px); z-index: 60;
+    background: rgba(10,21,32,.96); border: 1px solid var(--gx-line-strong); color: var(--gx-text);
+    padding: 8px 15px; border-radius: 8px; font-size: .76em; opacity: 0; pointer-events: none; transition: all .24s; }
+  .m-toast.on { opacity: 1; transform: translate(-50%, 0); }
+  .m-src { font-size: .68em; color: var(--gx-faint); text-align: right; margin-top: 8px; }
+  .m-kpi-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .m-kpi { background: rgba(20,34,52,.72); border: 1px solid rgba(120,160,220,.18); border-radius: 14px; padding: 12px 12px 10px; }
+  .m-kpi .lbl { font-size: .72em; color: var(--gx-faint); }
+  .m-kpi .val { font-size: 1.28em; font-weight: 700; margin-top: 5px; font-variant-numeric: tabular-nums; word-break: break-all; }
+  .m-kpi .val.sm { font-size: .98em; line-height: 1.35; }
+  .m-kpi .unit { font-size: .58em; color: var(--gx-faint); margin-left: 3px; font-weight: 500; }
+  .m-kpi .foot { font-size: .66em; color: var(--gx-faint); margin-top: 4px; line-height: 1.35; }
+  .m-bd { margin-bottom: 12px; }
+  .m-bd:last-child { margin-bottom: 0; }
+  .m-bd .gx-row-between { display: flex; justify-content: space-between; font-size: .86em; margin-bottom: 6px; }
+  .m-bar { display: block; height: 7px; border-radius: 5px; background: rgba(120,160,220,.16); overflow: hidden; }
+  .m-bar > i { display: block; height: 100%; border-radius: 5px; }
+  .m-record { padding: 9px 0; border-top: 1px solid rgba(163,191,250,.08); }
+  .m-record:first-child { border-top: 0; padding-top: 0; }
+  .m-record .gx-row-between { display: flex; justify-content: space-between; font-size: .9em; }
+  .m-record .m-hint { margin-top: 4px; padding-top: 0; border-top: 0; }
+  /* ---- 卡片头在手机上换行：标题与折叠按钮同一行，副标题另起一行（长标题不再挤成两行） ---- */
+  .gx-phone .gx-card-head { flex-wrap: wrap; }
+  .gx-phone .gx-card-head h3 { flex: 1 1 auto; min-width: 0; }
+  .gx-phone .gx-card-head > .m-card-toggle { order: 2; }
+  .gx-phone .gx-card-head > .gx-sub { order: 3; flex: 1 1 100%; line-height: 1.5; }
+  /* ---- 左上角品牌 LOGO：带光影 ---- */
+
+  /* 底部 5 个菜单（首页/资源/网络/收益/我的）必须单行自适应：
+     shared/guixu-theme.css 里 .gx-phone .phone-tabbar 是 4 列网格，加了第 5 个页签后会掉到第二行 */
+  .gx-phone .phone-tabbar { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .gx-phone .phone-tabbar button { min-width: 0; padding-left: 1px; padding-right: 1px; }
+  .gx-phone .phone-tabbar button > span { white-space: nowrap; }
+  @media (max-width: 340px) {
+    .gx-phone .phone-tabbar button { font-size: .82em; }
+  }
+  .gx-lang-bar .m-logo { position: relative; flex: none; width: 32px; height: 32px; display: grid; place-items: center; margin-right: auto; text-decoration: none; }
+  .m-logo-halo { position: absolute; inset: -78%; border-radius: 50%; pointer-events: none;
+    background: radial-gradient(circle, rgba(163,191,250,.52) 0%, rgba(163,191,250,.18) 36%, rgba(163,191,250,0) 70%);
+    will-change: opacity; animation: gxHaloPulse 4.6s ease-in-out infinite; }
+  .m-logo img { position: relative; width: 100%; height: 100%; display: block; object-fit: contain;
+    filter: drop-shadow(0 0 6px rgba(163,191,250,.85)) drop-shadow(0 0 14px rgba(163,191,250,.45)) drop-shadow(0 4px 8px rgba(0,0,0,.55));
+    will-change: transform; backface-visibility: hidden; animation: gxMarkFloat 6s ease-in-out infinite; }
+  @keyframes gxMarkFloat { 0%, 100% { transform: translate3d(0,0,0); } 50% { transform: translate3d(0,-3px,0); } }
+  body > .gx-lang-bar { align-items: center; }
+
+  /* ---- 卡片展开 / 收起 ---- */
+  .gx-card { position: relative; }
+  .m-card-toggle { flex: none; width: 24px; height: 24px; padding: 0; display: grid; place-items: center;
+    background: rgba(163,191,250,.10); border: 1px solid var(--gx-line); border-radius: 7px;
+    color: var(--gx-accent); cursor: pointer; font-family: var(--gx-font); -webkit-tap-highlight-color: transparent; }
+  .m-card-toggle:active { transform: scale(.94); }
+  .m-card-toggle svg { width: 13px; height: 13px; display: block; transition: transform .22s ease; }
+  .gx-card.m-card-float { padding-top: 30px; }
+  .gx-card.m-card-float > .m-card-toggle { position: absolute; top: 7px; right: 7px; }
+  .gx-card.m-collapsed { padding-top: 12px; padding-bottom: 12px; }
+  .gx-card.m-card-float.m-collapsed { padding-top: 30px; }
+  .gx-card.m-collapsed > *:not(.m-card-toggle):not(.m-card-strip):not(.gx-card-head) { display: none !important; }
+  /* 收起后：卡片头本身保留（高度收起），仅留展开按钮，避免按钮被连带隐藏 */
+  .gx-card.m-collapsed > .gx-card-head { display: block !important; height: 0; overflow: visible; margin: 0 !important; padding: 0 !important; }
+  .gx-card.m-collapsed .gx-card-head > *:not(.m-card-toggle) { display: none !important; }
+  .gx-card.m-collapsed .gx-card-head > .m-card-toggle { position: absolute; top: 12px; right: 12px; }
+  .m-card-strip { display: none; font-size: .86em; font-weight: 600; color: var(--gx-text); padding-right: 32px; }
+  .gx-card.m-collapsed > .m-card-strip { display: block; }
+  .gx-card.m-collapsed .m-card-toggle svg { transform: rotate(180deg); }
+  /* ---- 真机全屏：不显示模拟外框 / 刘海 / 装饰 ---- */
+  @media (max-width: 560px) {
+    body { padding: 0; }
+    body > .gx-lang-bar { padding-top: 12px; }
+    .phone-stage { gap: 0; }
+    .phone-stage .gx-emblem-wrap, .phone-note { display: none; }
+    .gx-phone { width: 100%; height: 100vh; height: 100dvh; border: none; border-radius: 0; box-shadow: none; }
+    .gx-phone .notch { display: none; }
+    .gx-phone .status-bar { padding: 14px 18px 6px; }
+    .gx-phone .phone-body { padding: 4px 14px 12px; }
+  }
+</style>
+  <!-- 统一卡片光影系统 v2（2026-09-29） -->
+  <link rel="stylesheet" href="../shared/gx-cards.css?v=20260929c">
+<style id="gxWmCSS">
+/* 左下角归墟 LOGO 虚影（约四分之三画幅，纯装饰层，不拦截交互） */
+.gx-phone { position: relative; }
+.gx-wm { position: absolute; left: -10vmin; bottom: -12vmin; width: 78vmin; height: 78vmin;
+  background: url(/guixu-mark-wm.webp?v=20261031e) no-repeat left bottom / contain;
+  pointer-events: none; user-select: none; -webkit-user-select: none; z-index: 0; }
+.gx-phone .status-bar, .gx-phone .phone-body, .gx-phone .phone-tabbar { position: relative; z-index: 1; }
+/* 背景动态特效：游走萤火 canvas 层（装饰，不拦截交互，压在内容之上做浮空光点） */
+#gxFirefly { position: absolute; inset: 0; display: block; width: 100%; height: 100%;
+  pointer-events: none; user-select: none; -webkit-user-select: none; z-index: 3; mix-blend-mode: screen; }
 </style>
 </head>
 <body>
+<!-- ===== GUIXU SPLASH START ===== -->
+<style id="gxSplashCSS">
+/* ===== 归墟开屏动画 · CSS ===== */
+#splashScreen.splash-overlay{position:fixed;inset:0;z-index:99999;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;overflow:hidden;pointer-events:auto;opacity:1;
+  background:radial-gradient(ellipse 62% 52% at 50% 42%,#0e2539 0%,#071625 46%,#03080f 100%);
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Helvetica Neue",Arial,sans-serif;
+  -webkit-tap-highlight-color:transparent;transition:opacity .62s ease}
+#splashScreen.splash-overlay.hide{opacity:0}
+#splashScreen.splash-overlay[data-active="0"]{display:none}
 
-<div class="gx-lang-bar"><span data-gx-lang-switch></span></div>
+/* 网格底纹 */
+#splashScreen .splash-grid{position:absolute;inset:0;opacity:0;
+  background-image:linear-gradient(rgba(120,180,255,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(120,180,255,.055) 1px,transparent 1px);
+  background-size:44px 44px;
+  -webkit-mask-image:radial-gradient(ellipse 56% 46% at 50% 45%,#000 18%,transparent 72%);
+  mask-image:radial-gradient(ellipse 56% 46% at 50% 45%,#000 18%,transparent 72%);
+  animation:gxSpGridIn 1.8s ease .15s forwards}
+@keyframes gxSpGridIn{from{opacity:0;transform:scale(1.07)}to{opacity:1;transform:scale(1)}}
+
+/* 粒子层 */
+#splashScreen .splash-fx{position:absolute;inset:0;width:100%;height:100%;display:block}
+
+/* 旋转光束（光栅） */
+#splashScreen .splash-rays{position:absolute;left:50%;top:50%;width:150vmax;height:150vmax;margin:-75vmax 0 0 -75vmax;opacity:0;
+  background:conic-gradient(from 0deg,rgba(150,205,255,.15) 0deg,rgba(150,205,255,0) 11deg,rgba(150,205,255,0) 23deg,
+    rgba(150,205,255,.10) 29deg,rgba(150,205,255,0) 41deg,rgba(150,205,255,0) 58deg,
+    rgba(150,205,255,.13) 64deg,rgba(150,205,255,0) 78deg,rgba(150,205,255,0) 98deg,
+    rgba(150,205,255,.08) 104deg,rgba(150,205,255,0) 118deg,rgba(150,205,255,0) 180deg,
+    rgba(150,205,255,.10) 200deg,rgba(150,205,255,0) 214deg,rgba(150,205,255,0) 250deg,
+    rgba(150,205,255,.12) 268deg,rgba(150,205,255,0) 282deg,rgba(150,205,255,0) 320deg,
+    rgba(150,205,255,.09) 336deg,rgba(150,205,255,0) 350deg);
+  -webkit-mask-image:radial-gradient(closest-side,#000 0%,transparent 60%);
+  mask-image:radial-gradient(closest-side,#000 0%,transparent 60%);
+  animation:gxSpRaysIn 2s ease .5s forwards,gxSpSpin 86s linear infinite}
+@keyframes gxSpRaysIn{to{opacity:1}}
+@keyframes gxSpSpin{to{transform:rotate(360deg)}}
+
+/* 开机光束 */
+#splashScreen .splash-beam{position:absolute;left:50%;top:50%;width:8px;height:2px;border-radius:2px;background:#e6f3ff;
+  box-shadow:0 0 18px 7px rgba(160,210,255,.85),0 0 64px 22px rgba(90,160,230,.45);
+  animation:gxSpBeam 1.2s cubic-bezier(.2,.72,.3,1) both}
+@keyframes gxSpBeam{
+  0%{opacity:0;transform:translate(-50%,-50%) scaleX(.2) scaleY(1)}
+  12%{opacity:1}
+  42%{transform:translate(-50%,-50%) scaleX(42) scaleY(1)}
+  68%{opacity:.5;transform:translate(-50%,-50%) scaleX(66) scaleY(.6)}
+  100%{opacity:0;transform:translate(-50%,-50%) scaleX(88) scaleY(.3)}}
+
+/* 舞台：光晕 + 冲击环 + LOGO */
+#splashScreen .splash-stage{position:relative;z-index:5;width:min(247px,51vw,27vh);height:min(247px,51vw,27vh);
+  display:flex;align-items:center;justify-content:center}
+#splashScreen .splash-halo{position:absolute;inset:-16%;border-radius:50%;opacity:0;will-change:opacity;
+  background:radial-gradient(circle at 50% 50%,rgba(165,214,255,.5) 0%,rgba(92,155,232,.24) 38%,rgba(60,110,190,0) 70%);
+  animation:gxSpHaloIn 1s cubic-bezier(.2,.8,.3,1) .3s forwards,gxSpHaloPulse 3.8s ease-in-out 1.35s infinite}
+@keyframes gxSpHaloIn{from{opacity:0}to{opacity:.86}}
+@keyframes gxSpHaloPulse{0%,100%{opacity:.78}50%{opacity:1}}
+#splashScreen .splash-ring{position:absolute;border-radius:50%;border:1px solid rgba(165,212,255,.55);opacity:0;
+  animation:gxSpWave 2s cubic-bezier(.22,.7,.3,1) .26s both}
+#splashScreen .splash-ring.r1{inset:8%}
+#splashScreen .splash-ring.r2{inset:20%;border-color:rgba(200,230,255,.42);animation-delay:.52s;animation-duration:2.3s}
+@keyframes gxSpWave{0%{opacity:0;transform:scale(.5)}16%{opacity:.85}100%{opacity:0;transform:scale(1.5)}}
+#splashScreen .splash-emblem{position:relative;width:56%;height:56%;display:flex;align-items:center;justify-content:center;
+  animation:gxSpEmblemIn 1.35s cubic-bezier(.16,.86,.3,1) .28s both}
+@keyframes gxSpEmblemIn{
+  0%{opacity:0;transform:translate3d(0,16px,0) scale(.78) rotate(-11deg)}
+  55%{opacity:1}
+  100%{opacity:1;transform:translate3d(0,0,0) scale(1) rotate(0deg)}}
+#splashScreen .splash-img{position:relative;z-index:2;width:100%;height:auto;display:block;
+  filter:brightness(1.12) saturate(1.06) drop-shadow(0 0 9px rgba(255,255,255,.5)) drop-shadow(0 0 30px rgba(122,186,255,.5)) drop-shadow(0 0 66px rgba(70,130,210,.3))}
+#splashScreen .splash-sheen{position:absolute;inset:0;z-index:3;pointer-events:none;
+  -webkit-mask-image:url(/guixu-splash-640.webp);mask-image:url(/guixu-splash-640.webp);
+  -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+  -webkit-mask-position:center;mask-position:center;
+  -webkit-mask-size:contain;mask-size:contain}
+#splashScreen .splash-sheen i{position:absolute;top:-18%;bottom:-18%;left:0;width:26%;display:block;opacity:0;
+  background:linear-gradient(90deg,rgba(255,255,255,0),rgba(226,243,255,.95),rgba(255,255,255,0));
+  filter:blur(3px);animation:gxSpSheen 2.3s cubic-bezier(.4,0,.25,1) .82s 1 both}
+@keyframes gxSpSheen{0%{opacity:0;transform:translate3d(-170%,0,0)}10%{opacity:1}90%{opacity:1}100%{opacity:0;transform:translate3d(540%,0,0)}}
+#splashScreen .splash-flash{position:absolute;left:50%;top:50%;width:126%;height:126%;transform:translate(-50%,-50%);
+  z-index:1;border-radius:50%;opacity:0;
+  background:radial-gradient(circle,rgba(238,248,255,.92) 0%,rgba(160,212,255,.34) 30%,rgba(160,212,255,0) 63%);
+  animation:gxSpFlash 1.05s ease .4s both}
+@keyframes gxSpFlash{0%{opacity:0}16%{opacity:.9}100%{opacity:0}}
+
+/* 文案 */
+#splashScreen .splash-text{position:relative;z-index:6;text-align:center;margin-top:clamp(18px,4.2vh,38px);opacity:0;
+  animation:gxSpUp .95s cubic-bezier(.2,.8,.3,1) 1.02s forwards}
+#splashScreen .splash-text .nm{font-size:clamp(26px,7.4vw,40px);font-weight:700;letter-spacing:.42em;text-indent:.42em;line-height:1.1;
+  background:linear-gradient(135deg,#f4f9ff 0%,#c2ddf9 44%,#7fb2e2 100%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+#splashScreen .splash-text .sb{margin-top:11px;font-size:clamp(10px,2.8vw,12px);letter-spacing:.32em;text-indent:.32em;
+  color:rgba(168,198,228,.6);text-transform:uppercase}
+#splashScreen .splash-load{position:relative;z-index:6;display:flex;gap:9px;margin-top:22px;opacity:0;
+  animation:gxSpUp .8s ease 1.32s forwards}
+#splashScreen .splash-load i{width:6px;height:6px;border-radius:50%;background:#9fc9ee;opacity:.32;
+  animation:gxSpDot 1.35s ease-in-out infinite}
+#splashScreen .splash-load i:nth-child(2){background:#d6ebff;animation-delay:.16s}
+#splashScreen .splash-load i:nth-child(3){background:#8fbcdf;animation-delay:.32s}
+@keyframes gxSpDot{0%,100%{opacity:.3;transform:translate3d(0,0,0)}45%{opacity:1;transform:translate3d(0,-7px,0)}}
+@keyframes gxSpUp{from{opacity:0;transform:translate3d(0,15px,0)}to{opacity:1;transform:none}}
+#splashScreen .splash-v{position:absolute;left:0;right:0;bottom:clamp(20px,4.2vh,34px);z-index:6;text-align:center;opacity:0;
+  font-size:10.5px;letter-spacing:.22em;color:rgba(158,190,220,.55);animation:gxSpUp .8s ease 1.5s forwards}
+#splashScreen .splash-tip{position:absolute;left:50%;bottom:clamp(74px,12vh,116px);z-index:8;
+  transform:translateX(-50%) translateY(6px);opacity:0;pointer-events:none;
+  font-size:12px;letter-spacing:.1em;color:rgba(196,220,242,.92);
+  background:rgba(20,46,72,.55);border:1px solid rgba(150,200,255,.26);padding:8px 16px;border-radius:999px;
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+  transition:opacity .45s ease,transform .45s ease}
+#splashScreen .splash-tip.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media (prefers-reduced-motion:reduce){
+  #splashScreen .splash-rays,#splashScreen .splash-beam{display:none}
+  #splashScreen *{animation-duration:.01s!important;animation-delay:0s!important}
+}
+</style>
+
+<div id="splashScreen" class="splash-overlay" data-active="1" role="img" aria-label="归墟">
+  <canvas class="splash-fx" id="splashFx"></canvas>
+  <div class="splash-grid"></div>
+  <div class="splash-rays"></div>
+  <div class="splash-beam"></div>
+  <div class="splash-stage">
+    <div class="splash-halo"></div>
+    <div class="splash-ring r1"></div>
+    <div class="splash-ring r2"></div>
+    <div class="splash-emblem">
+      <span class="splash-flash"></span>
+      <img class="splash-img" src="/guixu-splash-640.webp" alt="归墟" width="640" height="640" decoding="async">
+      <span class="splash-sheen"><i></i></span>
+    </div>
+  </div>
+  <div class="splash-text">
+    <div class="nm">归墟</div>
+    <div class="sb">The Great Abyss</div>
+  </div>
+  <div class="splash-load"><i></i><i></i><i></i></div>
+  <div class="splash-tip" id="splashTip">♪ 点击屏幕开启音效</div>
+  <div class="splash-v">PROOF OF RESOURCE NETWORK · GUIXU.CLUB</div>
+</div>
+<script>
+/* ===== 归墟开屏动画 · JS（静态遮罩版：隐藏 = display:none + data-active=0）===== */
+(function(){
+  var MIN_SHOW=2600, MAX_SHOW=8000;
+  /* 预览页专用：?hold=<秒> 延长展示时间，方便慢慢看效果（正式页无此参数） */
+  var _hold=parseFloat((location.search.match(/[?&]hold=(\d+(?:\.\d+)?)/)||[])[1]);
+  if(_hold>0){ MIN_SHOW=_hold*1000; MAX_SHOW=MIN_SHOW+6000; }
+  var _tpl=null, _rafStopper=null, _hidden=false, _start=0, _replaying=false;
+
+  function _ac(){
+    try{ if(!window._splashAC) window._splashAC=new (window.AudioContext||window.webkitAudioContext)(); return window._splashAC; }
+    catch(e){ return null; }
+  }
+  function _note(a,f,t0,dur,type,gain){
+    try{ var o=a.createOscillator(),g=a.createGain();
+      o.type=type||'sine'; o.frequency.setValueAtTime(f,t0); o.connect(g); g.connect(a.destination);
+      g.gain.setValueAtTime(0,t0); g.gain.linearRampToValueAtTime(gain||.07,t0+.02);
+      g.gain.exponentialRampToValueAtTime(.0008,t0+dur);
+      o.start(t0); o.stop(t0+dur+.05);
+    }catch(e){}
+  }
+  function _whoosh(a,t0,dur,peak){
+    try{ var len=Math.max(1,Math.floor(a.sampleRate*dur)), buf=a.createBuffer(1,len,a.sampleRate), d=buf.getChannelData(0);
+      for(var i=0;i<len;i++){ d[i]=(Math.random()*2-1)*(1-i/len); }
+      var s=a.createBufferSource(); s.buffer=buf;
+      var f=a.createBiquadFilter(); f.type='bandpass'; f.Q.value=.9;
+      f.frequency.setValueAtTime(240,t0); f.frequency.exponentialRampToValueAtTime(3400,t0+dur);
+      var g=a.createGain(); g.gain.setValueAtTime(0,t0);
+      g.gain.linearRampToValueAtTime(peak||.05,t0+dur*.32); g.gain.exponentialRampToValueAtTime(.0008,t0+dur);
+      s.connect(f); f.connect(g); g.connect(a.destination); s.start(t0); s.stop(t0+dur+.05);
+    }catch(e){}
+  }
+  /* 三段式音效：0s 低频涌起 + 气流 → 0.28s 落定重音 → 0.44s 上行音阶 → 1.28s 点睛余韵 */
+  window._playSplashSound=function(){
+    var a=_ac(); if(!a) return false;
+    if(a.state!=='running') return false;
+    var b=a.currentTime+.02;
+    _note(a,55,b,1.6,'sine',.17); _note(a,110,b+.04,1.4,'triangle',.05); _note(a,220,b+.02,1.2,'sine',.025);
+    _whoosh(a,b+.02,.9,.045);
+    _note(a,82.41,b+.28,.85,'triangle',.13); _note(a,164.81,b+.28,.6,'sine',.05);
+    [[261.63,.44],[392.00,.56],[523.25,.68],[659.25,.80],[783.99,.92]].forEach(function(n){
+      _note(a,n[0],b+n[1],.95,'triangle',.072); });
+    [[1318.51,1.28,1.7],[1567.98,1.40,1.6],[2093.00,1.52,1.5]].forEach(function(n){
+      _note(a,n[0],b+n[1],n[2],'sine',.05); });
+    window._splashSoundPlayed=true;
+    var tip=document.getElementById('splashTip'); if(tip) tip.classList.remove('show');
+    return true;
+  };
+  function _trySound(){
+    var a=_ac(); if(!a) return;
+    if(a.state==='running'){ window._playSplashSound(); }
+    else if(a.state==='suspended'){ a.resume().then(function(){ window._playSplashSound(); }).catch(function(){}); }
+  }
+  function _wake(){
+    var a=window._splashAC;
+    if(a&&a.state==='suspended'){ a.resume().then(function(){ if(!window._splashSoundPlayed) window._playSplashSound(); }).catch(function(){}); }
+    else if(a&&a.state==='running'&&!window._splashSoundPlayed){ window._playSplashSound(); }
+    var tip=document.getElementById('splashTip'); if(tip) tip.classList.remove('show');
+    document.removeEventListener('click',_wake); document.removeEventListener('touchstart',_wake);
+  }
+  document.addEventListener('click',_wake,{once:true});
+  document.addEventListener('touchstart',_wake,{once:true});
+
+  /* 粒子 / 火星 */
+  function _fx(){
+    var cv=document.getElementById('splashFx');
+    if(!cv||!cv.getContext) return null;
+    var ctx=cv.getContext('2d'), dpr=Math.min(window.devicePixelRatio||1,2);
+    var W=0,H=0,amb=[],sparks=[],raf=null,running=true,last=0;
+    function size(){ W=cv.width=Math.max(1,Math.floor(cv.clientWidth*dpr)); H=cv.height=Math.max(1,Math.floor(cv.clientHeight*dpr)); }
+    function mkAmb(){ return {x:Math.random()*W,y:H*(.2+Math.random()*.8),r:(.6+Math.random()*1.4)*dpr,
+      vx:(Math.random()-.5)*.07*dpr,vy:-(.06+Math.random()*.2)*dpr,a:.1+Math.random()*.42}; }
+    function burst(){ for(var i=0;i<48;i++){ var ang=Math.random()*Math.PI*2, sp=(.7+Math.random()*2.6)*dpr;
+      sparks.push({x:W/2,y:H/2,vx:Math.cos(ang)*sp,vy:Math.sin(ang)*sp,life:1,r:(.8+Math.random()*1.5)*dpr}); } }
+    function frame(now){
+      if(!running) return;
+      var dt=Math.min(48,now-last)/16.7; last=now;
+      ctx.clearRect(0,0,W,H); ctx.globalCompositeOperation='lighter';
+      for(var i=0;i<amb.length;i++){ var p=amb[i]; p.x+=p.vx*dt; p.y+=p.vy*dt;
+        if(p.y<-12){ p.y=H+12; p.x=Math.random()*W; }
+        if(p.x<0)p.x=W; if(p.x>W)p.x=0;
+        ctx.beginPath(); ctx.fillStyle='rgba(168,214,255,'+p.a.toFixed(3)+')'; ctx.arc(p.x,p.y,p.r,0,6.2832); ctx.fill(); }
+      for(var j=sparks.length-1;j>=0;j--){ var s=sparks[j];
+        s.x+=s.vx*dt; s.y+=s.vy*dt; s.vx*=.972; s.vy*=.972; s.life-=.0165*dt;
+        if(s.life<=0){ sparks.splice(j,1); continue; }
+        ctx.beginPath(); ctx.fillStyle='rgba(228,244,255,'+(s.life*.9).toFixed(3)+')'; ctx.arc(s.x,s.y,Math.max(.2,s.r*s.life),0,6.2832); ctx.fill(); }
+      raf=requestAnimationFrame(frame);
+    }
+    size(); for(var k=0;k<70;k++) amb.push(mkAmb());
+    last=performance.now(); raf=requestAnimationFrame(frame);
+    setTimeout(burst,400); setTimeout(burst,1500);
+    window.addEventListener('resize',size);
+    return {stop:function(){ running=false; if(raf)cancelAnimationFrame(raf); window.removeEventListener('resize',size); }};
+  }
+
+  function _hide(){
+    var el=document.getElementById('splashScreen'); if(!el||_hidden) return;
+    _hidden=true;
+    el.classList.remove('show'); el.classList.add('hide');
+    setTimeout(function(){
+      el.style.display='none'; el.dataset.active='0';
+      if(_rafStopper){ try{_rafStopper();}catch(e){} _rafStopper=null; }
+      try{ if(typeof window.launchFireworks==='function') window.launchFireworks(); else if(typeof window.guixuFireworks==='function') window.guixuFireworks(); }catch(e){}
+    },640);
+  }
+  function _tick(){
+    if(_hidden) return;
+    if(Date.now()-_start>=MIN_SHOW) _hide(); else setTimeout(_tick,100);
+  }
+  function _boot(){
+    var el=document.getElementById('splashScreen'); if(!el) return;
+    _hidden=false; _start=Date.now();
+    if(_tpl===null) _tpl=el.outerHTML;
+    _rafStopper=_fx();
+    _trySound();
+    setTimeout(function(){ if(!window._splashSoundPlayed){ var t=document.getElementById('splashTip'); if(t) t.classList.add('show'); } },950);
+    setTimeout(function(){ if(!window._splashSoundPlayed){ var t=document.getElementById('splashTip'); if(t) t.classList.add('show'); } },2100);
+    setTimeout(_tick,120);
+    setTimeout(function(){ _hide(); },MAX_SHOW);
+  }
+  /* 重播：重建遮罩节点，动画从头开始（供按钮 / LOGO 点击调用） */
+  window.gxShowSplash=function(){
+    if(_replaying) return; _replaying=true;
+    var old=document.getElementById('splashScreen');
+    if(old&&old.parentNode) old.parentNode.removeChild(old);
+    if(_rafStopper){ try{_rafStopper();}catch(e){} _rafStopper=null; }
+    var box=document.createElement('div'); box.innerHTML=_tpl;
+    var node=box.firstElementChild;
+    document.body.insertBefore(node,document.body.firstChild);
+    _replaying=false;
+    window._splashSoundPlayed=false;
+    _boot();
+  };
+  _boot();
+})();
+</script>
+<noscript><style>#splashScreen{display:none!important}</style></noscript>
+<!-- ===== GUIXU SPLASH END ===== -->
+
+
+<div class="gx-lang-bar">
+  <a class="m-logo" href="https://www.guixu.club/" title="归墟共识官网首页 / Guixu Consensus Home" aria-label="Guixu Consensus Home">
+    <span class="m-logo-halo"></span>
+    <img src="/guixu800tm-96.webp?v=20260928a" alt="归墟共识 Guixu Consensus" width="96" height="96" decoding="async" fetchpriority="high">
+  </a>
+  <span data-gx-lang-switch></span>
+</div>
 
 <div class="phone-stage">
+  <a class="gx-emblem-wrap" href="https://www.guixu.club/" title="归墟共识官网首页 / Guixu Consensus Home">
+    <span class="gx-emblem-halo"></span>
+    <img class="gx-emblem" src="/guixu800tm-320.webp?v=20260925a" alt="归墟共识 Guixu Consensus" width="320" height="320" decoding="async" fetchpriority="high">
+  </a>
   <div class="gx-phone">
+  <div class="gx-wm" aria-hidden="true"></div>
+  <canvas id="gxFirefly" aria-hidden="true"></canvas>
     <div class="notch"></div>
 
     <div class="status-bar">
-      <span id="clock">09:41</span>
+      <span id="clock">--:--</span>
       <span data-i18n="app.statusBar">Guixu Consensus · Lightweight node</span>
-      <span>5G · Wi-Fi</span>
+      <span id="mNet">—</span>
     </div>
 
-    <div class="phone-body">
+    <div class="phone-body" id="phoneBody">
 
-      <!-- ============ 首页 ============ -->
+      <!-- ================= 首页 ================= -->
       <section class="m-panel active" data-panel="home">
+        <!-- 钱包连接与节点身份（组件见 shared/gx-wallet.js，data-addr="short" 让地址缩略显示） -->
+        <div class="gx-card" id="gxWalletMount" data-addr="short" style="margin-bottom:10px"></div>
+
         <div class="m-hello">
           <div class="hi" data-i18n="app.hi">Welcome back</div>
-          <div class="nm" id="mOwner">-- <span class="gx-tag gx-tag-ok" id="mRank">--</span></div>
+          <div class="nm"><span id="mOwner">--</span></div>
         </div>
 
+        <!-- 说明：原「未连接钱包」引导卡片与「节点身份」卡片的内容，已合并进上方
+             钱包卡片（shared/gx-wallet.js 的 GX_WALLET_EXTRA 扩展钩子渲染），
+             避免同屏重复展示钱包地址 / 节点名 / 邮箱 / 推荐人 / 绑定状态。 -->
+
+        <div class="m-sec-title" data-i18n="m.sec.runtime">Local Runtime</div>
+        <div class="gx-card" id="mRuntime"></div>
+
+        <div class="m-sec-title" data-i18n="m.sec.network">Network Live</div>
+        <div class="gx-card" id="mNetStats"></div>
+
+        <!-- 共识价值精简条：让新人一进首页就看见一个正在长大的网络（数据源 /api/platform/metrics） -->
+        <div class="m-kpi-grid" id="mCvStrip" style="margin-top:12px"></div>
+        <div style="text-align:right;margin-top:8px">
+          <button class="gx-btn gx-btn-sm gx-btn-ghost" type="button" data-goto-tab="net" id="mCvMore" data-i18n="m.cv.more">View consensus value</button>
+        </div>
+        <div class="m-src" id="mCvStripFoot"></div>
+
+        <div class="gx-card" id="mNoticeCard" style="display:none;margin-top:10px"></div>
+      </section>
+
+      <!-- ================= 资源 ================= -->
+      <section class="m-panel" data-panel="share">
+        <div class="m-sec-title" style="margin-top:8px" data-i18n="m.sec.share">Sharing Policy · saved locally</div>
+        <div id="mShareList"></div>
+        <div class="m-hint" data-i18n="m.share.note">Quota and switches are stored in this browser and reported to the server every 60s while this page stays open; earnings accrue by real online time.</div>
+
+        <div class="m-sec-title" data-i18n="m.sec.cap">Device Resources · live</div>
+        <div class="gx-card" id="mCapacity"></div>
+
+        <div class="m-sec-title" data-i18n="m.sec.compute">Compute Sharing</div>
         <div class="gx-card">
-          <div class="gx-card-head">
-            <h3 data-i18n="app.running">Node Running</h3>
-            <span class="gx-tag gx-tag-ok"><i class="gx-dot gx-dot-pulse"></i> <span data-i18n="app.online">Online</span></span>
-          </div>
-          <div style="font-size:.76em;color:var(--gx-faint)" data-i18n="app.todayEarn">Today's earnings (x)</div>
-          <div class="m-big"><span id="mToday">0</span><small>x</small></div>
-          <div class="gx-row-between" style="margin-top:10px">
-            <span class="gx-sub" style="font-size:.76em"><span data-i18n="app.uptimeA">Uptime</span> <b class="gx-accent" id="mUptime">0</b> <span data-i18n="app.uptimeB">days</span></span>
-            <span class="gx-sub" style="font-size:.76em"><span data-i18n="app.score">Credit score</span> <b class="gx-accent" id="mScore">0</b></span>
-          </div>
-        </div>
-
-        <div class="m-sec-title" data-i18n="app.sec.res">Resource Contribution</div>
-        <div class="gx-grid gx-grid-2">
-          <div class="gx-card gx-kpi">
-            <div class="kpi-label" data-i18n="app.res.bw">Idle Bandwidth</div>
-            <div class="kpi-value" style="font-size:1.15em"><span id="mBw">0</span><span class="kpi-unit">Mbps</span></div>
-            <div class="kpi-foot" data-i18n="app.res.bw.foot">Shared on Wi-Fi only</div>
-          </div>
-          <div class="gx-card gx-kpi">
-            <div class="kpi-label" data-i18n="app.res.st">Local Storage</div>
-            <div class="kpi-value" style="font-size:1.15em"><span id="mSt">0</span><span class="kpi-unit">GB</span></div>
-            <div class="kpi-foot" data-i18n="app.res.st.foot">Media cache untouched</div>
-          </div>
-        </div>
-        <div class="gx-card" style="margin-top:10px">
           <div class="gx-card-head" style="margin-bottom:8px">
-            <h3 data-i18n="app.res.cpu">On-device Compute</h3>
+            <h3 data-i18n="m.compute.h">On-device compute</h3>
             <span class="gx-tag gx-tag-bad" data-i18n="app.res.cpu.tag">Not supported</span>
           </div>
-          <div style="font-size:.75em;color:var(--gx-dim);line-height:1.6" data-i18n="app.res.cpu.desc">
-            Mobile devices do not take part in compute sharing, in order to protect battery life and thermals. Join the network from the PC client to contribute compute.
-          </div>
+          <div style="font-size:.75em;color:var(--gx-dim);line-height:1.6" data-i18n="m.compute.desc">Mobile devices do not take part in compute sharing, in order to protect battery life and thermals. Contribute compute from the PC client instead.</div>
         </div>
+      </section>
 
-        <div class="m-sec-title" data-i18n="app.sec.node">Node Info</div>
+      <!-- ================= 共识（跨端共识价值：全网总盘 / 我的位置 / 增长趋势 / 通证标尺） ================= -->
+      <section class="m-panel" data-panel="net">
+        <div class="m-sec-title" style="margin-top:8px" data-i18n="m.sec.cv.total">Consensus Value · network live</div>
+        <div class="m-kpi-grid" id="mCvTotal"></div>
+        <div class="m-hint" id="mCvTotalFoot"></div>
+
+        <div class="m-sec-title" data-i18n="m.sec.cv.mine">My Position</div>
+        <div class="gx-card" id="mCvMine"></div>
+
+        <div class="m-sec-title" data-i18n="m.sec.cv.behavior">My Behaviour Contribution</div>
+        <div class="gx-card" id="mCvBehavior"></div>
+
+        <div class="m-sec-title" data-i18n="m.sec.cv.trend">Network Growth · last 30 days</div>
         <div class="gx-card">
-          <div class="m-line"><span class="k" data-i18n="app.node.id">Node ID</span><span class="v gx-mono" id="mNodeId">--</span></div>
-          <div class="m-line"><span class="k" data-i18n="app.node.type">Device Type</span><span class="v" data-i18n="app.node.type.val">Mobile · Lightweight node</span></div>
-          <div class="m-line"><span class="k" data-i18n="app.node.loc">Location</span><span class="v" data-i18n="app.node.loc.val">Shenzhen · China</span></div>
-          <div class="m-line"><span class="k" data-i18n="app.node.bal">Wallet Balance</span><span class="v gx-accent" id="mBal">--</span></div>
+          <canvas id="mCvChart" style="width:100%;height:120px;display:block"></canvas>
+          <div class="m-empty" id="mCvChartEmpty" style="display:none"></div>
+          <div class="m-src" id="mCvTrendFoot"></div>
         </div>
+
+        <div class="m-sec-title" data-i18n="m.sec.cv.ruler">Token Ruler · resource → token</div>
+        <div class="gx-card" id="mCvRuler"></div>
+
+        <div class="m-sec-title" data-i18n="m.sec.code">My Referral Code</div>
+        <div class="gx-card" id="mCodeCard"></div>
+
+        <div class="m-sec-title" data-i18n="m.sec.team">Referral Network</div>
+        <div class="gx-card" id="mTeamCard"></div>
+
+        <div class="m-sec-title" data-i18n="m.sec.members">Team Members</div>
+        <div class="gx-card" id="mMembers"></div>
+
       </section>
 
-      <!-- ============ 资源 ============ -->
-      <section class="m-panel" data-panel="share">
-        <div class="m-sec-title" style="margin-top:8px" data-i18n="app.share.secTitle">Sharing Config · Mobile lightweight node</div>
-        <div id="mShareList"></div>
-        <div style="font-size:.72em;color:var(--gx-faint);line-height:1.6;margin-top:14px" data-i18n="app.share.note">
-          The mobile client only contributes bandwidth and storage, strictly limited to Wi-Fi, charging and non-low-battery conditions.
-        </div>
-      </section>
-
-      <!-- ============ 收益 ============ -->
+      <!-- ================= 收益与结算 ================= -->
       <section class="m-panel" data-panel="earn">
-        <div class="m-sec-title" style="margin-top:8px" data-i18n="app.earn.secTitle">My Assets</div>
+        <div class="m-kpi-grid" id="mEarnKpis" style="margin-top:8px"></div>
+
+        <div class="m-sec-title" data-i18n="m.sec.earn.trend">Earnings Trend · last 15 days</div>
         <div class="gx-card">
-          <div style="font-size:.76em;color:var(--gx-faint)" data-i18n="app.earn.bal">Wallet balance (x)</div>
-          <div class="m-big"><span id="mBal2">0</span></div>
-          <div class="gx-row-between" style="margin-top:10px">
-            <span class="gx-sub" style="font-size:.76em"><span data-i18n="app.earn.pending">Pending  </span><b class="gx-accent" id="mPend">--</b></span>
-            <span class="gx-sub" style="font-size:.76em"><span data-i18n="app.earn.tax">Tax paid  </span><b class="gx-accent" id="mTax">--</b></span>
-          </div>
+          <canvas id="mEarnChart" style="width:100%;height:120px;display:block"></canvas>
+          <div class="m-src" id="mEarnTrendFoot"></div>
         </div>
 
-        <div class="m-sec-title" data-i18n="app.earn.trend">Earnings Trend</div>
-        <div class="gx-card"><canvas id="mEarnChart"></canvas></div>
+        <div class="m-sec-title" data-i18n="m.sec.earn.bd">Contribution Breakdown · this month</div>
+        <div class="gx-card" id="mEarnBreakdown"></div>
 
-        <div class="m-sec-title" data-i18n="app.earn.bd">Contribution Breakdown</div>
-        <div class="gx-card" id="mBreakdown"></div>
+        <div class="m-sec-title" data-i18n="m.sec.earn.rec">Settlement Records</div>
+        <div class="gx-card" id="mEarnRecords"></div>
 
-        <div class="m-sec-title" data-i18n="app.earn.hist">Recent Records</div>
-        <div class="gx-card" id="mHistory"></div>
+        <div class="m-sec-title" data-i18n="m.sec.measured">Measured on this device (browser)</div>
+        <div class="gx-card" id="mEarnMeasured"></div>
+
+        <div class="m-sec-title" data-i18n="m.sec.chain">On-chain settlement (BSC Mainnet, live)</div>
+        <div class="gx-card" id="mEarnChain"></div>
+
+        <div class="gx-card" id="mEarnFoot"></div>
       </section>
 
-      <!-- ============ 我的 ============ -->
-      <section class="m-panel" data-panel="profile">
-        <div class="m-sec-title" style="margin-top:8px" data-i18n="app.profile.dev">Device Info</div>
+      <!-- ================= 我的 ================= -->
+      <section class="m-panel" data-panel="me">
+        <div class="m-sec-title" style="margin-top:8px" data-i18n="m.sec.profile">Node Profile</div>
+        <div class="gx-card" id="mProfile"></div>
+
+        <div class="m-sec-title" data-i18n="m.sec.device">Device Info · live</div>
         <div class="gx-card" id="mDevice"></div>
 
-        <div class="m-sec-title" data-i18n="app.profile.policy">Running Policies</div>
-        <div class="gx-card" id="mPolicy"></div>
-
-        <div class="m-sec-title" data-i18n="app.profile.about">About</div>
-        <div class="gx-card">
-          <div class="m-line"><span class="k" data-i18n="app.about.ver">App Version</span><span class="v" data-i18n="app.about.verVal">v0.1.0 prototype</span></div>
-          <div class="m-line"><span class="k" data-i18n="app.about.net">Network</span><span class="v" data-i18n="app.about.netVal">Guixu Consensus Mainnet</span></div>
-          <div class="m-line"><span class="k" data-i18n="app.about.proto">Sharing Protocol</span><span class="v" data-i18n="app.about.protoVal">PoR Proof of Resource</span></div>
-        </div>
+        <div class="m-sec-title" data-i18n="m.sec.about">About</div>
+        <div class="gx-card" id="mAbout"></div>
       </section>
     </div>
 
     <div class="phone-tabbar">
       <button class="active" data-tab="home">
         <svg class="tab-ico" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5L12 4l8 6.5V20H4z"/><path d="M9.5 20v-5h5v5"/></svg>
-        <span data-i18n="app.tab.home">Home</span>
+        <span data-i18n="m.tab.home">Home</span>
       </button>
       <button data-tab="share">
         <svg class="tab-ico" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M7 6.5h10M5 12h14M7 17.5h10"/></svg>
-        <span data-i18n="app.tab.share">Resources</span>
+        <span data-i18n="m.tab.share">Resources</span>
+      </button>
+      <button data-tab="net">
+        <svg class="tab-ico" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2.4"/><circle cx="6" cy="18" r="2.4"/><circle cx="18" cy="18" r="2.4"/><path d="M12 7.4v4.2M10.4 12.6L7.4 16M13.6 12.6l3 3.4"/></svg>
+        <span data-i18n="m.tab.net">Consensus</span>
       </button>
       <button data-tab="earn">
-        <svg class="tab-ico" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17.5l5-5 3.5 3.5L21 6.5"/><path d="M15.5 6.5H21v5.5"/></svg>
-        <span data-i18n="app.tab.earn">Earnings</span>
+        <svg class="tab-ico" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V9M9.5 19V5M15 19v-7M20.5 19V8"/></svg>
+        <span data-i18n="m.tab.earn">Earnings</span>
       </button>
-      <button data-tab="profile">
+      <button data-tab="me">
         <svg class="tab-ico" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.6 3.1-5.5 7-5.5s7 1.9 7 5.5"/></svg>
-        <span data-i18n="app.tab.profile">Me</span>
+        <span data-i18n="m.tab.me">Me</span>
       </button>
     </div>
+
+    <div class="m-toast" id="mToast"></div>
   </div>
 
-  <div class="phone-note" data-i18n="app.note">Mobile app UI prototype v0.1 · shares the same node system as the PC client</div>
+  <div class="phone-note" data-i18n="m.note">Mobile terminal · live connection build · shares one node system with the PC client</div>
 </div>
 
-<script src="../shared/guixu-i18n.js"></script>
-<script src="../shared/world-dots.js"></script>
-<script src="../shared/mock-data.js"></script>
-<script src="../shared/guixu-core.js"></script>
+<script src="../shared/guixu-i18n.js?v=20261115a"></script>
+<script src="../shared/guixu-core.js?v=20260925h"></script>
+<script src="../shared/gx-wallet.js?v=20261114dev"></script>
+<script src="../shared/gx-log.js?v=20261114a"></script>
+<script src="../shared/gx-notice.js?v=20260927a"></script>
+<script src="../shared/gx-firefly.js?v=20261031a"></script>
 <script>
+/* ============================================================================
+   归墟共识 · 手机端终端页（真实连接版）
+   ----------------------------------------------------------------------------
+   数据来源（全部真实，无模拟数据）：
+     1. 本机钱包身份  localStorage: gx_terminal_wallet_v1 / gx_terminal_nodes_v1
+     2. 推荐关系      GET /api/referral/info?terminal=0x..
+     3. 推荐网络团队  GET /api/referral/team?terminal=0x..
+     4. 全网统计      GET /api/stats
+     5. 重要公告      GET /api/notice
+     6. 服务健康      GET /api/health
+     7. 本机资源/设备 浏览器原生 API（navigator.* / screen / storage.estimate）
+     8. 本机共享策略  localStorage: gx_mobile_share_v1（本机设置，未上报）
+   未接入后端的模块（收益与结算、资源计量）一律显示「待接入」空状态，不展示任何模拟数字。
+============================================================================ */
 (function () {
-  var D = window.GX_DATA, M = D.me, MB = D.shareProfile.mobile;
-  var curTab = 'home', firstTop = true;
+  'use strict';
 
-  /* ---------- 时钟 ---------- */
-  var now = new Date(), p2 = function (n) { return (n < 10 ? '0' : '') + n; };
-  GX.qs('#clock').textContent = p2(now.getHours()) + ':' + p2(now.getMinutes());
+  var API = '/api';
+  var LS_WALLET = 'gx_terminal_wallet_v1';
+  var LS_NODES = 'gx_terminal_nodes_v1';
+  var LS_SHARE = 'gx_mobile_share_v1';
+  var APP_VER = 'v1.0.0 live';
 
-  /* ---------- Tab 切换 ---------- */
-  function switchTab(key) {
-    curTab = key;
-    GX.qsa('.m-panel').forEach(function (p) { p.classList.toggle('active', p.dataset.panel === key); });
-    GX.qsa('.phone-tabbar button').forEach(function (b) { b.classList.toggle('active', b.dataset.tab === key); });
-    GX.qs('.phone-body').scrollTop = 0;
-    if (key === 'earn') drawEarn();
+  /* ---------------- 本页文案（合并写入语言包，随语言切换自动生效） ---------------- */
+  if (GX.i18n && GX.i18n.register) {
+    GX.i18n.register('en', {
+      'm.tab.earn': 'Earnings',
+      'm.sec.earn.trend': 'Earnings Trend · last 15 days', 'm.sec.earn.bd': 'Contribution Breakdown · this month',
+      'm.sec.earn.rec': 'Settlement Records',
+      'm.earn.pending.foot': 'Credited next day (T+1)', 'm.earn.trend.empty': 'No settled data yet',
+      'm.earn.rate': 'Settlement rate',
+      'm.bd.storage': 'Storage', 'm.bd.bandwidth': 'Bandwidth', 'm.bd.compute': 'Compute',
+      'm.tax.label': 'Pre-deducted tax (estimate)', 'm.tax.net': 'net',
+      'm.chain.addr': 'Settlement address', 'm.chain.bal': 'Settlement wallet BNB',
+      'm.tab.home': 'Home', 'm.tab.share': 'Resources', 'm.tab.net': 'Consensus', 'm.tab.me': 'Me',
+      'm.note': 'Mobile terminal · live connection build · shares one node system with the PC client',
+      'm.guide.h': 'Connect a wallet first', 'm.tag.required': 'Wallet required',
+      'm.guide.s1': 'Tap “Connect Wallet” above and pick MetaMask / OKX or another browser wallet.',
+      'm.guide.s2': 'Confirm the signature request in your wallet. Nothing is stored without your signature.',
+      'm.guide.s3': 'Once connected, this device becomes a terminal identity — you can then set node name, email and referrer.',
+      'm.guide.foot': 'This page never connects automatically. Identity data stays in this browser; only the referral binding is written to the server after signing.',
+      'm.sec.identity': 'Node Identity', 'm.sec.runtime': 'Local Runtime', 'm.sec.network': 'Network Live',
+      'm.sec.share': 'Sharing Policy · saved locally', 'm.sec.cap': 'Device Resources · live', 'm.sec.compute': 'Compute Sharing',
+      'm.sec.code': 'My Referral Code', 'm.sec.team': 'Referral Network', 'm.sec.members': 'Team Members',
+      'm.sec.earn': 'Earnings & Settlement', 'm.sec.profile': 'Node Profile', 'm.sec.device': 'Device Info · live', 'm.sec.about': 'About',
+      'm.k.addr': 'Wallet Address', 'm.k.name': 'Node Name', 'm.k.mail': 'Email', 'm.k.ref': 'Referrer',
+      'm.k.bind': 'Server Binding', 'm.k.bindtime': 'Bound At', 'm.k.source': 'Identity Source',
+      'm.k.env': 'Runtime', 'm.k.net': 'Network', 'm.k.screen': 'Screen', 'm.k.dpr': 'Pixel Ratio',
+      'm.k.platform': 'Platform', 'm.k.mem': 'Device Memory', 'm.k.cores': 'CPU Cores', 'm.k.quota': 'Storage Quota',
+      'm.k.down': 'Downlink', 'm.k.rtt': 'RTT', 'm.k.lang': 'Language', 'm.k.tz': 'Time Zone',
+      'm.k.total': 'Bound Terminals', 'm.k.direct': 'Direct', 'm.k.team': 'Team', 'm.k.updated': 'Updated',
+      'm.k.ver': 'App Version', 'm.k.netname': 'Network', 'm.k.proto': 'Sharing Protocol', 'm.k.api': 'API Status',
+      'm.k.data': 'Data Source', 'm.k.code': 'Referral Code', 'm.k.invite': 'Invite link', 'm.k.report': 'Resource reporting',
+      'm.v.pausednet': 'Paused network-wide', 'm.report.every': 'Active · every {v}s',
+      'm.report.paused.note': 'Resource reporting and accrual are paused network-wide; it resumes automatically once re-enabled.',
+      'm.k.model': 'Device model', 'm.k.gpu': 'GPU', 'm.k.touch': 'Touch points', 'm.k.batt': 'Battery',
+      'm.v.nosupport': 'Not exposed by this browser', 'm.v.charging': 'charging', 'm.v.measured': 'measured',
+      'm.v.softgpu': 'Software renderer (no GPU on this device)',
+      'm.res.note': 'Memory and CPU cores are the values the browser is willing to report \u2014 privacy rounding can make them lower than the hardware spec.',
+      'm.dev.note': 'Every value above is read live from this device through real browser APIs. Anything the browser does not expose is labelled as such \u2014 never filled with a placeholder or a mock number.',
+      'm.v.unset': 'Not set', 'm.v.unbound': 'Not bound', 'm.v.localonly': 'Local only', 'm.v.srvbound': 'Bound on server',
+      'm.v.loading': 'Loading…', 'm.v.fail': 'Load failed', 'm.v.connected': 'Connected', 'm.v.notconnected': 'No wallet',
+      'm.v.online': 'Online', 'm.v.offline': 'Offline', 'm.v.walletbrowser': 'Wallet in-app browser',
+      'm.v.plainbrowser': 'Browser (no wallet detected)', 'm.v.localwallet': 'Local browser wallet',
+      'm.empty.wallet.t': 'No wallet connected', 'm.empty.wallet.d': 'Connect a wallet and complete the signature to load real identity data here. This page never shows placeholder numbers.',
+      'm.empty.team.t': 'No team members yet', 'm.empty.team.d': 'Share your referral code. Terminals that bind you will appear here with their level.',
+      'm.empty.members.t': 'No member records', 'm.empty.members.d': 'Member records come from the referral binding table on the server.',
+      'm.empty.code.t': 'Referral code requires a wallet', 'm.empty.code.d': 'The referral code is your wallet address. Connect a wallet to get it.',
+      'm.empty.earn.t': 'Earnings pending backend', 'm.empty.earn.d': 'Earnings and settlement need the node resource-reporting and settlement APIs, which are not connected yet. Nothing simulated is shown here; real figures will appear automatically once the APIs are live.',
+      'm.earn.balance': 'Settled total', 'm.earn.today': "Today's earnings", 'm.earn.pending': 'Pending settlement',
+      'm.earn.days': 'Settled days', 'm.earn.dayUnit': 'day(s)', 'm.earn.online': 'Online today',
+      'm.earn.declared': 'Declared quota', 'm.earn.last': 'Last report',
+      'm.earn.trend': 'Last 15 days', 'm.earn.records': 'Recent settlements', 'm.earn.recOnline': 'online {v}',
+      'm.sec.measured': 'Measured on this device (browser)', 'm.mv.used': 'Storage used / quota', 'm.mv.link': 'Link downlink / RTT',
+      'm.sec.chain': 'On-chain settlement (BSC Mainnet, live)', 'm.chain.net': 'Network', 'm.chain.block': 'Block height',
+      'm.chain.state': 'Settlement state', 'm.chain.on': 'Connected', 'm.chain.off': 'Not connected yet (ledger only)',
+      'm.chain.readfail': 'RPC unavailable — reported as-is, not guessed',
+      'm.tax.line': 'Pre-deducted by rule {r} (estimate)', 'm.tax.note': 'Tax is computed from the platform rule; nothing is charged on chain yet.',
+      'm.earn.note': 'Accrued as declared quota (storage / bandwidth) \u00d7 settlement rate \u00d7 actual online time. Real-usage metering and on-chain withdrawal are not connected yet.',
+      'm.earn.loading.t': 'Loading settlement data', 'm.earn.loading.d': 'Fetching this terminal\u2019s settlement records from the server.',
+      'm.earn.err.t': 'Settlement API unavailable', 'm.earn.err.d': 'Could not load settlement data. Check your connection and retry.',
+      'm.btn.copy': 'Copy', 'm.btn.copyinvite': 'Copy invite link', 'm.btn.retry': 'Retry', 'm.toast.copied': 'Copied', 'm.toast.copyfail': 'Copy failed, please select manually',
+      'm.code.how': 'Your referral code is your wallet address. Share the code or the invite link \u2014 the link pre-fills your address as the referrer; the recipient connects a wallet and signs to bind.',
+      'm.card.collapse': 'Collapse section', 'm.card.expand': 'Expand section',
+      'm.toast.saved': 'Saved locally',
+      'm.sh.bw': 'Bandwidth sharing', 'm.sh.bw.d': 'Contribute idle uplink bandwidth on Wi-Fi only.',
+      'm.sh.st': 'Storage sharing', 'm.sh.st.d': 'Use the browser storage quota as light cache; photos and files are untouched.',
+      'm.sh.wifi': 'Wi-Fi only', 'm.sh.wifi.d': 'Auto-pause on cellular networks.',
+      'm.sh.charge': 'Charging only', 'm.sh.charge.d': 'Auto-pause while on battery.',
+      'm.sh.batt': 'Low-battery guard', 'm.sh.batt.d': 'Auto-pause below 20% battery.',
+      'm.sh.upper': 'Max {v}',
+      'm.compute.h': 'On-device compute',
+      'm.compute.desc': 'Mobile devices do not take part in compute sharing, in order to protect battery life and thermals. Contribute compute from the PC client instead.',
+      'm.share.note': 'Quota and switches are stored in this browser and reported to the server every 60s while this page stays open; earnings accrue by real online time.',
+      'm.lvl.n': 'Level {n}',
+      'm.about.ver': 'v1.0.0 · live connection', 'm.about.net': 'Guixu Consensus Mainnet', 'm.about.proto': 'PoR · Proof of Resource',
+      'm.about.data': 'Local wallet + Guixu API', 'm.about.apiok': 'Healthy', 'm.about.apibad': 'Unavailable',
+      /* 行为贡献（P7-a） */
+      'm.sec.cv.behavior': 'My Behaviour Contribution',
+      'm.bh.tier': 'Contributor tier', 'm.bh.lv1': 'Lv1 Standard', 'm.bh.lv2': 'Lv2 Premium',
+      'm.bh.lv3': 'Lv3 Core', 'm.bh.none': 'Not yet eligible',
+      'm.bh.points': 'Contribution score · 7d',
+      'm.bh.sess': 'Valid sessions / interactions · 7d',
+      'm.bh.weight': 'Traffic pool weight',
+      'm.bh.join': 'Qualified referrals · join bonus',
+      'm.bh.online': 'Uptime · 7d (days reported)',
+      'm.bh.state': 'Settlement', 'm.bh.on': 'Enabled', 'm.bh.observed': 'Observation period · not settled',
+      'm.bh.err.t': 'Behaviour metrics unavailable', 'm.bh.err.d': 'Could not read the behaviour ledger for this terminal.',
+      'm.bh.note': 'A valid session is one visible visit of 15 seconds or more; interactions are clicks, typing and tab switches, debounced to 1.5s. Online time is NOT used here — it already scales resource settlement, and counting it twice would pay the same contribution twice.',
+      /* 共识价值（P2 新增） */
+      'm.sec.cv.total': 'Consensus Value · network live', 'm.sec.cv.mine': 'My Position',
+      'm.sec.cv.trend': 'Network Growth · last 30 days', 'm.sec.cv.ruler': 'Token Ruler · resource → token',
+      'm.cv.terminals': 'Terminals', 'm.cv.storage': 'Pooled Storage', 'm.cv.bw': 'Pooled Bandwidth',
+      'm.cv.compute': 'Pooled Compute', 'm.cv.active': 'Active 7d', 'm.cv.basis': 'Declared quota',
+      'm.cv.more': 'View consensus value',
+      'm.cv.err.t': 'Consensus metrics unavailable', 'm.cv.err.d': 'Could not read network metrics. Check the connection and retry.',
+      'm.cv.empty.d': 'No terminal has reported yet — nothing is shown rather than a placeholder zero.',
+      'm.cv.ip': 'Current IP', 'm.cv.geo': 'Location', 'm.cv.ip.wait': 'Reading your current IP…',
+      'm.cv.trend.empty.t': 'No growth curve yet', 'm.cv.trend.empty.d': 'Once terminals have reported for two or more days, the network growth curve appears here.',
+      'm.cv.trend.axis': 'vertical axis: terminals',
+      'm.cv.mine.share': 'My share of the pool', 'm.cv.mine.st': 'Storage', 'm.cv.mine.bw': 'Bandwidth', 'm.cv.mine.cp': 'Compute',
+      'm.cv.mine.pct': 'Contribution percentile', 'm.cv.mine.pctv': 'Ahead of {v}% of terminals',
+      'm.cv.mine.decl': 'Declared quota', 'm.cv.mine.rate7': 'Network online rate · 7d', 'm.cv.mine.nodes': 'Network terminals',
+      'm.cv.mine.note': 'Share and percentile come from the same server snapshot as the network pool, so they always agree. Percentile is ranked by cumulative online time.',
+      'm.cv.ruler.total': 'Total (today)', 'm.cv.ruler.day': 'gx/day',
+      'm.cv.ruler.nodata.t': 'No report yet today', 'm.cv.ruler.nodata.d': 'Turn on resource sharing and keep this page open — the per-item conversion appears here.',
+      'm.cv.ruler.note': 'Line by line: declared quota × settlement rate × online-time ratio. The total is the server figure. On-chain settlement is not connected yet (ledger only).'
+    });
+    GX.i18n.register('zh', {
+      'm.tab.earn': '收益',
+      'm.sec.earn.trend': '收益趋势 · 近 15 日', 'm.sec.earn.bd': '贡献构成 · 本月',
+      'm.sec.earn.rec': '结算记录',
+      'm.earn.pending.foot': '次日入账（T+1）', 'm.earn.trend.empty': '暂无结算数据',
+      'm.earn.rate': '结算系数',
+      'm.bd.storage': '存储', 'm.bd.bandwidth': '带宽', 'm.bd.compute': '算力',
+      'm.tax.label': '预扣税费（估算）', 'm.tax.net': '预计到账',
+      'm.chain.addr': '结算地址', 'm.chain.bal': '结算钱包 BNB',
+      'm.tab.home': '首页', 'm.tab.share': '资源', 'm.tab.net': '共识', 'm.tab.me': '我的',
+      'm.note': '手机端终端 · 真实连接版 · 与 PC 客户端同属一套节点体系',
+      'm.guide.h': '先连接钱包', 'm.tag.required': '需钱包',
+      'm.guide.s1': '点击上方「连接钱包」，选择 MetaMask / OKX 等浏览器钱包。',
+      'm.guide.s2': '在钱包中确认签名授权；未完成签名不会写入任何身份。',
+      'm.guide.s3': '连接后本机即获得终端身份，可继续设置节点名、邮箱与推荐人。',
+      'm.guide.foot': '本页不会自动连接钱包。身份数据只保存在本机浏览器；只有推荐关系在用户签名后写入服务器。',
+      'm.sec.identity': '节点身份', 'm.sec.runtime': '本机运行状态', 'm.sec.network': '全网实时',
+      'm.sec.share': '共享策略 · 本机保存', 'm.sec.cap': '本机资源 · 实时读取', 'm.sec.compute': '算力共享',
+      'm.sec.code': '我的推荐码', 'm.sec.team': '推荐网络', 'm.sec.members': '团队成员',
+      'm.sec.earn': '收益与结算', 'm.sec.profile': '节点档案', 'm.sec.device': '设备信息 · 实时读取', 'm.sec.about': '关于',
+      'm.k.addr': '钱包地址', 'm.k.name': '节点名', 'm.k.mail': '邮箱', 'm.k.ref': '推荐人',
+      'm.k.bind': '服务端绑定', 'm.k.bindtime': '绑定时间', 'm.k.source': '身份来源',
+      'm.k.env': '运行环境', 'm.k.net': '网络', 'm.k.screen': '屏幕', 'm.k.dpr': '像素比',
+      'm.k.platform': '系统 / 浏览器', 'm.k.mem': '设备内存', 'm.k.cores': '逻辑核心', 'm.k.quota': '存储配额',
+      'm.k.down': '下行带宽', 'm.k.rtt': '网络延迟', 'm.k.lang': '语言', 'm.k.tz': '时区',
+      'm.k.total': '全网绑定终端', 'm.k.direct': '直推', 'm.k.team': '团队', 'm.k.updated': '数据更新',
+      'm.k.ver': '应用版本', 'm.k.netname': '网络', 'm.k.proto': '共享协议', 'm.k.api': '接口状态',
+      'm.k.data': '数据来源', 'm.k.code': '推荐码', 'm.k.invite': '邀请链接', 'm.k.report': '资源上报',
+      'm.v.pausednet': '全网已暂停', 'm.report.every': '正常 · 每 {v} 秒',
+      'm.report.paused.note': '全网已暂停资源上报与计入，后台恢复后自动继续。',
+      'm.k.model': '机型', 'm.k.gpu': '显卡', 'm.k.touch': '触控点', 'm.k.batt': '电池',
+      'm.v.nosupport': '本浏览器未提供', 'm.v.charging': '充电中', 'm.v.measured': '实测',
+      'm.v.softgpu': '软件渲染（本机无 GPU）',
+      'm.res.note': '内存与核心数是浏览器愿意对外上报的数值——受隐私保护取整，可能低于硬件实际标称。',
+      'm.dev.note': '以上均为本机浏览器接口实时读取的真实值；浏览器未开放的接口会明确标注，不会用占位假值填充。',
+      'm.v.unset': '未设置', 'm.v.unbound': '未绑定', 'm.v.localonly': '仅本机', 'm.v.srvbound': '服务器已绑定',
+      'm.v.loading': '读取中…', 'm.v.fail': '读取失败', 'm.v.connected': '已连接', 'm.v.notconnected': '未连接钱包',
+      'm.v.online': '在线', 'm.v.offline': '离线', 'm.v.walletbrowser': '钱包内置浏览器',
+      'm.v.plainbrowser': '普通浏览器（未检测到钱包）', 'm.v.localwallet': '本机浏览器钱包',
+      'm.empty.wallet.t': '未连接钱包', 'm.empty.wallet.d': '连接钱包并完成签名后，这里会显示真实的身份数据。本页不会用占位数字填充。',
+      'm.empty.team.t': '暂无团队成员', 'm.empty.team.d': '分享你的推荐码，绑定你的终端会按层级出现在这里。',
+      'm.empty.members.t': '暂无成员记录', 'm.empty.members.d': '成员记录来自服务器推荐绑定表。',
+      'm.empty.code.t': '推荐码需要先连接钱包', 'm.empty.code.d': '推荐码即你的钱包地址，连接钱包后自动生成。',
+      'm.empty.earn.t': '收益数据待接入', 'm.empty.earn.d': '收益与结算需要节点资源上报与结算接口，当前尚未接入。此处不展示任何模拟数字，接口就绪后会自动展示真实收益。',
+      'm.earn.balance': '累计已结算', 'm.earn.today': '今日收益', 'm.earn.pending': '待结算',
+      'm.earn.days': '已结算天数', 'm.earn.dayUnit': '天', 'm.earn.online': '今日在线',
+      'm.earn.declared': '申报额度', 'm.earn.last': '最近上报',
+      'm.earn.trend': '近 15 日', 'm.earn.records': '最近结算', 'm.earn.recOnline': '在线 {v}',
+      'm.sec.measured': '本机实测（浏览器）', 'm.mv.used': '存储占用 / 配额', 'm.mv.link': '链路下行 / 时延',
+      'm.sec.chain': '链上结算（BSC 主网 · 实时）', 'm.chain.net': '网络', 'm.chain.block': '当前区块',
+      'm.chain.state': '结算状态', 'm.chain.on': '已接入', 'm.chain.off': '尚未接入（当前仅记账）',
+      'm.chain.readfail': 'RPC 读取失败 —— 如实留空，不做估算',
+      'm.tax.line': '按规则 {r} 预扣（估算）', 'm.tax.note': '税费按平台规则估算，链上尚未实际扣缴。',
+      'm.earn.note': '按「已申报共享额度（存储/带宽）× 结算系数 × 实际在线时长」计收益；资源实际使用量与链上提现尚未接入。',
+      'm.earn.loading.t': '正在读取结算数据', 'm.earn.loading.d': '正在从服务器获取本终端的收益与结算记录。',
+      'm.earn.err.t': '结算接口读取失败', 'm.earn.err.d': '未能获取结算数据，请检查网络后重试。',
+      'm.btn.copy': '复制', 'm.btn.copyinvite': '复制邀请链接', 'm.btn.retry': '重试', 'm.toast.copied': '已复制', 'm.toast.copyfail': '复制失败，请手动选择复制',
+      'm.code.how': '推荐码即你的钱包地址。把推荐码或邀请链接发给下级，对方打开链接会自动填入推荐人地址，连接钱包并签名后即完成绑定。',
+      'm.card.collapse': '收起卡片', 'm.card.expand': '展开卡片',
+      'm.toast.saved': '已保存到本机',
+      'm.sh.bw': '带宽共享', 'm.sh.bw.d': '仅在 Wi-Fi 下贡献空闲上行带宽。',
+      'm.sh.st': '存储共享', 'm.sh.st.d': '使用浏览器可用配额做轻量缓存，不动相册与文件。',
+      'm.sh.wifi': '仅 Wi-Fi 下共享', 'm.sh.wifi.d': '蜂窝网络下自动暂停。',
+      'm.sh.charge': '仅充电时共享', 'm.sh.charge.d': '未充电时自动暂停。',
+      'm.sh.batt': '低电量保护', 'm.sh.batt.d': '电量低于 20% 自动暂停。',
+      'm.sh.upper': '上限 {v}',
+      'm.compute.h': '本机算力',
+      'm.compute.desc': '手机端不参与算力共享，以保护电池与散热。请在 PC 客户端贡献算力。',
+      'm.share.note': '额度与开关保存在本机浏览器；本页打开期间每 60 秒向服务器上报一次，收益按实际在线时长累计。',
+      'm.lvl.n': '第 {n} 层',
+      'm.about.ver': 'v1.0.0 · 真实连接', 'm.about.net': '归墟共识主网', 'm.about.proto': 'PoR · 资源证明',
+      'm.about.data': '本机钱包 + 归墟 API', 'm.about.apiok': '正常', 'm.about.apibad': '不可用',
+      /* 行为贡献（P7-a） */
+      'm.sec.cv.behavior': '我的行为贡献',
+      'm.bh.tier': '贡献者等级', 'm.bh.lv1': 'Lv1 普通', 'm.bh.lv2': 'Lv2 优质',
+      'm.bh.lv3': 'Lv3 核心', 'm.bh.none': '尚未达标',
+      'm.bh.points': '7 日贡献值',
+      'm.bh.sess': '有效会话 / 交互 · 7 日',
+      'm.bh.weight': '流量池权重',
+      'm.bh.join': '合格下级 · 拉新贡献',
+      'm.bh.online': '在线率 · 7 日（有上报天数）',
+      'm.bh.state': '结算状态', 'm.bh.on': '已开启', 'm.bh.observed': '观察期 · 未结算',
+      'm.bh.err.t': '行为度量读取失败', 'm.bh.err.d': '未能读取该终端的行为账本。',
+      'm.bh.note': '有效会话 = 一次可见停留 ≥ 15 秒；有效交互 = 点击 / 键盘输入 / 页签切换，1.5 秒去抖。在线时长不参与此项 —— 它已在资源结算中作为乘数，重复计入等于同一份贡献付两次钱。',
+      /* 共识价值（P2 新增） */
+      'm.sec.cv.total': '共识价值 · 全网实时', 'm.sec.cv.mine': '我的位置',
+      'm.sec.cv.trend': '网络增长 · 近 30 日', 'm.sec.cv.ruler': '通证标尺 · 资源 → 通证',
+      'm.cv.terminals': '接入终端', 'm.cv.storage': '汇聚存储', 'm.cv.bw': '汇聚带宽',
+      'm.cv.compute': '汇聚算力', 'm.cv.active': '近 7 日活跃', 'm.cv.basis': '已申报额度',
+      'm.cv.more': '查看共识价值',
+      'm.cv.err.t': '共识度量读取失败', 'm.cv.err.d': '未能读取全网度量数据，请检查网络后重试。',
+      'm.cv.empty.d': '暂无终端上报 —— 这里显示「—」，不用占位数字填充。',
+      'm.cv.ip': '当前 IP', 'm.cv.geo': '归属地', 'm.cv.ip.wait': '正在读取当前 IP…',
+      'm.cv.trend.empty.t': '暂无增长曲线', 'm.cv.trend.empty.d': '终端连续上报两天以上后，这里会显示网络增长曲线。',
+      'm.cv.trend.axis': '纵轴：接入终端数',
+      'm.cv.mine.share': '我在全网中的占比', 'm.cv.mine.st': '存储', 'm.cv.mine.bw': '带宽', 'm.cv.mine.cp': '算力',
+      'm.cv.mine.pct': '贡献分位', 'm.cv.mine.pctv': '超过全网 {v}% 的终端',
+      'm.cv.mine.decl': '我的申报额度', 'm.cv.mine.rate7': '全网在线率 · 近 7 日', 'm.cv.mine.nodes': '全网终端数',
+      'm.cv.mine.note': '占比与分位与全网总盘取自同一份服务端快照，两者天然一致；分位按累计在线时长排序。',
+      'm.cv.ruler.total': '合计（今日）', 'm.cv.ruler.day': 'gx/天',
+      'm.cv.ruler.nodata.t': '今日尚未上报', 'm.cv.ruler.nodata.d': '开启资源分享并保持本页打开，这里会显示逐项换算过程。',
+      'm.cv.ruler.note': '逐项换算：已申报额度 × 结算系数 × 在线时长占比；合计取服务器数值。链上结算尚未接入（当前仅记账）。'
+    });
   }
-  GX.qsa('.phone-tabbar button').forEach(function (b) {
-    GX.on(b, 'click', function () { switchTab(b.dataset.tab); });
+  function T(k, v) { return GX.t(k, v); }
+
+  /* ---------------- 基础工具 ---------------- */
+  function q(s) { return document.querySelector(s); }
+  function qa(s) { return Array.prototype.slice.call(document.querySelectorAll(s)); }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function shortAddr(a) { return a ? String(a).slice(0, 6) + '...' + String(a).slice(-4) : ''; }
+  function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  function readStore(k, d) { var v = lsGet(k); if (!v) { return d; } try { var j = JSON.parse(v); return j == null ? d : j; } catch (e) { return d; } }
+  /* 兼容大小写：节点记录统一用小写键写入，这里容忍历史/异体大小写 */
+  function nodeRec(addr) {
+    var all = readStore(LS_NODES, {}), a = String(addr || '').toLowerCase(), k;
+    if (!a) { return {}; }
+    if (all[a]) { return all[a]; }
+    for (k in all) { if (Object.prototype.hasOwnProperty.call(all, k) && String(k).toLowerCase() === a) { return all[k]; } }
+    return {};
+  }
+  function isAddr(a) { return /^0x[0-9a-fA-F]{40}$/.test(String(a || '').trim()); }
+
+  function apiGet(path) {
+    if (!window.fetch) { return Promise.reject(new Error('no fetch')); }
+    return fetch(API + path, { cache: 'no-store', credentials: 'omit' }).then(function (r) {
+      return r.text().then(function (t) { var j = null; try { j = JSON.parse(t); } catch (e) {} return { status: r.status, body: j }; });
+    }).then(function (r) {
+      if (!r.body || r.body.ok !== true) { throw new Error((r.body && (r.body.message || r.body.code)) || ('HTTP ' + r.status)); }
+      return r.body;
+    });
+  }
+
+  /* ---------------- 状态 ---------------- */
+  var ST = {
+    w: null,                 // 本机钱包身份（未连接为 null）
+    srv: null, srvLoaded: false, srvErr: false,
+    team: null, teamLoaded: false, teamErr: false,
+    stats: null, statsErr: false,
+    health: null, healthErr: false,
+    notice: null,
+    cap: {},                 // 本机能力（同步可得部分）
+    quota: null, quotaUsage: null, rttMs: null, batt: null,
+    share: null,
+    tab: 'home'
+  };
+
+  /* ---------------- 本机硬件 / 网络能力（全部真实读取，不做任何模拟） ----------------
+     真实来源：
+       · 机型 / 系统 / 浏览器   navigator.userAgent 解析
+       · 显卡(GPU)              WebGL WEBGL_debug_renderer_info.UNMASKED_RENDERER_WEBGL
+       · 芯片核心 / 内存        navigator.hardwareConcurrency / navigator.deviceMemory
+       · 存储配额              navigator.storage.estimate()
+       · 电池                  navigator.getBattery()（仅部分浏览器开放）
+       · 网络延迟              对本站 /api/health 的实测往返耗时（performance.now）
+       · 屏幕 / 像素比 / 触控   screen / devicePixelRatio / navigator.maxTouchPoints
+     浏览器未开放的接口一律显示「本浏览器未提供」，绝不填占位假值。
+-------------------------------------------------------------------------- */
+  function netConn() {
+    return navigator.connection || navigator.mozConnection || navigator.webkitConnection || null;
+  }
+  /* 网络代际：Network Information API 把 4G 与 5G 一律报成 effectiveType='4g'
+     （浏览器无法区分 4G/5G），所以 4G 档统一显示「4G/5G」；2G/3G 仍如实显示。 */
+  function netGen(c) {
+    var t = c && c.effectiveType ? String(c.effectiveType).toLowerCase() : '';
+    if (t === '4g') { return '4G/5G'; }
+    if (t === '3g') { return '3G'; }
+    if (t === '2g' || t === 'slow-2g') { return '2G'; }
+    return '';
+  }
+  /* 两种状态都以「在线 ·」开头，只区分接入方式 / 代际（用户 2026-10-03 口径）：
+       蜂窝/其它 → 「在线 · 4G/5G」（2G/3G 如实显示）
+       Wi-Fi     → 「在线 · WiFi」
+     connection.type 缺失时（部分 iOS / 钱包内置浏览器）无法判断接入方式，
+     按代际显示「在线 · 4G/5G」，拿不到代际则只显示「在线」。 */
+  function netText() {
+    if (navigator.onLine === false) { return T('m.v.offline'); }
+    var c = netConn();
+    var type = c && c.type ? String(c.type).toLowerCase() : '';
+    var mid = (type === 'wifi') ? 'WiFi' : netGen(c);
+    return T('m.v.online') + (mid ? ' · ' + mid : '');
+  }
+  /* 网络延迟：优先用对本站 API 的实测往返耗时（任何浏览器都测得到），
+     其次才退回浏览器上报的 connection.rtt */
+  function rttText() {
+    if (ST.rttMs != null) { return ST.rttMs + ' ms · ' + T('m.v.measured'); }
+    var c = netConn();
+    if (c && c.rtt) { return c.rtt + ' ms'; }
+    return T('m.v.nosupport');
+  }
+  /* 钱包内置浏览器品牌：优先读注入的 provider 标识（window.ethereum.isXxx），UA 兜底。
+     手机端主要在 TP 钱包这类 Web3 内置浏览器中打开，设备信息应如实显示。 */
+  var WALLET_UA = [
+    [/TokenPocket/i, 'TokenPocket'], [/MetaMask/i, 'MetaMask'], [/OKApp|OKX/i, 'OKX Wallet'],
+    [/imToken/i, 'imToken'], [/TrustWallet|Trust Wallet/i, 'Trust Wallet'],
+    [/BitKeep/i, 'BitKeep'], [/Bitget/i, 'Bitget Wallet'], [/MathWallet/i, 'MathWallet'],
+    [/CoinbaseWallet/i, 'Coinbase Wallet'], [/Rabby/i, 'Rabby'], [/OneKey/i, 'OneKey'],
+    [/Bitpie/i, 'Bitpie'], [/AlphaWallet/i, 'AlphaWallet']
+  ];
+  function walletBrand() {
+    var e = window.ethereum || (window.web3 && window.web3.currentProvider);
+    if (!e) { return ''; }
+    if (e.isTokenPocket) { return 'TokenPocket'; }
+    if (e.isMetaMask) { return 'MetaMask'; }
+    if (e.isOKExWallet || e.isOkxWallet) { return 'OKX Wallet'; }
+    if (e.isImToken) { return 'imToken'; }
+    if (e.isTrust || e.isTrustWallet) { return 'Trust Wallet'; }
+    if (e.isBitKeep) { return 'BitKeep'; }
+    if (e.isBitget || e.isBitgetWallet) { return 'Bitget Wallet'; }
+    if (e.isMathWallet) { return 'MathWallet'; }
+    if (e.isCoinbaseWallet) { return 'Coinbase Wallet'; }
+    if (e.isRabby) { return 'Rabby'; }
+    if (e.isOneKey) { return 'OneKey'; }
+    if (e.isBitpie) { return 'Bitpie'; }
+    return '';
+  }
+  /* UA 解析：机型 / 系统 / 浏览器（浏览器真实上报，不做猜测） */
+  function uaInfo() {
+    var ua = navigator.userAgent, model = '', os = '', br = '';
+    var m, mm;
+    if (/iPhone/i.test(ua)) {
+      model = 'iPhone';
+      m = ua.match(/OS\s([\d_]+)/); os = 'iOS' + (m ? ' ' + m[1].replace(/_/g, '.') : '');
+    } else if (/iPad/i.test(ua)) {
+      model = 'iPad';
+      m = ua.match(/OS\s([\d_]+)/); os = 'iPadOS' + (m ? ' ' + m[1].replace(/_/g, '.') : '');
+    } else if (/Android/i.test(ua)) {
+      m = ua.match(/Android\s([\d.]+)/); os = 'Android' + (m ? ' ' + m[1] : '');
+      mm = ua.match(/Android[^;)]*;\s*([^;)]+?)(?:\s+Build|\s*\)|;)/i);
+      model = mm ? String(mm[1]).replace(/^\s+|\s+$/g, '') : 'Android';
+      if (!model || /^(wv|en|zh|ja|ko)[-\w]*$/i.test(model)) { model = 'Android'; }
+    } else if (/Windows NT 10/i.test(ua)) { model = 'PC'; os = 'Windows 10/11'; }
+    else if (/Windows/i.test(ua)) { model = 'PC'; os = 'Windows'; }
+    else if (/CrOS/i.test(ua)) { model = 'Chromebook'; os = 'ChromeOS'; }
+    else if (/Mac OS X/i.test(ua)) { model = 'Mac'; os = 'macOS'; }
+    else if (/Linux/i.test(ua)) { model = 'PC'; os = 'Linux'; }
+    if (/MicroMessenger/i.test(ua)) { br = 'WeChat'; }
+    else if (/Edg\//.test(ua)) { br = 'Edge'; }
+    else if (/OPR\//.test(ua)) { br = 'Opera'; }
+    else if (/Chrome\//.test(ua)) { br = 'Chrome'; }
+    else if (/Firefox\//.test(ua)) { br = 'Firefox'; }
+    else if (/Safari\//.test(ua)) { br = 'Safari'; }
+    /* 钱包内置浏览器：provider 标识优先，其次 UA 关键字 */
+    var wb = walletBrand();
+    if (!wb) {
+      for (var wi = 0; wi < WALLET_UA.length; wi++) {
+        if (WALLET_UA[wi][0].test(ua)) { wb = WALLET_UA[wi][1]; break; }
+      }
+    }
+    if (wb) { br = wb; }
+    return { model: model, os: os, browser: br, wallet: wb, platform: (os || '') + (br ? (os ? ' · ' : '') + br : '') };
+  }
+  /* 显卡：WebGL 真实渲染器串
+     · iOS  → "Apple GPU"
+     · 安卓 → "Adreno (TM) 740" / "Mali-G78"（或带 ANGLE 前缀）
+     · PC   → "ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Direct3D11 vs_5_0 ps_5_0, D3D11)"
+     只保留「厂商 + 设备」，去掉驱动/API 版本噪音；纯软件渲染（虚拟机 / 无 GPU）单独标注。 */
+  function gpuText() {
+    try {
+      var cv = document.createElement('canvas');
+      var gl = cv.getContext('webgl') || cv.getContext('experimental-webgl');
+      if (!gl) { return ''; }
+      var ext = gl.getExtension('WEBGL_debug_renderer_info');
+      var s = String((ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER)) || '');
+      s = s.replace(/^\s+|\s+$/g, '');
+      if (!s) { return ''; }
+      /* macOS Chrome/Safari：去掉 "ANGLE Metal Renderer:" 前缀，避免与厂商名重复（Apple Apple M2） */
+      s = s.replace(/ANGLE\s+Metal Renderer:\s*/gi, '');
+      var m = s.match(/^ANGLE\s*\((.*)\)\s*$/i);
+      if (m) {
+        var parts = m[1].split(',');
+        var head = String(parts[0] || '').replace(/^\s+|\s+$/g, '');
+        var dev = String(parts[1] || '').replace(/^\s+|\s+$/g, '');
+        dev = dev.replace(/\s*(Direct3D\d*|D3D\d+|vs_\d+_\d+|ps_\d+_\d+|Vulkan[\d.\s]*|OpenGL[\w\s.]*|Metal.*)$/i, '').replace(/^\s+|\s+$/g, '');
+        if (!dev) { dev = head; head = ''; }
+        s = (head && dev.toLowerCase().indexOf(head.toLowerCase()) !== 0 ? head + ' ' : '') + dev;
+      }
+      s = s.replace(/\(0x[0-9A-Fa-f]+\)/g, '').replace(/\s{2,}/g, ' ').replace(/^\s+|\s+$/g, '');
+      if (!s || /^(WebKit WebGL|WebGL)$/i.test(s)) { return ''; }
+      /* 返回语言无关的哨兵值，文案在渲染时按当前语言取，避免切成中文后仍是旧语言 */
+      if (/SwiftShader|llvmpipe|Software|Mesa OffScreen/i.test(s)) { return '#soft'; }
+      /* 驱动/API 版本噪音会成串出现（如 "Direct3D11 vs_5_0 ps_5_0"），剥到稳定为止 */
+      var NOISE = /\s*(Direct3D\d*|D3D\d+|vs_\d+_\d+|ps_\d+_\d+|Vulkan[\d.\s]*|OpenGL[\w\s.\/]*|Metal[\w\s.]*|Unspecified\s+Version)\s*$/i;
+      var prevS = '';
+      while (prevS !== s) { prevS = s; s = s.replace(NOISE, '').replace(/^\s+|\s+$/g, ''); }
+      if (!s) { return ''; }
+      return s.length > 58 ? s.slice(0, 58) : s;
+    } catch (e) { return ''; }
+  }
+  /* 电池：仅部分浏览器开放（Chrome/Android 有，iOS Safari 无） */
+  function probeBattery() {
+    if (!navigator.getBattery) { return; }
+    try {
+      navigator.getBattery().then(function (b) {
+        function upd() {
+          ST.batt = { level: Math.round(b.level * 100), charging: !!b.charging };
+          renderDevice();
+        }
+        upd();
+        b.addEventListener('levelchange', upd);
+        b.addEventListener('chargingchange', upd);
+      }).catch(function () {});
+    } catch (e) {}
+  }
+  /* 运行环境文案随语言切换实时取值（不要缓存进 ST.cap，否则切换语言后仍是旧语言） */
+  function envText() { return window.ethereum ? T('m.v.walletbrowser') : T('m.v.plainbrowser'); }
+  /* 真实值取用：浏览器没开放就明确说明，不显示 "--" 也不编造 */
+  function V(x) { return (x === null || x === undefined || x === '') ? T('m.v.nosupport') : esc(String(x)); }
+  function fmtBytes(b) {
+    if (b == null || isNaN(b)) { return '--'; }
+    var u = ['B', 'KB', 'MB', 'GB', 'TB'], i = 0, v = Number(b);
+    while (v >= 1024 && i < u.length - 1) { v /= 1024; i++; }
+    return (i >= 3 ? v.toFixed(2) : v.toFixed(0)) + ' ' + u[i];
+  }
+  function readCapacity() {
+    var u = uaInfo();
+    ST.cap = {
+      model: u.model, os: u.os, browser: u.browser, platform: u.platform,
+      gpu: gpuText(),
+      screen: (window.screen ? screen.width + '\u00d7' + screen.height : ''),
+      dpr: (window.devicePixelRatio ? window.devicePixelRatio + 'x' : ''),
+      touch: (typeof navigator.maxTouchPoints === 'number' ? String(navigator.maxTouchPoints) : ''),
+      mem: (navigator.deviceMemory ? navigator.deviceMemory + ' GB' : ''),
+      cores: (navigator.hardwareConcurrency ? String(navigator.hardwareConcurrency) : ''),
+      lang: (navigator.language || ''),
+      tz: (function () { try { return Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (e) { return ''; } })(),
+      down: (netConn() && netConn().downlink ? netConn().downlink + ' Mbps' : '')
+      /* 网络文案不进 ST.cap：它随语言 / 接入方式变化，必须在渲染时实时取 netText()
+         （见 renderRuntime / renderCapacity），缓存会在切语言后留下旧语言。 */
+    };
+    if (navigator.storage && navigator.storage.estimate) {
+      navigator.storage.estimate().then(function (e) {
+        ST.quota = e.quota; ST.quotaUsage = e.usage; renderCapacity(); renderDevice();
+      }).catch(function () {});
+    }
+  }
+
+  /* ---------------- 钱包身份（与入口页 / 终端页同一套 localStorage 键） ---------------- */
+  function readWallet() {
+    var raw = lsGet(LS_WALLET);
+    if (!raw) { return null; }
+    raw = String(raw).trim();
+    if (raw.charAt(0) === '"') { try { var s = JSON.parse(raw); if (typeof s === 'string') { raw = s.trim(); } } catch (e) {} }
+    if (!isAddr(raw)) { return null; }
+    var rec = readStore(LS_NODES, {})[raw.toLowerCase()] || {};
+    return {
+      addr: raw, short: shortAddr(raw),
+      name: String(rec.name == null ? '' : rec.name).trim(),
+      email: String(rec.email == null ? '' : rec.email).trim(),
+      ref: String(rec.ref == null ? '' : rec.ref).trim()
+    };
+  }
+
+  /* ---------------- 本机共享策略（真实持久化，本机设置） ---------------- */
+  var SHARE_DEF = { bwOn: true, bwMax: 20, stOn: true, stMax: 8, wifiOnly: true, chargeOnly: true, lowBatt: true };
+  var SHARE_ITEMS = [
+    { key: 'bw', onKey: 'bwOn', maxKey: 'bwMax', unit: 'Mbps', min: 5, max: 100, step: 5, label: 'm.sh.bw', desc: 'm.sh.bw.d' },
+    { key: 'st', onKey: 'stOn', maxKey: 'stMax', unit: 'GB', min: 1, max: 64, step: 1, label: 'm.sh.st', desc: 'm.sh.st.d' }
+  ];
+  var POLICY_ITEMS = [
+    { key: 'wifiOnly', label: 'm.sh.wifi', desc: 'm.sh.wifi.d' },
+    { key: 'chargeOnly', label: 'm.sh.charge', desc: 'm.sh.charge.d' },
+    { key: 'lowBatt', label: 'm.sh.batt', desc: 'm.sh.batt.d' }
+  ];
+  function readShare() {
+    var v = readStore(LS_SHARE, null), out = {}, k;
+    for (k in SHARE_DEF) { if (Object.prototype.hasOwnProperty.call(SHARE_DEF, k)) { out[k] = SHARE_DEF[k]; } }
+    if (v && typeof v === 'object') { for (k in SHARE_DEF) { if (Object.prototype.hasOwnProperty.call(v, k)) { out[k] = v[k]; } } }
+    return out;
+  }
+  function saveShare() { lsSet(LS_SHARE, JSON.stringify(ST.share)); }
+
+  /* ---------------- 数据拉取 ---------------- */
+  function loadServer(bust) {
+    var w = ST.w;
+    if (!w) { ST.srv = null; ST.srvLoaded = false; ST.srvErr = false; return; }
+    var addr = w.addr;
+    ST.srvLoaded = false; ST.srvErr = false;
+    apiGet('/referral/info?terminal=' + encodeURIComponent(addr)).then(function (d) {
+      if (!ST.w || ST.w.addr !== addr) { return; }
+      ST.srv = d; ST.srvLoaded = true; ST.srvErr = false; renderAll();
+    }).catch(function () {
+      if (!ST.w || ST.w.addr !== addr) { return; }
+      ST.srv = null; ST.srvLoaded = true; ST.srvErr = true; renderAll();
+    });
+  }
+  function loadTeam() {
+    var w = ST.w;
+    if (!w) { ST.team = null; ST.teamLoaded = false; ST.teamErr = false; return; }
+    var addr = w.addr;
+    ST.teamLoaded = false; ST.teamErr = false;
+    apiGet('/referral/team?terminal=' + encodeURIComponent(addr)).then(function (d) {
+      if (!ST.w || ST.w.addr !== addr) { return; }
+      ST.team = d; ST.teamLoaded = true; ST.teamErr = false; renderAll();
+    }).catch(function () {
+      if (!ST.w || ST.w.addr !== addr) { return; }
+      ST.team = null; ST.teamLoaded = true; ST.teamErr = true; renderAll();
+    });
+  }
+  function loadStats() {
+    apiGet('/stats').then(function (d) { ST.stats = d; ST.statsErr = false; renderNetStats(); })
+      .catch(function () { ST.statsErr = true; renderNetStats(); });
+  }
+  function loadHealth() {
+    /* 同一次 /api/health 请求顺带量出真实往返耗时，作为「网络延迟」的真值（任何浏览器都可用） */
+    var t0 = (window.performance && performance.now) ? performance.now() : null;
+    apiGet('/health').then(function (d) {
+      ST.health = d; ST.healthErr = false;
+      if (t0 !== null) { ST.rttMs = Math.max(1, Math.round(performance.now() - t0)); }
+      renderAbout(); renderRuntime(); renderCapacity();
+    }).catch(function () { ST.health = null; ST.healthErr = true; renderAbout(); });
+  }
+  function loadNotice() {
+    if (!window.GX_NOTICE || !GX_NOTICE.refresh) { return; }
+    GX_NOTICE.refresh(function (n) { ST.notice = n; renderNotice(); });
+  }
+
+  /* ---------------- 渲染小工具 ---------------- */
+  /* 值偏长（按中英文宽度估算）时自动缩一号字体，避免换行后大小与短值不一致 */
+  function valIsLong(html) {
+    var t = String(html == null ? '' : html).replace(/<[^>]*>/g, '');
+    var n = 0;
+    for (var i = 0; i < t.length; i++) { n += (t.charCodeAt(i) > 0x2e80) ? 2 : 1; }
+    return n > 22;
+  }
+  function row(k, v, forceSm) {
+    var sm = (forceSm === 'sm') || valIsLong(v);
+    return '<div class="m-line"><span class="k">' + k + '</span><span class="v' + (sm ? ' gx-val-sm' : '') + '">' + v + '</span></div>';
+  }
+  /* 空状态：不显示任何占位数字，仅说明原因与下一步 */
+  function empty(tKey, dKey, retryKey) {
+    var h = '<div class="m-empty"><div class="t">' + T(tKey) + '</div>';
+    if (dKey) { h += '<div class="d">' + T(dKey) + '</div>'; }
+    if (retryKey) { h += '<div style="text-align:center"><button class="m-retry" type="button" data-retry="' + retryKey + '">' + T('m.btn.retry') + '</button></div>'; }
+    return h + '</div>';
+  }
+  function copyBtn(v) { return '<button class="m-copy" type="button" data-copy="' + esc(v) + '">' + T('m.btn.copy') + '</button>'; }
+  function addrCell(a) { return '<span class="gx-mono" title="' + esc(a) + '">' + esc(shortAddr(a)) + '</span>' + copyBtn(a); }
+
+  /* ---------------- 状态栏（真实网络） ---------------- */
+  function renderStatusBar() {
+    var now = new Date(), p2 = function (n) { return (n < 10 ? '0' : '') + n; };
+    var c = q('#clock');
+    if (c) { c.textContent = p2(now.getHours()) + ':' + p2(now.getMinutes()); }
+    var n = q('#mNet');
+    if (n) { n.textContent = netText(); }
+  }
+
+  /* ---------------- 首页：钱包卡片扩展（原「节点身份」卡片内容并入此处） ---------------- */
+  /* 卡片本体由 shared/gx-wallet.js 渲染；这里通过 GX_WALLET_EXTRA 钩子把
+     ①未连接时的连接指引 ②已连接时的服务端绑定状态 追加进同一张卡片，
+     从而与「钱包与节点身份」卡片合并，不再单独出现第二张身份卡片。 */
+  function walletExtraHTML(addr) {
+    var h = '<div class="gxw-sep"></div>';
+    if (!addr) {
+      h += '<div class="gx-card-head" style="margin-bottom:8px"><h3>' + esc(T('m.guide.h')) + '</h3>' +
+        '<span class="gx-tag">' + esc(T('m.tag.required')) + '</span></div>';
+      h += '<ol class="m-steps"><li>' + esc(T('m.guide.s1')) + '</li><li>' + esc(T('m.guide.s2')) +
+        '</li><li>' + esc(T('m.guide.s3')) + '</li></ol>';
+      h += '<div class="m-hint">' + esc(T('m.guide.foot')) + '</div>';
+      return h;
+    }
+    var srv = ST.srv || {}, bound = !!srv.bound;
+    var bindCell;
+    if (!ST.srvLoaded) { bindCell = '<span class="gx-tag">' + T('m.v.loading') + '</span>'; }
+    else if (ST.srvErr) { bindCell = '<span class="gx-tag gx-tag-warn">' + T('m.v.fail') + '</span>'; }
+    else if (bound) { bindCell = '<span class="gx-tag gx-tag-ok">' + T('m.v.srvbound') + '</span>'; }
+    else { bindCell = '<span class="gx-tag gx-tag-warn">' + T('m.v.localonly') + '</span>'; }
+    h += '<div class="m-line"><span class="k">' + T('m.k.bind') + '</span><span class="v">' + bindCell + '</span></div>';
+    if (bound && srv.created_at) {
+      h += '<div class="m-line"><span class="k">' + T('m.k.bindtime') + '</span><span class="v">' + esc(srv.created_at) + '</span></div>';
+    }
+    h += '<div class="m-src">' + T('m.k.source') + ': ' + (bound ? 'API /api/referral/info' : 'localStorage') + '</div>';
+    return h;
+  }
+  /* gx-wallet.js 每次渲染卡片后回调，把扩展内容追加到卡片末尾（保持在卡片内，随折叠一起收起） */
+  window.GX_WALLET_EXTRA = function (mount, addr) {
+    if (!mount) { return; }
+    var box = mount.querySelector('#gxwExtra');
+    if (!box) {
+      box = document.createElement('div');
+      box.id = 'gxwExtra';
+      mount.appendChild(box);
+    }
+    box.innerHTML = walletExtraHTML(addr);
+  };
+  /* 语言切换 / 地址变化时才重建钱包卡片（避免刷新时丢失未保存的输入） */
+  var _wLang = null, _wAddr = null;
+  function syncWalletCard() {
+    var mount = q('#gxWalletMount');
+    if (!mount) { return; }
+    var lg = (GX.lang && GX.lang()) || 'en';
+    var addr = ST.w ? ST.w.addr : '';
+    if (window.GX_WALLET && GX_WALLET.render && (lg !== _wLang || addr !== _wAddr)) {
+      _wLang = lg; _wAddr = addr;
+      GX_WALLET.render();
+      return;
+    }
+    if (window.GX_WALLET_EXTRA) { window.GX_WALLET_EXTRA(mount, addr); }
+  }
+
+  /* ---------------- 首页：本机运行状态（真实） ---------------- */
+  function renderRuntime() {
+    var h = '';
+    h += row(T('m.k.env'), esc(envText()));
+    h += row(T('m.k.net'), esc(netText()));
+    h += row(T('m.k.rtt'), esc(rttText()));
+    /* 资源上报状态：周期与全网开关都以后台参数为准（暂停时明示，不留假「正常」） */
+    h += row(T('m.k.report'), RT.paused
+      ? '<span class="gx-tag gx-tag-warn">' + esc(T('m.v.pausednet')) + '</span>'
+      : esc(T('m.report.every', { v: RT.report_interval_sec })));
+    if (RT.paused) { h += '<div class="m-hint">' + esc(runtimeNote()) + '</div>'; }
+    h += '<div class="m-src">navigator.connection / performance.now() / navigator.ethereum</div>';
+    q('#mRuntime').innerHTML = h;
+  }
+
+  /* ---------------- 首页：全网实时（真实 /api/stats） ---------------- */
+  function renderNetStats() {
+    var el = q('#mNetStats'), h = '';
+    if (ST.statsErr) { el.innerHTML = empty('m.v.fail', null, 'stats'); return; }
+    if (!ST.stats) { el.innerHTML = '<div class="m-empty"><div class="t">' + T('m.v.loading') + '</div></div>'; return; }
+    h += row(T('m.k.total'), '<b class="gx-accent">' + GX.num(ST.stats.total_bindings, 0) + '</b>');
+    h += row(T('m.k.direct'), ST.team ? '<b class="gx-accent">' + GX.num(ST.team.direct_count, 0) + '</b>' : esc(T('m.v.notconnected')));
+    h += row(T('m.k.updated'), esc(ST.stats.latest_at || '--'));
+    h += '<div class="m-src">API /api/stats</div>';
+    el.innerHTML = h;
+  }
+
+  /* ---------------- 有效流量信标（P7-a）----------------
+     口径对齐白皮书第九章第一节：**一次可见停留 ≥ 15 秒 = 1 次有效会话**；
+     有效交互 = 点击 / 键盘输入 / 页签切换，带 1.5 秒去抖，避免连点刷数。
+     只统计「页面可见」期间的行为；切到后台不计时、不计数。
+     上报的是「自上次上报以来的增量」，服务端做累加（node_usage.sessions/interactions）。 */
+  var BEH = { dwellMs: 0, counted: false, pSess: 0, pInter: 0, lastInter: 0 };
+  function behTick() {
+    if (document.hidden) { BEH.dwellMs = 0; BEH.counted = false; return; }
+    BEH.dwellMs += 1000;
+    if (!BEH.counted && BEH.dwellMs >= 15000) { BEH.counted = true; BEH.pSess += 1; }
+  }
+  function behInteract() {
+    if (document.hidden) { return; }
+    var now = Date.now();
+    if (now - BEH.lastInter < 1500) { return; }
+    BEH.lastInter = now;
+    BEH.pInter += 1;
+  }
+  function behFlush() {
+    var d = { sessions: BEH.pSess, interactions: BEH.pInter };
+    BEH.pSess = 0; BEH.pInter = 0;
+    return d;
+  }
+  document.addEventListener('click', behInteract, true);
+  document.addEventListener('keydown', behInteract, true);
+
+  /* ---------------- 共识价值（真实 /api/platform/metrics + earnings.platform） ----------------
+     呈现：① 全网总盘 ② 我的位置 ③ 网络增长趋势 ④ 通证标尺（资源 → 通证换算拆解）
+     硬规则：接口无数据 → 显「—」/「暂无接入数据」，绝不回落 0 或模拟值；不够两天数据不硬画曲线。 */
+  var CV = null, CV_ERR = false, CV_LOADED = false;
+
+  function cvRatio(v) {
+    if (v === null || v === undefined || v === '' || !isFinite(Number(v))) { return '—'; }
+    return GX.num(Number(v), 2) + '%';
+  }
+  function loadConsensus(force) {
+    if (CV_LOADED && !force) { renderConsensus(); return; }
+    CV_LOADED = true;
+    try {
+      fetch('/api/platform/metrics', { cache: 'no-store' })
+        .then(function (r) { return r.json(); })
+        .then(function (j) { CV = (j && j.ok) ? j : null; CV_ERR = !CV; renderConsensus(); })
+        .catch(function () { CV = null; CV_ERR = true; renderConsensus(); });
+    } catch (e) { CV = null; CV_ERR = true; renderConsensus(); }
+  }
+  function cvKpi4(el, cv, compact) {
+    if (!el) { return; }
+    var dash = '—';
+    if (!cv) {
+      el.innerHTML = earnKpi(T('m.cv.terminals'), dash, '') + earnKpi(T('m.cv.storage'), dash, '') +
+                     earnKpi(T('m.cv.bw'), dash, '') + earnKpi(T('m.cv.compute'), dash, '');
+      return;
+    }
+    var t = cv.terminals || {}, r = cv.resources || {}, on = !!cv.data_available;
+    el.innerHTML =
+      earnKpi(T('m.cv.terminals'), on ? GX.num(t.total, 0) : dash, '', T('m.cv.active') + ' ' + (on ? GX.num(t.active_7d, 0) : dash)) +
+      earnKpi(T('m.cv.storage'), on ? GX.num(r.storage_gb, 2) : dash, 'GB', T('m.cv.basis')) +
+      earnKpi(T('m.cv.bw'), on ? GX.num(r.bw_mbps, 1) : dash, 'Mbps', '') +
+      earnKpi(T('m.cv.compute'), on ? GX.num(r.compute_tflops, 2) : dash, compact ? 'TF' : 'TFLOPS', '');
+  }
+  function renderCvRuler() {
+    var el = q('#mCvRuler');
+    if (!el) { return; }
+    if (!ST.w) { el.innerHTML = empty('m.empty.wallet.t', 'm.empty.wallet.d'); return; }
+    if (!EARN) { el.innerHTML = empty(EARN_ERR ? 'm.earn.err.t' : 'm.earn.loading.t', EARN_ERR ? 'm.earn.err.d' : 'm.earn.loading.d'); return; }
+    if (!EARN.reported) { el.innerHTML = empty('m.cv.ruler.nodata.t', 'm.cv.ruler.nodata.d'); return; }
+    var rt = EARN.rates || {}, rep = EARN.reported || {};
+    var ratio = Math.max(0, Math.min(1, Number(EARN.online_minutes_today || 0) / 1440));
+    var items = [['m.bd.storage', Number(rep.storage_gb) || 0, 'GB', Number(rt.storage_rate) || 0],
+                 ['m.bd.bandwidth', Number(rep.bw_mbps) || 0, 'Mbps', Number(rt.bw_rate) || 0],
+                 ['m.bd.compute', Number(rep.compute_tflops) || 0, 'TFLOPS', Number(rt.compute_rate) || 0]];
+    var h = '';
+    items.forEach(function (it) {
+      var x = it[1] * it[3] * ratio;
+      h += row(T(it[0]), GX.num(it[1], 2) + ' ' + it[2] + ' × ' + GX.num(it[3], 5) + ' × ' + cvRatio(ratio * 100) +
+               ' = <b>' + fmtX(x) + '</b> gx');
+    });
+    h += row(T('m.cv.ruler.total'), '<b class="gx-accent">' + fmtX(EARN.today_x) + '</b> ' + T('m.cv.ruler.day'));
+    h += '<div class="m-hint">' + T('m.cv.ruler.note') + '</div>';
+    el.innerHTML = h;
+  }
+  /* ---------------- 我的行为贡献（真实 /api/node/behavior） ---------------- */
+  var BH = null, BH_ERR = false, BH_ADDR = '';
+  function loadBehavior(force) {
+    if (!ST.w) { BH = null; BH_ERR = false; BH_ADDR = ''; renderBehavior(); return; }
+    if (BH_ADDR === ST.w.addr && !force) { renderBehavior(); return; }
+    BH_ADDR = ST.w.addr; BH = null; BH_ERR = false; renderBehavior();
+    try {
+      fetch('/api/node/behavior?terminal=' + encodeURIComponent(ST.w.addr), { cache: 'no-store' })
+        .then(function (r) { return r.json(); })
+        .then(function (j) {
+          if (BH_ADDR !== (ST.w ? ST.w.addr : '')) { return; }
+          BH = (j && j.ok) ? j : null; BH_ERR = !BH; renderBehavior();
+        })
+        .catch(function () { if (BH_ADDR === (ST.w ? ST.w.addr : '')) { BH = null; BH_ERR = true; renderBehavior(); } });
+    } catch (e) { BH = null; BH_ERR = true; renderBehavior(); }
+  }
+  function behTierLabel(t) {
+    if (t === 'lv3') { return T('m.bh.lv3'); }
+    if (t === 'lv2') { return T('m.bh.lv2'); }
+    if (t === 'lv1') { return T('m.bh.lv1'); }
+    return T('m.bh.none');
+  }
+  function renderBehavior() {
+    var el = q('#mCvBehavior');
+    if (!el) { return; }
+    if (!ST.w) { el.innerHTML = empty('m.empty.wallet.t', 'm.empty.wallet.d'); return; }
+    if (!BH) { el.innerHTML = empty(BH_ERR ? 'm.earn.err.t' : 'm.earn.loading.t', BH_ERR ? 'm.earn.err.d' : 'm.earn.loading.d'); return; }
+    try {
+      var dash = '—';
+      var h = '';
+      h += row(T('m.bh.tier'), '<span class="gx-tag' + (BH.tier === 'none' ? '' : ' gx-tag-ok') + '">' + behTierLabel(BH.tier) + '</span>');
+      h += row(T('m.bh.points'), GX.num(BH.points_7d, 1));
+      h += row(T('m.bh.sess'), GX.num(BH.sessions_7d, 0) + ' / ' + GX.num(BH.interactions_7d, 0));
+      h += row(T('m.bh.weight'), GX.num(BH.pool_weight_7d, 1));
+      h += row(T('m.bh.join'), GX.num(BH.referee_qualified, 0) + ' · ' + fmtX(BH.join_x_total) + ' gx');
+      h += row(T('m.bh.online'), GX.num(Number(BH.online_rate_7d || 0) * 100, 2) + '% · ' + GX.num(BH.days_active_7d, 0) + '/7');
+      h += row(T('m.bh.state'), BH.settlement_enabled ? T('m.bh.on') : T('m.bh.observed'));
+      h += '<div class="m-hint">' + T('m.bh.note') + '</div>';
+      el.innerHTML = h;
+    } catch (e) { el.innerHTML = empty('m.bh.err.t', 'm.bh.err.d'); }
+  }
+
+  function drawCvChart() {
+    var cv = q('#mCvChart');
+    if (!cv || !GX.lineChart || cv.style.display === 'none' || !cv.clientWidth) { return; }
+    var series = (CV && CV.trend) ? CV.trend.map(function (d) { return Number(d.terminals) || 0; }) : [];
+    if (series.length < 2) { return; }
+    GX.lineChart(cv, [{ data: series, color: '#a3bffa' }], { min: 0 });
+  }
+  function renderConsensus() {
+    var dash = '—';
+    cvKpi4(q('#mCvTotal'), CV_ERR ? null : CV, false);
+    cvKpi4(q('#mCvStrip'), CV_ERR ? null : CV, true);
+
+    var foot = q('#mCvTotalFoot');
+    if (foot) {
+      if (CV_ERR) {
+        foot.innerHTML = T('m.cv.err.d') + ' <button class="m-retry" type="button" data-retry="cv">' + T('m.btn.retry') + '</button>';
+      } else if (!CV) { foot.textContent = T('m.v.loading'); }
+      else if (!CV.data_available) { foot.textContent = T('m.cv.empty.d'); }
+      else { foot.textContent = T('m.cv.basis') + ' · ' + T('m.k.updated') + ' ' + (CV.updated_at || dash); }
+    }
+    var sfoot = q('#mCvStripFoot');
+    if (sfoot) { sfoot.textContent = (CV && CV.data_available) ? ('API /api/platform/metrics · ' + (CV.updated_at || '')) : ''; }
+
+    /* ② 我的位置 */
+    var mine = q('#mCvMine');
+    if (mine) {
+      if (!ST.w) { mine.innerHTML = empty('m.empty.wallet.t', 'm.empty.wallet.d') + ipRows(); }
+      else if (!EARN) { mine.innerHTML = empty(EARN_ERR ? 'm.earn.err.t' : 'm.earn.loading.t', EARN_ERR ? 'm.earn.err.d' : 'm.earn.loading.d') + ipRows(); }
+      else {
+        var p = EARN.platform || {}, sh = p.share || {};
+        var h = '';
+        h += row(T('m.cv.mine.share'), T('m.cv.mine.st') + ' ' + cvRatio(sh.storage_pct) + ' · ' + T('m.cv.mine.bw') + ' ' +
+                 cvRatio(sh.bw_pct) + ' · ' + T('m.cv.mine.cp') + ' ' + cvRatio(sh.compute_pct));
+        h += row(T('m.cv.mine.pct'), (p.percentile === null || p.percentile === undefined) ? dash : T('m.cv.mine.pctv', { v: p.percentile }));
+        h += row(T('m.cv.mine.decl'), esc(declaredText()));
+        h += row(T('m.cv.mine.rate7'), (p.online_rate_7d === undefined || p.online_rate_7d === null) ? dash : cvRatio(Number(p.online_rate_7d) * 100));
+        h += row(T('m.cv.mine.nodes'), p.terminals_total === undefined ? dash : GX.num(p.terminals_total, 0));
+        h += '<div class="m-hint">' + T('m.cv.mine.note') + '</div>';
+        mine.innerHTML = h + ipRows();
+      }
+    }
+
+    /* ③ 网络增长趋势 */
+    var cvEl = q('#mCvChart'), emp = q('#mCvChartEmpty'), tf = q('#mCvTrendFoot');
+    var hasTrend = !!(CV && CV.trend && CV.trend.length);
+    var canDraw = hasTrend && CV.trend.length >= 2;
+    if (cvEl) { cvEl.style.display = canDraw ? 'block' : 'none'; }
+    if (emp) {
+      emp.style.display = canDraw ? 'none' : '';
+      emp.innerHTML = canDraw ? '' : (CV_ERR
+        ? '<div class="t">' + T('m.cv.err.t') + '</div><div class="d">' + T('m.cv.err.d') + '</div>'
+        : (!CV ? '<div class="t">' + T('m.v.loading') + '</div>'
+               : '<div class="t">' + T('m.cv.trend.empty.t') + '</div><div class="d">' + T('m.cv.trend.empty.d') + '</div>'));
+    }
+    if (tf) {
+      tf.textContent = canDraw ? ('API /api/platform/metrics · ' + (CV.trend[0].day || '') + ' → ' + (CV.trend[CV.trend.length - 1].day || '') +
+                                 ' · ' + T('m.cv.trend.axis')) : '';
+    }
+    if (canDraw) { drawCvChart(); }
+
+    /* ④ 通证标尺 */
+    renderCvRuler();
+  }
+
+  /* ---------------- 首页：公告 ---------------- */
+  function renderNotice() {
+    var el = q('#mNoticeCard'), n = ST.notice;
+    var usable = !!(n && n.enabled && (n.title_zh || n.title_en || n.body_zh || n.body_en || n.image));
+    if (!usable) { el.style.display = 'none'; el.innerHTML = ''; return; }
+    var zh = GX.lang() === 'zh';
+    var title = (zh ? (n.title_zh || n.title_en) : (n.title_en || n.title_zh)) || '';
+    var body = (zh ? (n.body_zh || n.body_en) : (n.body_en || n.body_zh)) || '';
+    var h = '<div class="gx-card-head" style="margin-bottom:8px"><h3>' + esc(title || 'Notice') + '</h3>' +
+      '<span class="gx-tag">' + esc(n.updated_at || '') + '</span></div>' +
+      '<div style="font-size:.78em;color:var(--gx-dim);line-height:1.65">' + esc(String(body).slice(0, 120)) + (String(body).length > 120 ? '…' : '') + '</div>' +
+      '<div style="margin-top:10px"><button class="gx-btn gx-btn-sm gx-btn-ghost" type="button" id="mNoticeOpen">' +
+      (zh ? '查看详情' : 'View details') + '</button></div>';
+    el.style.display = '';
+    el.innerHTML = h;
+    var b = q('#mNoticeOpen');
+    if (b) { b.addEventListener('click', function () { if (window.GX_NOTICE && GX_NOTICE.show) { GX_NOTICE.show(n); } }); }
+  }
+
+  /* ---------------- 资源：本机共享策略 ---------------- */
+  function renderShare() {
+    ST.share = ST.share || readShare();
+    var s = ST.share, h = '';
+    SHARE_ITEMS.forEach(function (it) {
+      var on = !!s[it.onKey];
+      h += '<div class="m-item' + (on ? '' : ' off') + '" style="margin-bottom:10px">' +
+        '<div class="it-top"><div><div class="it-name">' + T(it.label) + '</div><div class="it-desc">' + T(it.desc) + '</div></div>' +
+        '<button class="gx-switch' + (on ? ' on' : '') + '" type="button" data-share-on="' + it.onKey + '"></button></div>';
+      if (on) {
+        h += '<div class="it-val"><span data-share-val="' + it.maxKey + '">' + GX.num(s[it.maxKey], 0) + '</span>' +
+          ' <span style="font-size:.42em;color:var(--gx-dim)">' + it.unit + '</span></div>' +
+          '<input class="gx-range" type="range" min="' + it.min + '" max="' + it.max + '" step="' + it.step + '" value="' + s[it.maxKey] + '" data-share-range="' + it.maxKey + '">' +
+          '<div class="gx-row-between" style="font-size:.7em;color:var(--gx-faint);margin-top:5px"><span>' + it.min + ' ' + it.unit + '</span><span>' +
+          T('m.sh.upper', { v: it.max + ' ' + it.unit }) + '</span></div>';
+      }
+      h += '<div class="it-hint">' + T('m.share.note') + '</div></div>';
+    });
+    POLICY_ITEMS.forEach(function (p) {
+      var on = !!s[p.key];
+      h += '<div class="m-item" style="margin-bottom:10px"><div class="it-top">' +
+        '<div><div class="it-name">' + T(p.label) + '</div><div class="it-desc">' + T(p.desc) + '</div></div>' +
+        '<button class="gx-switch' + (on ? ' on' : '') + '" type="button" data-share-on="' + p.key + '"></button></div></div>';
+    });
+    q('#mShareList').innerHTML = h;
+
+    qa('[data-share-on]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var k = b.getAttribute('data-share-on');
+        ST.share[k] = !ST.share[k];
+        saveShare(); renderShare(); reportTick(true); toast(T('m.toast.saved'));
+      });
+    });
+    qa('[data-share-range]').forEach(function (r) {
+      r.addEventListener('input', function () {
+        var k = r.getAttribute('data-share-range');
+        var v = parseFloat(r.value);
+        ST.share[k] = v;
+        var el = q('[data-share-val="' + k + '"]');
+        if (el) { el.textContent = GX.num(v, 0); }
+      });
+      r.addEventListener('change', function () { saveShare(); reportTick(true); toast(T('m.toast.saved')); });
+    });
+  }
+
+  /* ---------------- 资源：本机能力（真实） ---------------- */
+  function renderCapacity() {
+    var c = ST.cap, h = '';
+    h += row(T('m.k.cores'), V(c.cores));
+    h += row(T('m.k.mem'), V(c.mem));
+    var quotaCell;
+    if (ST.quota == null) { quotaCell = esc(T('m.v.loading')); }
+    else { quotaCell = esc(fmtBytes(ST.quotaUsage) + ' / ' + fmtBytes(ST.quota)); }
+    h += row(T('m.k.quota'), quotaCell);
+    h += row(T('m.k.net'), esc(netText()));
+    h += row(T('m.k.down'), V(c.down));
+    h += row(T('m.k.rtt'), esc(rttText()));
+    h += '<div class="m-hint">' + T('m.res.note') + '</div>';
+    h += '<div class="m-src">navigator.hardwareConcurrency / deviceMemory / storage.estimate / performance.now()</div>';
+    q('#mCapacity').innerHTML = h;
+  }
+
+  /* ---------------- 网络：推荐码 ---------------- */
+  function renderCode() {
+    var el = q('#mCodeCard'), w = ST.w;
+    if (!w) { el.innerHTML = empty('m.empty.code.t', 'm.empty.code.d'); return; }
+    var h = '';
+    h += row(T('m.k.code'), '<span class="gx-mono" title="' + esc(w.addr) + '">' + esc(w.short) + '</span>' + copyBtn(w.addr));
+    h += row(T('m.k.addr'), '<span class="gx-mono">' + esc(w.short) + '</span>' + copyBtn(w.addr));
+    /* 邀请链接：完整链接（把推荐码即钱包地址带在 URL 里），对方打开后自动填入推荐人 */
+    var link = (window.GX_WALLET && GX_WALLET.inviteLink) ? GX_WALLET.inviteLink(w.addr) : '';
+    if (link) {
+      h += '<div class="m-invite-block">';
+      h += '<div class="m-invite-k">' + T('m.k.invite') + '</div>';
+      h += '<div class="m-invite-url gx-mono">' + esc(link) + '</div>';
+      h += '<button class="m-copy m-invite-btn" type="button" data-copy="' + esc(link) + '">' + T('m.btn.copyinvite') + '</button>';
+      h += '</div>';
+    }
+    h += '<div class="m-hint">' + T('m.code.how') + '</div>';
+    el.innerHTML = h;
+  }
+
+  /* ---------------- 网络：推荐网络 ---------------- */
+  function renderTeamCard() {
+    var el = q('#mTeamCard'), w = ST.w;
+    if (!w) { el.innerHTML = empty('m.empty.wallet.t', 'm.empty.wallet.d'); return; }
+    if (ST.teamErr) { el.innerHTML = empty('m.v.fail', null, 'team'); return; }
+    if (!ST.team) { el.innerHTML = '<div class="m-empty"><div class="t">' + T('m.v.loading') + '</div></div>'; return; }
+    var t = ST.team, h = '';
+    h += '<div class="gx-grid gx-grid-2" style="margin-bottom:12px">' +
+      '<div><div style="font-size:.72em;color:var(--gx-faint)">' + T('m.k.direct') + '</div><div class="m-big" style="font-size:1.5em">' + GX.num(t.direct_count, 0) + '</div></div>' +
+      '<div><div style="font-size:.72em;color:var(--gx-faint)">' + T('m.k.team') + '</div><div class="m-big" style="font-size:1.5em">' + GX.num(t.team_size, 0) + '</div></div>' +
+      '</div>';
+    var levels = t.levels || {}, keys = Object.keys(levels).sort(function (a, b) { return Number(a) - Number(b); });
+    if (keys.length) {
+      var max = Math.max.apply(null, keys.map(function (k) { return levels[k]; }));
+      keys.forEach(function (k) {
+        h += '<div class="m-lvl"><span class="n">' + T('m.lvl.n', { n: k }) + '</span>' +
+          '<span class="gx-bar"><i style="width:' + ((levels[k] / max) * 100).toFixed(1) + '%"></i></span>' +
+          '<span class="c">' + levels[k] + '</span></div>';
+      });
+    } else {
+      h += '<div style="font-size:.76em;color:var(--gx-faint);line-height:1.6">' + T('m.empty.team.d') + '</div>';
+    }
+    h += '<div class="m-src">API /api/referral/team</div>';
+    el.innerHTML = h;
+  }
+
+  /* ---------------- 网络：团队成员 ---------------- */
+  function renderMembers() {
+    var el = q('#mMembers'), w = ST.w;
+    if (!w) { el.innerHTML = empty('m.empty.wallet.t', 'm.empty.wallet.d'); return; }
+    if (ST.teamErr) { el.innerHTML = empty('m.v.fail', null, 'team'); return; }
+    if (!ST.team) { el.innerHTML = '<div class="m-empty"><div class="t">' + T('m.v.loading') + '</div></div>'; return; }
+    var ms = ST.team.members || [];
+    if (!ms.length) { el.innerHTML = empty('m.empty.team.t', 'm.empty.team.d'); return; }
+    var h = '';
+    ms.slice(0, 50).forEach(function (m) {
+      h += '<div class="m-line"><span style="flex:1;min-width:0"><b style="font-weight:600">' + esc(m.name || shortAddr(m.addr)) + '</b>' +
+        '<span class="m-sub gx-mono">' + esc(shortAddr(m.addr)) + copyBtn(m.addr) + '</span></span>' +
+        '<span class="v"><span class="gx-tag">' + T('m.lvl.n', { n: m.depth }) + '</span></span></div>';
+    });
+    if (ms.length > 50) { h += '<div class="m-src">' + ms.length + ' / 50+</div>'; }
+    el.innerHTML = h;
+  }
+
+    /* ---------------- 网络：收益与结算（真实接口 /api/node/earnings） ----------------
+     口径：收益 = 已申报共享额度 × 结算系数 × 实际在线时长占比(≤1)。
+     手机端按策略不参与算力共享，申报项只有存储与带宽（来自「资源」tab 的开关/滑块）。 */
+  var EARN = null, EARN_ERR = false, EARN_ADDR = '', REPORT_TIMER = null;
+
+  function fmtX(v) {
+    var n = Number(v || 0);
+    if (!isFinite(n) || n === 0) { return '0'; }
+    var a = Math.abs(n);
+    if (a < 0.001) { return n.toFixed(6); }
+    if (a < 1) { return n.toFixed(4); }
+    return n.toFixed(2);
+  }
+  /* 浏览器实测计量（非申报）：存储配额/占用、链路下行、时延 */
+  var MEASURED = { used_gb: 0, quota_gb: 0, downlink_mbps: 0, rtt_ms: 0 };
+  function refreshMeasured(cb) {
+    var done = false;
+    function fin() { if (cb && !done) { done = true; cb(); } }
+    try {
+      var c = navigator.connection || navigator.mozConnection || null;
+      MEASURED.downlink_mbps = c && c.downlink ? Number(c.downlink) : 0;
+      MEASURED.rtt_ms = c && c.rtt ? Number(c.rtt) : 0;
+      if (navigator.storage && navigator.storage.estimate) {
+        navigator.storage.estimate().then(function (e) {
+          if (e) {
+            MEASURED.used_gb = e.usage ? Math.round(e.usage / 1073741824 * 1000) / 1000 : 0;
+            MEASURED.quota_gb = e.quota ? Math.round(e.quota / 1073741824 * 100) / 100 : 0;
+          }
+          fin();
+        }).catch(fin);
+      } else { fin(); }
+    } catch (e) { fin(); }
+    setTimeout(fin, 1500);
+  }
+  function reportPayload() {
+    var w = ST.w;
+    if (!w) { return null; }
+    var rec = nodeRec(w.addr);
+    if (!rec.authSig || !rec.authMsg) { return null; }     /* 需连接钱包时拿到的授权签名 */
+    var sh = ST.share || readShare();
+    var bd = behFlush();                                  /* 有效会话 / 有效交互增量 */
+    return { terminal: w.addr, sig: rec.authSig, sig_msg: rec.authMsg,
+             sessions: bd.sessions, interactions: bd.interactions,
+             storage_gb: sh.stOn ? Number(sh.stMax) || 0 : 0,
+             bw_mbps: sh.bwOn ? Number(sh.bwMax) || 0 : 0,
+             compute_tflops: 0,                            /* 手机端策略上不做算力共享 */
+             client: 'mobile-web',
+             tz: (function () { try { return Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (e) { return ''; } })(),
+             lang: String(navigator.language || ''),
+             used_gb: MEASURED.used_gb, quota_gb: MEASURED.quota_gb,
+             downlink_mbps: MEASURED.downlink_mbps, rtt_ms: MEASURED.rtt_ms };
+  }
+  function reportTick(force) {
+    refreshMeasured(function () {
+      var payload = reportPayload();
+      if (!payload) { return; }
+      sendReport(payload, force);
+    });
+  }
+  /* ---------------- 全局运行参数（后台「运行参数」面板可调） ----------------
+     GET /api/node/runtime → 上报周期 + 全网暂停。硬编码 60 秒只作兜底：
+     取不到就用默认，绝不让上报链路停摆。暂停期间不再定时上报，改为每 5 分钟问一次是否恢复
+     （同时页面切回前台/网络恢复也会立刻问一次），后台一恢复就自动接着上报。 */
+  var RT = { report_interval_sec: 60, paused: false, note: '', loaded: false };
+  var PAUSE_TIMER = null, PAUSE_RECHECK_MS = 5 * 60 * 1000;
+
+  function runtimeNote() { return RT.note || T('m.report.paused.note'); }
+  function syncReporting() {
+    if (REPORT_TIMER) { clearInterval(REPORT_TIMER); REPORT_TIMER = null; }
+    if (PAUSE_TIMER) { clearTimeout(PAUSE_TIMER); PAUSE_TIMER = null; }
+    if (RT.paused) { PAUSE_TIMER = setTimeout(function () { loadRuntime(); }, PAUSE_RECHECK_MS); return; }
+    REPORT_TIMER = setInterval(function () { reportTick(false); }, Math.max(10, RT.report_interval_sec) * 1000);
+  }
+  function applyRuntime(j) {
+    if (!j || j.ok !== true) { return false; }
+    var wasPaused = RT.paused;
+    var iv = Number(j.report_interval_sec);
+    if (isFinite(iv) && iv > 0) { RT.report_interval_sec = Math.max(10, Math.min(3600, Math.round(iv))); }
+    RT.paused = !!j.paused;
+    if (j.pause_note) { RT.note = String(j.pause_note.zh || j.pause_note.en || '').trim(); }
+    RT.loaded = true;
+    syncReporting();
+    renderRuntime();
+    /* 后台刚恢复（暂停 → 运行）：立刻补报一次，不必干等到下一个周期 */
+    if (wasPaused && !RT.paused && !document.hidden) { reportTick(true); }
+    return true;
+  }
+  function loadRuntime(cb) {
+    try {
+      fetch('/api/node/runtime', { cache: 'no-store' }).then(function (r) { return r.json(); })
+        .then(function (j) { applyRuntime(j); if (cb) { cb(); } })
+        .catch(function () { if (cb) { cb(); } });
+    } catch (e) { if (cb) { cb(); } }
+  }
+  function sendReport(payload, force) {
+    if (!force && document.hidden) { return; }
+    if (RT.paused) { return; }                    /* 全网暂停：不再上报，等后台恢复 */
+    try {
+      fetch('/api/node/report', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload), cache: 'no-store' })
+        .then(function (r) { return r.json(); })
+        .then(function (j) {
+          if (!j || j.ok !== true) { return; }
+          /* 后台可能刚改了周期或刚按下暂停：用响应里的值即时生效 */
+          applyRuntime({ ok: true, paused: !!j.paused, report_interval_sec: j.report_interval_sec, pause_note: j.pause_note });
+          loadEarnings(true);
+        })
+        .catch(function () {});
+    } catch (e) {}
+  }
+  function startReporting() {
+    if (REPORT_TIMER) { clearInterval(REPORT_TIMER); REPORT_TIMER = null; }
+    var kick = function () { if (RT.paused) { loadRuntime(); } else { reportTick(true); } };
+    document.addEventListener('visibilitychange', function () { if (!document.hidden) { kick(); } });
+    window.addEventListener('online', kick);
+    loadRuntime(function () { kick(); });         /* 先取全局参数（含暂停态），再决定是否上报 */
+  }
+  window.GX_RUNTIME = { state: RT, refresh: loadRuntime };
+  function loadEarnings(force) {
+    if (!ST.w) { EARN = null; EARN_ADDR = ''; EARN_ERR = false; renderEarn(); renderConsensus(); return; }
+    if (EARN_ADDR === ST.w.addr && !force) { renderEarn(); renderConsensus(); return; }
+    EARN_ADDR = ST.w.addr; EARN = null; EARN_ERR = false; renderEarn(); renderConsensus(); loadBehavior(true);
+    try {
+      fetch('/api/node/earnings?terminal=' + encodeURIComponent(ST.w.addr) + '&days=15', { cache: 'no-store' })
+        .then(function (r) { return r.json(); })
+        .then(function (j) {
+          if (EARN_ADDR !== (ST.w ? ST.w.addr : '')) { return; }
+          EARN = (j && j.ok) ? j : null; EARN_ERR = !EARN; renderEarn(); renderConsensus();
+        })
+        .catch(function () { EARN = null; EARN_ERR = true; renderEarn(); renderConsensus(); });
+    } catch (e) { EARN = null; EARN_ERR = true; renderEarn(); renderConsensus(); }
+  }
+  function drawEarnChart() {
+    var cv = q('#mEarnChart');
+    if (!cv || !GX.lineChart) { return; }
+    var series = (EARN && EARN.series) ? EARN.series.map(function (d) { return Number(d.x) || 0; }) : [];
+    if (!series.length) { series = [0, 0, 0]; }
+    GX.lineChart(cv, [{ data: series, color: '#7ee0c8' }], { min: 0, max: Math.max.apply(null, series) || 1 });
+  }
+  function earnKpi(label, value, unit, foot, cls) {
+    return '<div class="m-kpi"><div class="lbl">' + label + '</div><div class="val' + (cls ? ' ' + cls : '') + '">' + value +
+      (unit ? '<span class="unit">' + unit + '</span>' : '') + '</div>' +
+      (foot ? '<div class="foot">' + foot + '</div>' : '') + '</div>';
+  }
+  function earnSection(id, html) { var el = q('#' + id); if (el) { el.innerHTML = html; } }
+  var EARN_IDS = ['mEarnBreakdown', 'mEarnRecords', 'mEarnMeasured', 'mEarnChain', 'mEarnFoot'];
+
+  function declaredText() {
+    var sh = ST.share || readShare(), parts = [];
+    if (sh.stOn && Number(sh.stMax) > 0) { parts.push(GX.num(sh.stMax) + ' GB'); }
+    if (sh.bwOn && Number(sh.bwMax) > 0) { parts.push(GX.num(sh.bwMax) + ' Mbps'); }
+    return parts.length ? parts.join(' / ') : '\u2014';
+  }
+
+  function renderEarn() {
+    var kpis = q('#mEarnKpis');
+    if (!kpis) { return; }
+    var dash = '\u2014', hint = function (k) { return '<div class="m-hint">' + T(k) + '</div>'; };
+
+    /* 未连接钱包：只显示「—」与引导，绝不回落模拟数字 */
+    if (!ST.w) {
+      kpis.innerHTML = earnKpi(T('m.earn.balance'), dash, 'gx') + earnKpi(T('m.earn.today'), dash, 'gx') +
+                       earnKpi(T('m.earn.pending'), dash, 'gx') + earnKpi(T('m.earn.days'), dash);
+      earnSection('mEarnBreakdown', empty('m.empty.wallet.t', 'm.empty.wallet.d'));
+      EARN_IDS.slice(1).forEach(function (id) { earnSection(id, ''); });
+      earnSection('mEarnTrendFoot', '');
+      drawEarnChart();
+      return;
+    }
+    /* 读取中 / 读取失败 */
+    if (!EARN) {
+      kpis.innerHTML = earnKpi(T('m.earn.balance'), dash, 'gx') + earnKpi(T('m.earn.today'), dash, 'gx') +
+                       earnKpi(T('m.earn.pending'), dash, 'gx') + earnKpi(T('m.earn.days'), dash);
+      earnSection('mEarnBreakdown', empty(EARN_ERR ? 'm.earn.err.t' : 'm.earn.loading.t',
+                                          EARN_ERR ? 'm.earn.err.d' : 'm.earn.loading.d'));
+      EARN_IDS.slice(1).forEach(function (id) { earnSection(id, ''); });
+      earnSection('mEarnTrendFoot', '');
+      drawEarnChart();
+      return;
+    }
+
+    /* 有真实数据 */
+    try {
+    var lastRep = (EARN.reported && EARN.reported.at) ? String(EARN.reported.at).slice(11, 16) : dash;
+    kpis.innerHTML =
+      earnKpi(T('m.earn.balance'), fmtX(EARN.settled_total), 'gx',
+              T('m.earn.days') + ' ' + EARN.settled_days + ' ' + T('m.earn.dayUnit')) +
+      earnKpi(T('m.earn.today'), fmtX(EARN.today_x), 'gx', T('m.earn.online') + ' ' + EARN.online_minutes_today + ' min') +
+      earnKpi(T('m.earn.pending'), fmtX(EARN.pending_x), 'gx', T('m.earn.pending.foot')) +
+      earnKpi(T('m.earn.declared'), declaredText(), '', T('m.earn.last') + ' ' + lastRep, 'sm');
+
+    /* 本月贡献构成 */
+    var bd = EARN.breakdown || {};
+    var bars = [['m.bd.storage', Number(bd.storage_x) || 0, '#a3bffa'],
+                ['m.bd.bandwidth', Number(bd.bandwidth_x) || 0, '#7ee0c8'],
+                ['m.bd.compute', Number(bd.compute_x) || 0, '#ffb86b']];
+    var mx = Math.max(bars[0][1], bars[1][1], bars[2][1]) || 1;
+    var hasBd = (bars[0][1] + bars[1][1] + bars[2][1]) > 0;
+    earnSection('mEarnBreakdown', hasBd ? bars.map(function (r) {
+      return '<div class="m-bd"><div class="gx-row-between"><span>' + T(r[0]) + '</span><span>' + fmtX(r[1]) + ' gx</span></div>' +
+             '<span class="m-bar"><i style="width:' + (r[1] / mx * 100).toFixed(1) + '%;background:' + r[2] + '"></i></span></div>';
+    }).join('') + '<div class="m-src">' + esc(String(bd.month || '')) + '</div>' : hint('m.earn.trend.empty'));
+
+    /* 结算记录 */
+    var recs = EARN.records || [];
+    earnSection('mEarnRecords', recs.length ? recs.map(function (r) {
+      var mins = r.online_minutes || 0, hh = Math.floor(mins / 60), mm = mins % 60;
+      var decl = [];
+      if (r.storage_gb) { decl.push(GX.num(r.storage_gb, 1) + 'GB'); }
+      if (r.bw_mbps) { decl.push(GX.num(r.bw_mbps, 0) + 'Mbps'); }
+      if (r.compute_tflops) { decl.push(GX.num(r.compute_tflops, 1) + 'TF'); }
+      return '<div class="m-record"><div class="gx-row-between"><span class="gx-mono">' + esc(r.day) + '</span>' +
+        '<b class="gx-accent">+' + fmtX(r.total_x) + ' x</b></div>' +
+        '<div class="m-hint">' + T('m.earn.recOnline', { v: hh + 'h' + (mm < 10 ? '0' : '') + mm + 'm' }) +
+        (decl.length ? ' · ' + esc(decl.join(' / ')) : '') + '</div></div>';
+    }).join('') : hint('m.earn.trend.empty'));
+
+    /* 本机实测 */
+    var mv = EARN.measured;
+    earnSection('mEarnMeasured', mv ? (row(T('m.mv.used'), GX.num(mv.used_gb, 3) + ' GB / ' + GX.num(mv.quota_gb, 2) + ' GB') +
+      row(T('m.mv.link'), (mv.downlink_mbps ? GX.num(mv.downlink_mbps, 1) + ' Mbps' : dash) + ' / ' + (mv.rtt_ms ? String(mv.rtt_ms) + ' ms' : dash))) +
+      '<div class="m-src">navigator.storage.estimate() · navigator.connection</div>' : hint('m.earn.trend.empty'));
+
+    /* 链上结算 + 税费 */
+    var ch = EARN.chain, tx = EARN.tax, hc = '';
+    if (!ch || !ch.ok) {
+      hc += row(T('m.chain.state'), esc(T('m.chain.readfail')));
+    } else {
+      hc += row(T('m.chain.net'), esc(String(ch.network || '')) + (ch.chain_id ? ' · chainId ' + ch.chain_id : ''));
+      hc += row(T('m.chain.block'), ch.block ? String(ch.block) : dash);
+      hc += row(T('m.chain.addr'), '<span class="gx-mono">' + esc(shortAddr(ch.settle_address || '')) + '</span>');
+      hc += row(T('m.chain.bal'), (ch.bnb_balance === null || ch.bnb_balance === undefined) ? dash : GX.num(ch.bnb_balance, 6) + ' BNB');
+      hc += row(T('m.chain.state'), esc(T(ch.settlement_on_chain ? 'm.chain.on' : 'm.chain.off')));
+    }
+    if (tx) {
+      hc += row(T('m.tax.label'), fmtX(tx.tax_estimate_x) + ' gx · ' + T('m.tax.net') + ' ' + fmtX(tx.net_estimate_x) + ' gx');
+    }
+    hc += '<div class="m-hint">' + T('m.tax.note') + '</div>';
+    earnSection('mEarnChain', hc);
+
+    /* 口径说明 + 系数 */
+    var rt = EARN.rates || {};
+    earnSection('mEarnFoot', '<div class="m-hint">' + T('m.earn.note') + '</div>' +
+      '<div class="m-src">' + T('m.earn.rate') + ': ' + GX.num(rt.storage_rate, 5) + ' gx/GB·d · ' +
+      GX.num(rt.bw_rate, 4) + ' gx/Mbps·d · ' + GX.num(rt.compute_rate, 2) + ' gx/TFLOPS·d</div>');
+
+    earnSection('mEarnTrendFoot', 'API /api/node/earnings' + (EARN.day ? ' · ' + esc(EARN.day) : ''));
+    drawEarnChart();
+    } catch (e) {
+      if (window.console && console.error) { console.error('renderEarn failed', e); }
+      earnSection('mEarnFoot', '<div class="m-hint">' + T('m.earn.err.d') + '</div>');
+    }
+  }
+
+  /* ---------------- 我的：节点档案 ---------------- */
+  function renderProfile() {
+    var el = q('#mProfile'), w = ST.w;
+    if (!w) { el.innerHTML = empty('m.empty.wallet.t', 'm.empty.wallet.d'); return; }
+    var srv = ST.srv || {}, bound = !!srv.bound;
+    var h = '';
+    h += row(T('m.k.addr'), '<span class="gx-mono">' + esc(w.short) + '</span>' + copyBtn(w.addr));
+    h += row(T('m.k.name'), esc(String(srv.name || w.name || T('m.v.unset'))));
+    h += row(T('m.k.mail'), esc(String(srv.email || w.email || T('m.v.unset'))));
+    h += row(T('m.k.ref'), (srv.referrer || w.ref) ? addrCell(srv.referrer || w.ref) : esc(T('m.v.unbound')));
+    h += row(T('m.k.bind'), bound ? '<span class="gx-tag gx-tag-ok">' + T('m.v.srvbound') + '</span>'
+      : (ST.srvErr ? '<span class="gx-tag gx-tag-warn">' + T('m.v.fail') + '</span>' : '<span class="gx-tag gx-tag-warn">' + T('m.v.localonly') + '</span>'));
+    h += '<div class="m-hint">' + T('m.guide.s3') + '</div>';
+    el.innerHTML = h;
+  }
+
+  /* ---------------- 我的：设备信息 ---------------- */
+  function renderDevice() {
+    var c = ST.cap, h = '';
+    h += row(T('m.k.model'), V(c.model));
+    h += row(T('m.k.platform'), V(c.platform));
+    var gpuCell = (c.gpu === '#soft') ? esc(T('m.v.softgpu')) : V(c.gpu);
+    h += row(T('m.k.gpu'), gpuCell);
+    h += row(T('m.k.screen'), V(c.screen));
+    h += row(T('m.k.dpr'), V(c.dpr));
+    h += row(T('m.k.touch'), V(c.touch));
+    var battCell = T('m.v.nosupport');
+    if (ST.batt) { battCell = ST.batt.level + '%' + (ST.batt.charging ? ' \u00b7 ' + T('m.v.charging') : ''); }
+    h += row(T('m.k.batt'), esc(battCell));
+    h += row(T('m.k.lang'), V(c.lang));
+    h += row(T('m.k.tz'), V(c.tz));
+    h += row(T('m.k.env'), esc(envText()));
+    h += '<div class="m-hint">' + T('m.dev.note') + '</div>';
+    h += '<div class="m-src">navigator.userAgent / window.ethereum / WebGL / screen / maxTouchPoints / Intl / getBattery</div>';
+    q('#mDevice').innerHTML = h;
+  }
+
+  /* ---------------- 我的：关于 ---------------- */
+  function renderAbout() {
+    var h = '';
+    h += row(T('m.k.ver'), esc(APP_VER));
+    h += row(T('m.k.netname'), T('m.about.net'));
+    h += row(T('m.k.proto'), T('m.about.proto'));
+    var apiCell;
+    if (ST.health) { apiCell = '<span class="gx-tag gx-tag-ok"><i class="gx-dot"></i> ' + T('m.about.apiok') + '</span>'; }
+    else if (ST.healthErr) { apiCell = '<span class="gx-tag gx-tag-bad">' + T('m.about.apibad') + '</span>'; }
+    else { apiCell = '<span class="gx-tag">' + T('m.v.loading') + '</span>'; }
+    h += row(T('m.k.api'), apiCell);
+    if (ST.health && ST.health.bindings != null) { h += row(T('m.k.total'), GX.num(ST.health.bindings, 0)); }
+    h += row(T('m.k.data'), T('m.about.data'));
+    h += '<div class="m-src">API /api/health' + (ST.health && ST.health.time ? ' · ' + esc(ST.health.time) : '') + '</div>';
+    q('#mAbout').innerHTML = h;
+  }
+
+  /* ---------------- 首页昵称行 ---------------- */
+  function renderOwner() {
+    var el = q('#mOwner'), w = ST.w;
+    if (!w) { el.innerHTML = esc(T('m.v.notconnected')); return; }
+    var srv = ST.srv || {};
+    /* 绑定状态（服务器已绑定 / 仅本机）已并入钱包卡片，此处只显示节点显示名，避免同屏重复 */
+    var name = String(srv.name || w.name || w.short);
+    el.innerHTML = esc(name);
+  }
+
+  /* ---------------- 卡片展开 / 收起（默认展开，状态本机记忆） ---------------- */
+  var LS_CARD = 'gx.mobile.card.folded.v1';
+  var _cardTimer = null;
+
+  function readFolded() {
+    try {
+      var raw = localStorage.getItem(LS_CARD);
+      var o = raw ? JSON.parse(raw) : {};
+      return (o && typeof o === 'object') ? o : {};
+    } catch (e) { return {}; }
+  }
+  function saveFolded(o) {
+    try { localStorage.setItem(LS_CARD, JSON.stringify(o)); } catch (e) {}
+  }
+  function cardKey(card) {
+    if (card.id) { return card.id; }
+    var p = card.parentNode;
+    var panel = card.closest ? card.closest('.m-panel') : null;
+    var tab = panel ? (panel.getAttribute('data-panel') || 'x') : 'x';
+    var sid = (p && p.id) ? p.id : 'p';
+    var i = p ? Array.prototype.indexOf.call(p.children, card) : 0;
+    return tab + ':' + sid + ':' + i;
+  }
+  function cardLabel(card) {
+    var h = card.querySelector('.gx-card-head h3') || card.querySelector('.gx-card-head h4');
+    if (h && (h.textContent || '').trim()) { return h.textContent.trim(); }
+    var t = card.previousElementSibling;
+    while (t) {
+      if (t.classList && (t.classList.contains('m-sec-title') || t.classList.contains('gx-sec-title'))) {
+        return (t.textContent || '').trim();
+      }
+      t = t.previousElementSibling;
+    }
+    var dr = card.getAttribute('data-card-title');
+    if (dr) { return T(dr); }
+    return card.getAttribute('data-title') || '';
+  }
+  function collapseIcon() {
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 15l-6-6-6 6"></path></svg>';
+  }
+  function decorateCards() {
+    var folded = readFolded();
+    qa('.gx-card').forEach(function (card) {
+      var key = card.getAttribute('data-card-key') || cardKey(card);
+      card.setAttribute('data-card-key', key);
+      if (!card.getAttribute('data-card-ph')) { card.setAttribute('data-card-ph', cardLabel(card) || 'Section'); }
+      var strip = card.querySelector('.m-card-strip');
+      if (!strip) {
+        strip = document.createElement('div');
+        strip.className = 'm-card-strip';
+        strip.textContent = card.getAttribute('data-card-ph');
+        if (!card.querySelector('.gx-card-head')) { card.classList.add('m-card-float'); }
+        card.insertBefore(strip, card.firstChild);
+      } else {
+        var fresh = cardLabel(card);
+        if (fresh && fresh !== card.getAttribute('data-card-ph')) {
+          card.setAttribute('data-card-ph', fresh);
+          strip.textContent = fresh;
+        }
+      }
+      if (!card.querySelector('.m-card-toggle')) {
+        var btn = document.createElement('button');
+        btn.className = 'm-card-toggle';
+        btn.type = 'button';
+        btn.setAttribute('data-card-toggle', '1');
+        btn.innerHTML = collapseIcon();
+        var head = card.querySelector('.gx-card-head');
+        if (head && head.parentNode === card) { head.appendChild(btn); }
+        else { card.insertBefore(btn, card.firstChild); card.classList.add('m-card-float'); }
+      }
+      var b2 = card.querySelector('.m-card-toggle');
+      var on = Object.prototype.hasOwnProperty.call(folded, key);
+      if (b2) {
+        b2.title = on ? T('m.card.expand') : T('m.card.collapse');
+        b2.setAttribute('aria-label', b2.title);
+        b2.setAttribute('aria-expanded', on ? 'false' : 'true');
+      }
+      card.classList.toggle('m-collapsed', on);
+    });
+  }
+  function toggleCard(card) {
+    if (!card || !card.classList || !card.classList.contains('gx-card')) { return; }
+    var key = card.getAttribute('data-card-key') || cardKey(card);
+    var folded = readFolded();
+    var on = card.classList.toggle('m-collapsed');
+    if (on) { folded[key] = 1; } else { delete folded[key]; }
+    saveFolded(folded);
+    var btn = card.querySelector('.m-card-toggle');
+    if (btn) {
+      btn.title = on ? T('m.card.expand') : T('m.card.collapse');
+      btn.setAttribute('aria-label', btn.title);
+      btn.setAttribute('aria-expanded', on ? 'false' : 'true');
+    }
+  }
+  function watchCards() {
+    if (!window.MutationObserver) { return; }
+    var mo = new MutationObserver(function () {
+      clearTimeout(_cardTimer);
+      _cardTimer = setTimeout(decorateCards, 80);
+    });
+    mo.observe(document.body, { childList: true, subtree: true });
+  }
+
+  /* ---------------- 总渲染 ---------------- */
+  function renderAll() {
+    ST.w = readWallet();
+    renderStatusBar();
+    renderOwner();
+    syncWalletCard();
+    renderRuntime();
+    renderNetStats();
+    renderConsensus();
+    renderBehavior();
+    renderNotice();
+    renderShare();
+    renderCapacity();
+    renderCode();
+    renderTeamCard();
+    renderMembers();
+    renderEarn();
+    renderProfile();
+    renderDevice();
+    renderAbout();
+    decorateCards();
+  }
+
+  /* ---------- 当前 IP 与归属地（共识 → 我的位置） ----------
+     只回显访问者自己的 IP：IP 由服务端从 nginx 传入的 X-Real-IP 取，归属地由服务端代查
+     （ip-api 同源出中英两份，ipinfo 兜底）。中文界面显示中文地名，英文界面显示英文地名；
+     数据源不可达或内网地址时显示「—」，不编造。 */
+  var IPINFO = null, IP_ERR = false, IP_DONE = false;
+  function geoText(g) {
+    if (!g) return '—';
+    var zh = ((GX.lang && GX.lang()) || 'zh') === 'zh';
+    return (zh ? (g.text || g.text_en) : (g.text_en || g.text)) || '—';
+  }
+  function ipRows() {
+    if (!IP_DONE) {
+      return row(T('m.cv.ip'), '<span class="gx-dim">' + T('m.cv.ip.wait') + '</span>', 'sm');
+    }
+    if (IP_ERR || !IPINFO || !IPINFO.ip) {
+      return row(T('m.cv.ip'), '—', 'sm') + row(T('m.cv.geo'), '—', 'sm');
+    }
+    return row(T('m.cv.ip'), esc(IPINFO.ip), 'sm') + row(T('m.cv.geo'), esc(geoText(IPINFO.geo)), 'sm');
+  }
+  function loadIp() {
+    fetch('/api/node/ip', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (j) {
+      if (j && j.ok) { IPINFO = j; IP_ERR = false; } else { IP_ERR = true; }
+      IP_DONE = true; renderConsensus();
+    }).catch(function () { IP_ERR = true; IP_DONE = true; renderConsensus(); });
+  }
+
+  /* ---------------- Tab 切换 ---------------- */
+  function switchTab(key) {
+    ST.tab = key;
+    qa('.m-panel').forEach(function (p) { p.classList.toggle('active', p.getAttribute('data-panel') === key); });
+    qa('.phone-tabbar button').forEach(function (b) { b.classList.toggle('active', b.getAttribute('data-tab') === key); });
+    var body = q('#phoneBody');
+    if (body) { body.scrollTop = 0; }
+    if (key === 'earn') { renderEarn(); setTimeout(drawEarnChart, 60); }
+    if (key === 'net') { renderConsensus(); renderBehavior(); setTimeout(drawCvChart, 60); }
+  }
+  qa('.phone-tabbar button').forEach(function (b) {
+    b.addEventListener('click', function () { switchTab(b.getAttribute('data-tab')); });
   });
 
-  /* ---------- 首页 ---------- */
-  function renderHome() {
-    GX.qs('#mOwner').innerHTML = GX.field(M, 'owner') + ' <span class="gx-tag gx-tag-ok">' + GX.t(M.rank.levelKey) + '</span>';
-    [
-      ['#mToday', M.wallet.todayEarn, 2], ['#mUptime', M.uptimeDays, 0],
-      ['#mScore', M.rank.score, 0], ['#mBw', MB.items[0].limit, 0],
-      ['#mSt', MB.items[1].limit, 0], ['#mBal2', M.wallet.balance, 2]
-    ].forEach(function (n) {
-      var el = GX.qs(n[0]);
-      if (firstTop) { GX.countUp(el, n[1], { decimals: n[2] }); } else { el.textContent = GX.num(n[1], n[2]); }
-    });
-    firstTop = false;
-    GX.qs('#mNodeId').textContent = M.nodeId;
-    GX.qs('#mBal').textContent = GX.coin(M.wallet.balance);
-    GX.qs('#mPend').textContent = GX.coin(M.wallet.pending);
-    GX.qs('#mTax').textContent = GX.coin(M.wallet.taxPaid);
+  /* ---------------- 复制 / 重试 / 提示 ---------------- */
+  var toastTimer = null;
+  function toast(msg) {
+    var el = q('#mToast');
+    if (!el) { return; }
+    el.textContent = msg;
+    el.classList.add('on');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { el.classList.remove('on'); }, 1800);
+  }
+  function copyText(v) {
+    var done = function () { toast(T('m.toast.copied')); };
+    var fail = function () { toast(T('m.toast.copyfail')); };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(v).then(done, function () { fallback(); });
+    } else { fallback(); }
+    function fallback() {
+      try {
+        var ta = document.createElement('textarea');
+        ta.value = v; ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.select();
+        var ok = document.execCommand('copy');
+        document.body.removeChild(ta);
+        ok ? done() : fail();
+      } catch (e) { fail(); }
+    }
+  }
+  document.addEventListener('click', function (e) {
+    var gt = e.target;
+    while (gt && gt !== document && !(gt.getAttribute && gt.getAttribute('data-goto-tab'))) { gt = gt.parentNode; }
+    if (gt && gt.getAttribute && gt.getAttribute('data-goto-tab')) { switchTab(gt.getAttribute('data-goto-tab')); return; }
+    var cb = e.target;
+    while (cb && cb !== document && !(cb.getAttribute && cb.getAttribute('data-card-toggle'))) { cb = cb.parentNode; }
+    if (cb && cb.getAttribute && cb.getAttribute('data-card-toggle')) { toggleCard(cb.closest ? cb.closest('.gx-card') : null); return; }
+    var t = e.target;
+    while (t && t !== document && !(t.getAttribute && t.getAttribute('data-copy'))) { t = t.parentNode; }
+    if (t && t.getAttribute && t.getAttribute('data-copy')) { copyText(t.getAttribute('data-copy')); return; }
+    var r = e.target;
+    while (r && r !== document && !(r.getAttribute && r.getAttribute('data-retry'))) { r = r.parentNode; }
+    if (r && r.getAttribute && r.getAttribute('data-retry')) {
+      var kind = r.getAttribute('data-retry');
+      if (kind === 'stats') { ST.stats = null; ST.statsErr = false; renderNetStats(); loadStats(); }
+      if (kind === 'cv') { CV = null; CV_ERR = false; CV_LOADED = false; renderConsensus(); loadConsensus(); }
+      if (kind === 'team') { ST.team = null; ST.teamErr = false; renderTeamCard(); renderMembers(); loadTeam(); }
+      if (kind === 'server') { ST.srv = null; ST.srvErr = false; syncWalletCard(); loadServer(); }
+    }
+  });
+
+  /* ---------------- 钱包 / 网络事件 ---------------- */
+  window.GX_WALLET_REFRESH = function () {
+    var prev = ST.w ? ST.w.addr : '';
+    ST.w = readWallet();
+    var now = ST.w ? ST.w.addr : '';
+    if (now !== prev) {
+      ST.srv = null; ST.srvLoaded = false; ST.srvErr = false;
+      ST.team = null; ST.teamLoaded = false; ST.teamErr = false;
+      if (now) { loadServer(); loadTeam(); }
+    }
+    loadEarnings(true);
+    renderAll();
+  };
+  window.addEventListener('storage', function (e) {
+    if (!e || !e.key || e.key === LS_WALLET || e.key === LS_NODES) { window.GX_WALLET_REFRESH(); }
+  });
+  window.addEventListener('online', function () { renderStatusBar(); renderRuntime(); renderDevice(); });
+  window.addEventListener('offline', function () { renderStatusBar(); renderRuntime(); renderDevice(); });
+  /* 接入方式切换（Wi-Fi ⇄ 蜂窝）也要即时刷新状态栏的「WiFi · …」/「在线 · …」 */
+  (function () {
+    var c = netConn();
+    if (c && c.addEventListener) {
+      c.addEventListener('change', function () { renderStatusBar(); renderRuntime(); renderDevice(); });
+    }
+  })();
+
+  /* ---------------- 启动 ---------------- */
+  function boot() {
+    ST.share = readShare();
+    ST.w = readWallet();
+    readCapacity();
+    probeBattery();
+    renderAll();
+    loadStats();
+    loadConsensus();
+    loadBehavior();
+    loadIp();
+    setInterval(behTick, 1000);
+    loadHealth();
+    loadNotice();
+    if (ST.w) { loadServer(); loadTeam(); }
+    loadEarnings();
+    startReporting();
+    watchCards();
   }
 
-  /* ---------- 资源共享 ---------- */
-  function unitText(it, v) {
-    if (it.unit === 'TFLOPS') return v.toFixed(1);
-    return GX.num(v);
+  if (GX.i18n) {
+    if (GX.i18n.onChange) { GX.i18n.onChange(function () { renderAll(); }); }
+    if (GX.i18n.init) { GX.i18n.init(); }
   }
-  function renderShares() {
-    GX.qs('#mShareList').innerHTML = MB.items.map(function (it) {
-      var off = !it.enabled;
-      return '<div class="m-item' + (off ? ' off' : '') + '" style="margin-bottom:10px">' +
-        '<div class="it-top">' +
-          '<div><div class="it-name">' + GX.t(it.labelKey) + '</div><div class="it-desc">' + GX.t(it.descKey) + '</div></div>' +
-          (off
-            ? '<span class="gx-tag gx-tag-bad">' + GX.t('app.res.cpu.tag') + '</span>'
-            : '<button class="gx-switch' + (it.enabled ? ' on' : '') + '" data-share="' + it.key + '"></button>') +
-        '</div>' +
-        (off ? '' :
-          '<div class="it-val"><span data-val="' + it.key + '">' + unitText(it, it.limit) + '</span>' +
-          ' <span style="font-size:.42em;color:var(--gx-dim)">' + it.unit + '</span></div>' +
-          '<input class="gx-range" type="range" min="0" max="' + it.max + '" step="' + it.step + '" value="' + it.limit + '" data-range="' + it.key + '">' +
-          '<div class="gx-row-between" style="font-size:.7em;color:var(--gx-faint);margin-top:5px"><span>0</span><span>' + GX.t('app.share.upper', { v: it.max + ' ' + it.unit }) + '</span></div>') +
-        '<div class="it-hint">' + GX.t(it.hintKey) + (off ? '' : GX.t('app.share.weight', { v: '<b class="gx-accent">' + GX.t(it.weightKey) + '</b>' })) + '</div>' +
-        '</div>';
-    }).join('');
-
-    GX.qsa('[data-range]').forEach(function (r) {
-      GX.on(r, 'input', function () {
-        var it = MB.items.filter(function (x) { return x.key === r.dataset.range; })[0];
-        GX.qs('[data-val="' + it.key + '"]').textContent = unitText(it, parseFloat(r.value));
-      });
-    });
-    GX.qsa('[data-share]').forEach(function (s) {
-      GX.on(s, 'click', function () {
-        s.classList.toggle('on');
-        s.closest('.m-item').classList.toggle('off', !s.classList.contains('on'));
-      });
-    });
-  }
-
-  /* ---------- 收益 ---------- */
-  function drawEarn() {
-    GX.lineChart(GX.qs('#mEarnChart'), [
-      { data: D.earnings.series, color: '#7ee0c8' }
-    ], { min: 0, grid: true });
-  }
-
-  function renderBreakdown() {
-    var maxB = Math.max.apply(null, D.earnings.breakdown.map(function (b) { return b.month; }));
-    GX.qs('#mBreakdown').innerHTML = D.earnings.breakdown.map(function (b) {
-      return '<div style="margin-bottom:13px">' +
-        '<div class="gx-row-between" style="font-size:.82em;margin-bottom:6px">' +
-          '<span>' + GX.t(b.labelKey) + '<span class="m-sub">' + GX.t('app.earn.today') + b.today.toFixed(2) + ' x</span></span>' +
-          '<span class="gx-accent" style="font-variant-numeric:tabular-nums">' + GX.num(b.month, 2) + ' x</span>' +
-        '</div>' +
-        '<span class="gx-bar"><i style="width:' + (b.month / maxB * 100).toFixed(1) + '%;background:' + b.color + '"></i></span>' +
-        '</div>';
-    }).join('');
-  }
-
-  function renderHistory() {
-    GX.qs('#mHistory').innerHTML = D.earnings.history.map(function (h) {
-      return '<div class="m-line">' +
-        '<span style="flex:1"><span class="gx-mono" style="font-size:.92em">' + GX.t(h.labelKey) + '</span>' +
-        '<span class="m-sub">' + h.time + ' · ' + GX.t(h.typeKey) + '</span></span>' +
-        '<span class="v gx-ok" style="font-weight:600">+' + h.amount.toFixed(2) + ' x</span></div>';
-    }).join('');
-  }
-
-  /* ---------- 我的 ---------- */
-  function renderProfile() {
-    var dm = M.deviceMobile;
-    GX.qs('#mDevice').innerHTML = [
-      ['app.dev.name', dm.name], ['app.dev.os', dm.os], ['app.dev.cpu', dm.cpu],
-      ['app.dev.mem', dm.mem], ['app.dev.disk', dm.disk]
-    ].map(function (r) {
-      return '<div class="m-line"><span class="k">' + GX.t(r[0]) + '</span><span class="v">' + r[1] + '</span></div>';
-    }).join('');
-
-    GX.qs('#mPolicy').innerHTML = MB.policies.map(function (p) {
-      return '<div class="m-line"><span style="flex:1"><b style="font-weight:600">' + GX.t(p.labelKey) + '</b>' +
-        '<span class="m-sub">' + GX.t(p.descKey) + '</span></span>' +
-        '<button class="gx-switch' + (p.on ? ' on' : '') + '" data-policy="' + p.key + '"></button></div>';
-    }).join('');
-    GX.qsa('[data-policy]').forEach(function (s) { GX.bindSwitch(s); });
-  }
-
-  /* ---------- 统一重渲染（语言切换时整体重跑） ---------- */
-  function renderAll() {
-    renderHome();
-    renderShares();
-    renderBreakdown();
-    renderHistory();
-    renderProfile();
-    switchTab(curTab);
-  }
-
-  GX.i18n.onChange(renderAll);
-  GX.i18n.init();
-  renderAll();
+  if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', boot); }
+  else { boot(); }
 })();
 </script>
+<script src="../shared/gx-pauseflag.js?v=20261114b"></script>
 </body>
 </html>

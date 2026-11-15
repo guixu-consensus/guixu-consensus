@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Guixu Community Mark — Verification Stage | Guixu Consensus</title>
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png?v=20260925c">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Segoe UI', 'Microsoft YaHei', system-ui, sans-serif; background: #f0f2f5; color: #1a1a2e; line-height: 1.7; }
+a { color: inherit; }
+html[lang="en"] [data-zh] { display: none !important; }
+html[lang="zh"] [data-en] { display: none !important; }
+
+/* ---------- NAV ---------- */
+nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; background: rgba(13,27,42,.92); backdrop-filter: blur(8px); border-bottom: 1px solid rgba(163,191,250,.12); }
+nav .inner { max-width: 1100px; margin: auto; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; height: 56px; }
+nav .logo { color: #e0e1dd; font-size: 1.15em; font-weight: 700; letter-spacing: .5px; text-decoration: none; display: inline-flex; align-items: center; gap: .45em; }
+nav .logo .logo-mark { width: 1.75em; height: 1.75em; display: block; object-fit: contain; flex: 0 0 auto;
+  filter: brightness(1.18) saturate(1.1) drop-shadow(0 0 5px rgba(255,255,255,.9)) drop-shadow(0 0 14px rgba(255,255,255,.55)) drop-shadow(0 0 24px rgba(255,255,255,.26)) drop-shadow(0 1px 3px rgba(0,0,0,.55)); }
+nav .logo span { color: #a3bffa; }
+nav .nav-links { display: flex; gap: 22px; align-items: center; list-style: none; }
+nav .nav-links a { color: rgba(224,225,221,.7); text-decoration: none; font-size: .9em; transition: color .2s; }
+nav .nav-links a:hover, nav .nav-links a.active { color: #a3bffa; }
+.lang-btn { background: rgba(163,191,250,.15); border: 1px solid rgba(163,191,250,.3); color: #a3bffa; border-radius: 6px; padding: 4px 14px; font-size: .85em; cursor: pointer; transition: all .2s; }
+.lang-btn:hover { background: rgba(163,191,250,.3); }
+.menu-toggle { display: none; background: none; border: none; color: #a3bffa; font-size: 1.5em; cursor: pointer; }
+
+/* ---------- RISK BAR ---------- */
+.riskbar { margin-top: 56px; background: #12202f; border-bottom: 1px solid rgba(163,191,250,.14); color: rgba(224,225,221,.78); font-size: .8em; padding: 9px 24px; text-align: center; letter-spacing: .2px; }
+.riskbar b { color: #ffb4a2; font-weight: 600; }
+
+/* ---------- HERO ---------- */
+.hero { background: linear-gradient(135deg, #0d1b2a, #1b263b, #415a77); color: #e0e1dd; padding: 72px 24px 60px; position: relative; overflow: hidden; }
+.hero::before { content: ''; position: absolute; top: -20%; right: -10%; width: 500px; height: 500px; background: radial-gradient(circle, rgba(163,191,250,.12) 0%, transparent 70%); border-radius: 50%; }
+.hero .inner { max-width: 1100px; margin: auto; position: relative; z-index: 1; }
+.eyebrow { font-size: .78em; letter-spacing: 2.4px; text-transform: uppercase; color: #a3bffa; margin-bottom: 18px; }
+.hero h1 { font-size: clamp(1.9em, 4vw, 2.9em); line-height: 1.25; margin-bottom: 18px; font-weight: 700; }
+.hero .tagline { font-size: 1.06em; color: rgba(224,225,221,.84); max-width: 720px; }
+.chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 30px; }
+.chip { border: 1px solid rgba(163,191,250,.3); background: rgba(163,191,250,.1); border-radius: 999px; padding: 6px 16px; font-size: .82em; color: #cdd9f5; }
+.chip b { color: #a3bffa; font-weight: 600; }
+
+/* ---------- SECTION ---------- */
+section.blk { max-width: 1100px; margin: 0 auto; padding: 62px 24px; }
+.sect-no { font-size: .76em; letter-spacing: 2px; color: #7a8ba8; text-transform: uppercase; margin-bottom: 10px; }
+h2 { font-size: 1.55em; color: #0d1b2a; margin-bottom: 10px; font-weight: 700; }
+.lead { color: #46566e; max-width: 760px; margin-bottom: 32px; }
+
+.cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.card { background: #fff; border-radius: 12px; padding: 24px; border: 1px solid #e2e7ef; box-shadow: 0 1px 3px rgba(13,27,42,.04); }
+.card h3 { font-size: 1.02em; color: #0d1b2a; margin-bottom: 10px; }
+.card p { font-size: .92em; color: #51617a; }
+.card .num { font-size: .74em; color: #a3bffa; font-weight: 700; letter-spacing: 1.5px; margin-bottom: 12px; display: block; }
+
+table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 12px; overflow: hidden; border: 1px solid #e2e7ef; font-size: .93em; }
+th, td { text-align: left; padding: 13px 18px; border-bottom: 1px solid #eef1f6; vertical-align: top; }
+th { background: #f7f9fc; color: #33465f; font-weight: 600; font-size: .9em; width: 34%; }
+tr:last-child td, tr:last-child th { border-bottom: none; }
+td .pending { color: #b0713a; font-size: .86em; }
+td .ok { color: #2f6f4f; font-size: .86em; }
+
+.boundary { background: #fff; border: 1px solid #e2e7ef; border-left: 4px solid #a3bffa; border-radius: 12px; padding: 26px 28px; }
+.boundary ul { list-style: none; }
+.boundary li { padding: 11px 0; border-bottom: 1px dashed #eef1f6; font-size: .94em; color: #33465f; }
+.boundary li:last-child { border-bottom: none; }
+.boundary li b { color: #0d1b2a; }
+
+.metrics { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
+.metric { background: #fff; border: 1px solid #e2e7ef; border-radius: 12px; padding: 20px 18px; text-align: center; }
+.metric .v { font-size: 1.5em; font-weight: 700; color: #8c9ab0; line-height: 1.2; }
+.metric .k { font-size: .8em; color: #6b7c95; margin-top: 8px; }
+.note { font-size: .82em; color: #7a8ba8; margin-top: 16px; }
+
+.risk { background: #12202f; color: rgba(224,225,221,.82); border-radius: 12px; padding: 30px 30px 26px; }
+.risk h2 { color: #e0e1dd; font-size: 1.25em; margin-bottom: 14px; }
+.risk ol { margin-left: 20px; font-size: .92em; }
+.risk li { margin-bottom: 9px; }
+.risk li b { color: #ffb4a2; }
+
+.cta { text-align: center; padding: 58px 24px 70px; }
+.cta h2 { margin-bottom: 8px; }
+.cta p { color: #51617a; margin-bottom: 26px; font-size: .95em; }
+.btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+.btn { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; border-radius: 8px; padding: 12px 26px; font-size: .92em; font-weight: 600; transition: all .2s; }
+.btn.primary { background: #1b263b; color: #e0e1dd; }
+.btn.primary:hover { background: #0d1b2a; }
+.btn.ghost { border: 1px solid #cdd6e3; color: #33465f; }
+.btn.ghost:hover { border-color: #a3bffa; color: #1b263b; }
+
+footer { background: #0d1b2a; color: rgba(224,225,221,.65); padding: 34px 24px; text-align: center; font-size: .85em; }
+footer .footer-links { display: flex; gap: 22px; justify-content: center; flex-wrap: wrap; margin-bottom: 14px; }
+footer a { color: rgba(224,225,221,.78); text-decoration: none; }
+footer a:hover { color: #a3bffa; }
+footer .x-link { display: inline-flex; align-items: center; gap: 5px; }
+footer .x-ico { vertical-align: -1px; }
+
+@media (max-width: 900px) {
+  .cards { grid-template-columns: 1fr; }
+  .metrics { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+  nav .nav-links { display: none; position: absolute; top: 56px; left: 0; right: 0; background: rgba(13,27,42,.97); flex-direction: column; padding: 16px 24px; gap: 14px; border-bottom: 1px solid rgba(163,191,250,.15); }
+  nav .nav-links.show { display: flex; }
+  .menu-toggle { display: block; }
+  th { width: 42%; }
+  section.blk { padding: 46px 20px; }
+  .hero { padding: 54px 20px 46px; }
+  .risk { padding: 24px 20px; }
+}
+/* ---------- FAQ & DISCLOSURE (2026-11-01) ---------- */
+.faq ul { list-style: none; display: grid; gap: 12px; }
+.faq li { background: #fff; border: 1px solid #e2e7ef; border-radius: 12px; padding: 18px 20px; font-size: .94em; color: #33465f; }
+.faq li b { display: block; color: #26426b; margin-bottom: 7px; font-size: 1em; }
+.faq li span { display: inline; }
+.rev { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .82em; color: #7a8ba8; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="inner">
+    <a class="logo" href="/" title="Back to Home / 返回首页"><img class="logo-mark" src="/guixu800tm-96.webp?v=20260925a" alt="Guixu Consensus" width="96" height="96" decoding="async"><span>Guixu</span>&nbsp;Consensus</a>
+    <button class="menu-toggle" onclick="toggleMenu()">&#9776;</button>
+    <ul class="nav-links">
+      <li><a href="/#about" data-en>About</a><a href="/#about" data-zh>关于</a></li>
+      <li><a href="/#how" data-en>How It Works</a><a href="/#how" data-zh>机制</a></li>
+      <li><a href="/#roadmap" data-en>Roadmap</a><a href="/#roadmap" data-zh>路线图</a></li>
+      <li><a href="/token/" class="active" data-en>gx</a><a href="/token/" class="active" data-zh>代币 gx</a></li>
+      <li><a href="https://node.guixu.club/" data-en>Terminal</a><a href="https://node.guixu.club/" data-zh>用户终端</a></li>
+      <li><button class="lang-btn" onclick="toggleLang()">中文</button></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="riskbar">
+  <span data-en><b>Status note.</b> This page is a mechanism disclosure for a pre-launch community asset. It is not a public offering, not an investment product, and no contract has been deployed.</span>
+  <span data-zh><b>状态说明。</b>本页为发射前社区资产的机制披露，非公开发行、非投资产品，合约尚未部署。</span>
+</div>
+
+<section class="hero">
+  <div class="inner hero-content">
+    <div class="eyebrow">BNB Chain &middot; Bonding Curve &middot; Community Asset</div>
+    <h1>
+      <span data-en>Guixu Consensus &middot; gx</span>
+      <span data-zh>归墟共识 &middot; gx</span>
+    </h1>
+    <p class="tagline">
+      <span data-en>A community token on BNB Chain, issued through Flap&#39;s public bonding curve. Fair launch: no pre-mine, no presale, no reserved allocation. Tax 1% buy / 1% sell: 50% to the on-chain dividend vault, 30% to the liquidity pool, 10% to the creator, 10% burned. Independent of the Guixu mainnet token.</span>
+      <span data-zh>部署于 BNB Chain，经 Flap 公开联合曲线发行的社区代币。公平启动，零预挖、无预售、无预留额度。买入税、卖出税各 1%：五成进入链上分红金库，三成注入流动性池，一成分配给创作者，一成用于销毁。与归墟主网代币相互独立。</span>
+    </p>
+    <div class="chips">
+      <span class="chip"><b data-en>Stage</b><b data-zh>阶段</b> &nbsp;<span data-en>Pre-launch</span><span data-zh>发射前</span></span>
+      <span class="chip"><b data-en>Contract</b><b data-zh>合约</b> &nbsp;<span data-en>To be announced</span><span data-zh>待公布</span></span>
+      <span class="chip"><b data-en>Network</b><b data-zh>网络</b> &nbsp;BNB Smart Chain</span>
+    </div>
+  </div>
+</section>
+
+<section class="blk">
+  <div class="sect-no">01 &mdash; Mechanism</div>
+  <h2><span data-en>How the curve works</span><span data-zh>曲线机制</span></h2>
+  <p class="lead">
+    <span data-en>Price is discovered on-chain between reserve and circulating supply. There is no pre-built liquidity pool and no manual price setting at this stage.</span>
+    <span data-zh>价格由储备与流通量在链上共同决定，曲线阶段不存在预建流动性池，也不存在人工挂单定价。</span>
+  </p>
+  <div class="cards">
+    <div class="card">
+      <span class="num">01</span>
+      <h3><span data-en>Bonding curve</span><span data-zh>联合曲线</span></h3>
+      <p><span data-en>Buying releases tokens from the curve and grows the reserve; selling returns reserve to the seller and shrinks it. Supply drives price, not order books.</span>
+      <span data-zh>买入时合约释放代币、储备增加；卖出时回收代币、储备减少。价格由储备与流通共同决定，而非订单簿。</span></p>
+    </div>
+    <div class="card">
+      <span class="num">02</span>
+      <h3><span data-en>Graduation</span><span data-zh>毕业迁移</span></h3>
+      <p><span data-en>At 80% of total supply in circulation (800M tokens, approx. 16 BNB reserve), remaining supply and the full reserve migrate to PancakeSwap. Tax tokens migrate to a V2 pool.</span>
+      <span data-zh>流通量达到总量 80%（8 亿枚，约 16 BNB 储备）时，剩余代币与全部储备自动迁移至 PancakeSwap；税币迁移目标为 V2 池。</span></p>
+    </div>
+    <div class="card">
+      <span class="num">03</span>
+      <h3><span data-en>Tax routing</span><span data-zh>税收路由</span></h3>
+      <p><span data-en>Trade tax is fixed at deployment and cannot be changed afterwards: 1% on buys, 1% on sells. Of that, 50% funds the on-chain dividend vault, 30% is added to the liquidity pool, 10% goes to the creator and 10% is burned. Nothing is routed outside those four buckets.</span>
+      <span data-zh>交易税在创建时写死、之后不可更改：买入 1%、卖出 1%。其中五成进入链上分红金库，三成注入流动性池，一成分配给创作者，一成用于销毁；四项之外不流向任何钱包。</span></p>
+    </div>
+  </div>
+</section>
+
+<section class="blk" style="padding-top:0;">
+  <div class="sect-no">02 &mdash; Proposed parameters</div>
+  <h2><span data-en>Parameters (proposed, pending sign-off)</span><span data-zh>参数（拟议，待签决）</span></h2>
+  <p class="lead">
+    <span data-en>Every value below is a proposal under review. Nothing is final until the contract is deployed and published on this page. Risk-control switches (holding cap, per-block limit, contract buys) depend on the options actually offered at creation.</span>
+    <span data-zh>以下数值均为评审中的拟议值，在合约部署并在本页公布之前，均不构成最终参数。风控类开关（持仓上限、区块限制、合约买入）以创建页实际可选项为准。</span>
+  </p>
+  <table>
+    <tr><th><span data-en>Network / quote asset</span><span data-zh>网络 / 计价资产</span></th><td>BNB Smart Chain &middot; BNB</td></tr>
+    <tr><th><span data-en>Total supply</span><span data-zh>总供应量</span></th><td>1,000,000,000 gx</td></tr>
+    <tr><th><span data-en>Buy / sell tax</span><span data-zh>买税 / 卖税</span></th><td>1% / 1%</td></tr>
+    <tr><th><span data-en>Tax routing</span><span data-zh>税收分配</span></th><td><span data-en>50% to the dividend vault (bStocks), 30% to the liquidity pool, 10% to the creator, 10% burned; nothing flows outside those four buckets</span><span data-zh>50% 进入 bStocks 分红金库，30% 注入流动性池，10% 分配给创作者，10% 用于销毁；不流入四项之外的任何钱包</span></td></tr>
+    <tr><th><span data-en>Tax split (four buckets)</span><span data-zh>税费四桶</span></th><td><span data-en>Dividend 50% &middot; Liquidity 30% &middot; Creator 10% &middot; Burn 10%</span><span data-zh>分红 50% &middot; 流动性 30% &middot; 创作者 10% &middot; 销毁 10%</span></td></tr>
+    <tr><th><span data-en>Reward module</span><span data-zh>分配模块</span></th><td><span data-en>Dividend vault (bStocks); minimum holding 500,000 gx to qualify</span><span data-zh>分红金库（bStocks）；最低持仓 50 万枚 gx 方可参与</span></td></tr>
+    <tr><th><span data-en>Max holding per wallet</span><span data-zh>单钱包持仓上限</span></th><td><span data-en>&le;0.3% of total supply</span><span data-zh>&le;总量 0.3%</span></td></tr>
+    <tr><th><span data-en>Per-block limit</span><span data-zh>区块内限制</span></th><td><span data-en>One buy per wallet per block</span><span data-zh>每钱包每区块仅允许 1 笔买入</span></td></tr>
+    <tr><th><span data-en>Contract buys</span><span data-zh>合约买入</span></th><td><span data-en>Disabled &mdash; externally owned wallets only</span><span data-zh>关闭 &mdash; 仅允许普通外部钱包</span></td></tr>
+    <tr><th><span data-en>Team allocation</span><span data-zh>团队预留</span></th><td><span data-en>None &mdash; no pre-mine</span><span data-zh>无 &mdash; 全程零预挖</span></td></tr>
+    <tr><th><span data-en>Migration target</span><span data-zh>迁移目标</span></th><td>PancakeSwap V2</td></tr>
+    <tr><th><span data-en>Anti-farmer protection</span><span data-zh>反农民保护期</span></th><td><span data-en>30 days (default)</span><span data-zh>30 天（默认）</span></td></tr>
+    <tr><th><span data-en>Contract address</span><span data-zh>合约地址</span></th><td><span class="pending" data-en>To be announced — no contract is deployed</span><span class="pending" data-zh>待公布 — 合约尚未部署</span></td></tr>
+  </table>
+</section>
+
+<section class="blk" style="padding-top:0;">
+  <div class="sect-no">03 &mdash; Boundary</div>
+  <h2><span data-en>Boundary with the Guixu mainnet</span><span data-zh>与归墟主网的边界</span></h2>
+  <p class="lead">
+    <span data-en>This asset is a separate community object. The statements below are commitments, not marketing language, and this page is the only authoritative statement of the relationship between this asset and the Guixu mainnet.</span>
+    <span data-zh>本资产是独立的社区物件。以下为承诺性表述，不作宣传包装；本页是本资产与归墟主网关系的唯一权威表述。</span>
+  </p>
+  <div class="boundary">
+    <ul>
+      <li><b data-en>Independent asset.</b><b data-zh>独立资产。</b> <span data-en>It is not the Guixu mainnet token and carries no mainnet emission rights.</span><span data-zh>它不是归墟主网代币，不承载任何主网发行权益。</span></li>
+      <li><b data-en>No impact on the roadmap.</b><b data-zh>不影响路线图。</b> <span data-en>PoR consensus, the node program and the 2027+ roadmap are unaffected by this launch.</span><span data-zh>PoR 共识、节点程序与 2027 起的路线图不受本次发射影响。</span></li>
+      <li><b data-en>Two different taxes.</b><b data-zh>两种税不是一回事。</b> <span data-en>Trade tax applies to this token only. It is unrelated to the mainnet transaction fee.</span><span data-zh>交易税仅作用于本代币，与主网交易税无关，二者不可混同。</span></li>
+      <li><b data-en>Optional identity, not entitlement.</b><b data-zh>可选身份，非服务权益。</b> <span data-en>Holding is an optional identity layer. It grants no access right, no service and no return.</span><span data-zh>持币仅为可选身份层，不构成任何访问权、服务权益或回报。</span></li>
+      <li><b data-en>No mapping, no conversion, no distribution.</b><b data-zh>不映射、不兑换、不空投。</b> <span data-en>This asset does not map to the mainnet token, cannot be converted into it, and receives no share of any mainnet revenue or emission.</span><span data-zh>本资产不映射主网代币、不可兑换为主网代币，也不分取主网的任何收益或发行份额。</span></li>
+      <li><b data-en>No governance or node rights.</b><b data-zh>不授予治理与节点权益。</b> <span data-en>Holding grants no governance power over the mainnet, no node qualification and no claim on the resource marketplace.</span><span data-zh>持币不授予对主网的治理权、不构成节点资格，也不对资源市场提出任何主张。</span></li>
+      <li><b data-en>Documentation boundary.</b><b data-zh>文档边界。</b> <span data-en>The mainnet whitepaper does not describe, include or endorse this asset; nothing in the whitepaper applies to it, and this page is not part of the whitepaper.</span><span data-zh>归墟主网白皮书不描述、不包含、也不背书本资产；白皮书中任何表述均不适用于本资产，本页不属于白皮书体系。</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="blk" style="padding-top:0;">
+  <div class="sect-no">04 &mdash; Data</div>
+  <h2><span data-en>On-chain data</span><span data-zh>链上数据</span></h2>
+  <p class="lead">
+    <span data-en>No figure is published until it can be read from chain. Empty means empty — we do not mock numbers.</span>
+    <span data-zh>凡不能从链上读取的数字一律不发布。无数据即留空，不填充、不模拟。</span>
+  </p>
+  <div class="metrics">
+    <div class="metric"><div class="v">&mdash;</div><div class="k"><span data-en>Graduation progress</span><span data-zh>毕业进度</span></div></div>
+    <div class="metric"><div class="v">&mdash;</div><div class="k"><span data-en>Tax vault balance</span><span data-zh>税池余额</span></div></div>
+    <div class="metric"><div class="v">&mdash;</div><div class="k"><span data-en>Distribution rounds</span><span data-zh>分红轮次</span></div></div>
+    <div class="metric"><div class="v">&mdash;</div><div class="k"><span data-en>Independent holders</span><span data-zh>独立持有人</span></div></div>
+    <div class="metric"><div class="v">&mdash;</div><div class="k"><span data-en>LP status</span><span data-zh>LP 状态</span></div></div>
+  </div>
+  <p class="note"><span data-en>Dashboard data is being connected. Only aggregated figures will be shown; no terminal identifiers or addresses.</span><span data-zh>看板数据对接中，仅展示聚合数据，不暴露终端标识与地址。</span></p>
+  <p class="note"><span data-en>Disclosure cadence: one aggregated update per week, timestamped on this page. Definitions stay fixed, figures are never back-filled or smoothed, and anything not readable from chain stays empty.</span><span data-zh>披露节奏：每周一次聚合更新，并在本页标注时间。口径固定，数字不回填、不平滑处理；凡不能从链上读取的一律留空。</span></p>
+  <p class="rev">page rev. 2026-11-15 &middot; next revision: weekly</p>
+</section>
+
+<section class="blk" style="padding-top:0;">
+  <div class="sect-no">05 &mdash; FAQ</div>
+  <h2><span data-en>Six questions, answered plainly</span><span data-zh>六个问题，直答</span></h2>
+  <p class="lead">
+    <span data-en>Answers describe the mechanism only. They are not an offer, a solicitation or a promise of outcome.</span>
+    <span data-zh>以下仅陈述机制，不构成要约、招揽或任何结果承诺。</span>
+  </p>
+  <div class="faq">
+    <ul>
+      <li>
+        <b><span data-en>Q1 &middot; What is this asset?</span><span data-zh>Q1 &middot; 这是什么资产？</span></b>
+        <span data-en>A community asset on BNB Smart Chain, issued through a public bonding curve on Flap. It is not the Guixu mainnet token and carries no rights over it.</span><span data-zh>一个部署在 BNB Smart Chain、通过 Flap 公开联合曲线发行的社区资产。它不是归墟主网代币，也不对主网主张任何权利。</span>
+      </li>
+      <li>
+        <b><span data-en>Q2 &middot; Who issues it, and how is it distributed?</span><span data-zh>Q2 &middot; 谁发行、如何分配？</span></b>
+        <span data-en>Community-initiated and deployed on a public launch venue. There is no presale, no private round, no whitelist and no reserved allocation; the creator's opening buy is capped by the venue's rule.</span><span data-zh>由社区发起，在公开发射平台部署。不存在预售、私募、白名单或预留额度；创建者的首笔买入受平台规则上限约束。</span>
+      </li>
+      <li>
+        <b><span data-en>Q3 &middot; Where does the money go?</span><span data-zh>Q3 &middot; 资金去哪？</span></b>
+        <span data-en>Every flow is executed by on-chain rules: the venue protocol fee, plus the trade tax split 50% to the dividend vault, 30% to the liquidity pool, 10% to the creator and 10% burned. Ratios are published and readable on chain. Nothing is extracted outside those rules.</span><span data-zh>全部流向由链上规则执行：平台协议费，加上按五成分红金库、三成流动性池、一成创作者、一成销毁拆分的交易税。比例公开且可在链上读取，规则之外不额外抽取。</span>
+      </li>
+      <li>
+        <b><span data-en>Q4 &middot; How does it relate to the Guixu mainnet?</span><span data-zh>Q4 &middot; 与归墟主网什么关系？</span></b>
+        <span data-en>Independent. No mapping, no conversion, no airdrop, no share of mainnet revenue or emission, and no governance or node rights. The mainnet whitepaper does not cover this asset.</span><span data-zh>相互独立。不映射、不兑换、不空投、不分取主网收益或发行份额，也不附带治理权与节点权益。主网白皮书不涉及本资产。</span>
+      </li>
+      <li>
+        <b><span data-en>Q5 &middot; Is there a price floor?</span><span data-zh>Q5 &middot; 价格有托底吗？</span></b>
+        <span data-en>No. There is no underlying asset backing and no price floor. Price is set entirely by trading between buyers and sellers, so it can move sharply in either direction.</span><span data-zh>没有。本代币无底层资产支撑，也没有价格托底，价格完全由买卖双方的交易决定，可能出现较大幅度波动。</span>
+      </li>
+      <li>
+        <b><span data-en>Q6 &middot; Can I buy it now?</span><span data-zh>Q6 &middot; 现在能买吗？</span></b>
+        <span data-en>Not from us. The contract address has not been published and no subscription, reservation or allocation is open at this stage. Any address is valid only once it appears on this page.</span><span data-zh>我们这边不提供任何买入通道。合约地址尚未公布，本阶段不开放任何认购、预约或额度。任何合约地址，以本页公布为准。</span>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<section class="blk" style="padding-top:0;">
+  <div class="risk">
+    <h2><span data-en>Risk disclosure</span><span data-zh>风险声明</span></h2>
+    <ol>
+      <li><b data-en>Not an investment.</b><b data-zh>非投资品。</b> <span data-en>No return, price support or buy-back commitment is made. The token has no underlying asset backing and its price may fall.</span><span data-zh>不承诺任何回报、价格支撑或回购。本代币无底层资产支撑，价格存在下跌可能。</span></li>
+      <li><b data-en>No public offering.</b><b data-zh>非公开发行。</b> <span data-en>No subscription, no offering and no solicitation is organised, and nothing here targets residents of restricted jurisdictions.</span><span data-zh>不组织认购、不进行募集、不做任何招揽，不面向受限制司法辖区的居民。</span></li>
+      <li><b data-en>Platform dependency.</b><b data-zh>平台依赖。</b> <span data-en>The launch venue may change or upgrade its contracts and fee rules; those changes are outside community control.</span><span data-zh>发射平台可能变更或升级其合约与费率规则，此类变更不受社区控制。</span></li>
+      <li><b data-en>Liquidity is built from tax, not from a private allocation.</b><b data-zh>流动性来自交易税，而非预留额度。</b> <span data-en>After graduation the token trades in a V2 pool whose depth depends on accumulated tax inflow, so large sells can still move price.</span><span data-zh>毕业后代币在 V2 池交易，池子深度取决于累计税流入，大额卖出仍会造成价格冲击。</span></li>
+    </ol>
+  </div>
+</section>
+
+<section class="cta">
+  <h2><span data-en>Follow the on-chain record</span><span data-zh>跟踪链上记录</span></h2>
+  <p><span data-en>All updates are published here and on X. No address is valid until it appears on this page.</span><span data-zh>所有进展仅在本页与 X 发布。任何合约地址，以本页公布为准。</span></p>
+  <div class="btns">
+    <a class="btn primary" href="https://x.com/Guixu2026" target="_blank" rel="noopener noreferrer">X &middot; @Guixu2026</a>
+    <a class="btn ghost" href="https://www.guixu.club/" target="_blank" rel="noopener noreferrer"><span data-en>Main site</span><span data-zh>品牌官网</span></a>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-links">
+    <a href="guixu-consensus-whitepaper-v1-en.html" data-en>Whitepaper</a>
+    <a href="guixu-consensus-whitepaper-v1.html" data-zh>白皮书</a>
+    <a href="/" data-en>Home</a>
+    <a href="/" data-zh>首页</a>
+    <a href="https://node.guixu.club/" data-en>Terminal</a>
+    <a href="https://node.guixu.club/" data-zh>用户终端</a>
+  </div>
+  <p>&copy; 2026 Guixu Consensus Community &middot; <span data-en>Community asset, pre-launch</span><span data-zh>社区资产 · 发射前</span> &middot; <a href="mailto:guixu2026@gmail.com">guixu2026@gmail.com</a> &middot; <a class="x-link" href="https://x.com/Guixu2026" target="_blank" rel="noopener noreferrer"><svg class="x-ico" viewBox="0 0 24 24" width="13" height="13" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg><span>@Guixu2026</span></a></p>
+</footer>
+
+<script>
+(function () {
+  try {
+    var s = localStorage.getItem("gx-lang");
+    if (s === "zh") {
+      document.documentElement.setAttribute("lang", "zh");
+      var btn = document.querySelector('.lang-btn');
+      if (btn) btn.textContent = 'EN';
+    }
+  } catch (e) {}
+})();
+function toggleMenu() { document.querySelector('.nav-links').classList.toggle('show'); }
+function closeMenu() { document.querySelector('.nav-links').classList.remove('show'); }
+function toggleLang() {
+  var html = document.documentElement;
+  html.setAttribute("lang", html.getAttribute("lang") === "en" ? "zh" : "en");
+  var btn = document.querySelector('.lang-btn');
+  btn.textContent = html.getAttribute("lang") === "en" ? "中文" : "EN";
+  closeMenu();
+  try { localStorage.setItem("gx-lang", html.getAttribute("lang")); } catch (e) {}
+}
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('.nav-links a, .nav-links button').forEach(function (el) {
+    el.addEventListener('click', closeMenu);
+  });
+});
+</script>
+<script src="home-fx.js?v=20261031b" defer></script>
+</body>
+</html>

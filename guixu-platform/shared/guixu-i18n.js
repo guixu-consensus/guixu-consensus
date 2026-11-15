@@ -32,6 +32,9 @@
 
   i18n.DEFAULT = 'en';
 
+  /* ★ 语言包/静态资源版本号：改文案后 +1，破 nginx immutable 缓存 */
+  i18n.ASSET_VER = '20261115a';
+
   /* ★ 支持的语言清单：新增语言只需新建语言包文件并在此追加语言代码 */
   var LOCALES = i18n.LOCALES = ['en', 'zh'];
 
@@ -54,7 +57,7 @@
     if (self && self.src) base = self.src.replace(/[?#].*$/, '').replace(/[^\/]*$/, '');
     if (!base) base = 'shared/';
     for (var i = 0; i < LOCALES.length; i++) {
-      document.write('<script src="' + base + 'i18n/' + LOCALES[i] + '.js"><\/script>');
+      document.write('<script src="' + base + 'i18n/' + LOCALES[i] + '.js?v=' + i18n.ASSET_VER + '"><\/script>');
     }
   })();
 

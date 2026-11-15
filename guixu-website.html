@@ -3,7 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png?v=20260925c">
+<link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png?v=20260925c">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=20260925c">
 <title>Guixu Consensus — The Great Abyss</title>
+<!-- 首屏 LOGO 预加载：避免等 CSS 解析完才发现图片 -->
+<link rel="preload" as="image" href="/guixu800tm-320.webp?v=20260925a">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; }
@@ -12,7 +18,12 @@ body { font-family: 'Segoe UI', 'Microsoft YaHei', system-ui, sans-serif; backgr
 /* ---------- NAV ---------- */
 nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; background: rgba(13,27,42,.92); backdrop-filter: blur(8px); border-bottom: 1px solid rgba(163,191,250,.12); }
 nav .inner { max-width: 1100px; margin: auto; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; height: 56px; }
-nav .logo { color: #e0e1dd; font-size: 1.15em; font-weight: 700; letter-spacing: .5px; }
+nav .logo { color: #e0e1dd; font-size: 1.15em; font-weight: 700; letter-spacing: .5px; text-decoration: none; cursor: pointer; transition: opacity .2s; display: inline-flex; align-items: center; gap: .45em; }
+/* LOGO 尺寸随同排文字字号同步（em 单位 = 跟随字体缩放），1.75em ≈ 32px */
+nav .logo .logo-mark { width: 1.75em; height: 1.75em; display: block; object-fit: contain; flex: 0 0 auto;
+  /* 与 guixu-platform 顶部导航统一：guixu800tm 徽标 + 纯白冷光晕（2026-09-25） */
+  filter: brightness(1.18) saturate(1.1) drop-shadow(0 0 5px rgba(255,255,255,.9)) drop-shadow(0 0 14px rgba(255,255,255,.55)) drop-shadow(0 0 24px rgba(255,255,255,.26)) drop-shadow(0 1px 3px rgba(0,0,0,.55)); }
+nav .logo:hover { opacity: .82; }
 nav .logo span { color: #a3bffa; }
 nav .nav-links { display: flex; gap: 24px; align-items: center; list-style: none; }
 nav .nav-links a { color: rgba(224,225,221,.7); text-decoration: none; font-size: .9em; transition: color .2s; }
@@ -26,6 +37,18 @@ nav .nav-links a:hover { color: #a3bffa; }
 .hero::before { content: ''; position: absolute; top: -20%; right: -10%; width: 500px; height: 500px; background: radial-gradient(circle, rgba(163,191,250,.12) 0%, transparent 70%); border-radius: 50%; }
 .hero::after { content: ''; position: absolute; bottom: -15%; left: -5%; width: 400px; height: 400px; background: radial-gradient(circle, rgba(65,90,119,.25) 0%, transparent 70%); border-radius: 50%; }
 .hero-content { position: relative; z-index: 1; max-width: 720px; }
+/* ---------- HERO 品牌主视觉：光影 LOGO（与 guixu-platform 总览页 hero 一致） ---------- */
+/* 动画只跑 opacity / translate3d（合成器层，不触发重排重绘），滤镜保持在静态层 */
+.hero .gx-emblem-wrap { position: relative; width: clamp(112px, 17vh, 150px); height: clamp(112px, 17vh, 150px); margin: 0 auto clamp(44px, 9.5vh, 124px); display: grid; place-items: center; }
+.hero .gx-emblem-halo { position: absolute; inset: -50%; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle, rgba(163,191,250,.5) 0%, rgba(163,191,250,.18) 36%, rgba(163,191,250,0) 70%);
+  will-change: opacity; animation: gxHaloPulse 4.6s ease-in-out infinite; }
+.hero .gx-emblem { position: relative; width: 100%; height: 100%; display: block; object-fit: contain;
+  filter: drop-shadow(0 0 10px rgba(163,191,250,.72)) drop-shadow(0 0 24px rgba(163,191,250,.5)) drop-shadow(0 14px 22px rgba(0,0,0,.6));
+  will-change: transform; backface-visibility: hidden; animation: gxEmblemFloat 6.5s ease-in-out infinite; }
+@keyframes gxEmblemFloat { 0%, 100% { transform: translate3d(0,0,0); } 50% { transform: translate3d(0,-8px,0); } }
+/* 只动 opacity，不动 scale —— scale 会让大范围径向渐变每帧重新栅格化 */
+@keyframes gxHaloPulse { 0%, 100% { opacity: .7; } 50% { opacity: 1; } }
 .hero h1 { font-size: 3em; color: #e0e1dd; margin-bottom: 8px; font-weight: 700; letter-spacing: 2px; }
 .hero .tagline { font-size: 1.3em; color: #a3bffa; margin-bottom: 16px; }
 .hero .sub { color: rgba(224,225,221,.6); font-size: 1em; margin-bottom: 32px; }
@@ -96,29 +119,27 @@ section { padding: 80px 24px; }
 .faq-a { padding: 0 24px 18px; color: #4a4a5a; font-size: .9em; line-height: 1.7; max-height: 0; overflow: hidden; transition: max-height .35s ease; }
 .faq-item.open .faq-a { max-height: 500px; }
 
-/* ---------- FOOTER ---------- */
-footer { background: #0d1b2a; color: rgba(224,225,221,.5); text-align: center; padding: 32px 24px; font-size: .85em; }
-footer .footer-links { display: flex; gap: 24px; justify-content: center; margin-bottom: 16px; flex-wrap: wrap; }
-footer a { color: #a3bffa; text-decoration: none; }
-footer a:hover { text-decoration: underline; }
+/* ---------- DOCS ---------- */
+.docs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-top: 32px; }
+.doc-card { background: #fff; border-radius: 12px; padding: 28px 24px; box-shadow: 0 2px 12px rgba(0,0,0,.05); display: flex; flex-direction: column; }
+.doc-card .doc-icon { font-size: 2em; margin-bottom: 12px; }
+.doc-card h3 { font-size: 1.1em; color: #1b263b; margin-bottom: 8px; }
+.doc-card .doc-ver { font-size: .9em; color: #4a4a5a; margin-bottom: 20px; }
+.doc-actions { margin-top: auto; display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+.doc-btn { padding: 10px 22px; font-size: .9em; }
+.doc-alt { font-size: .85em; color: #415a77; text-decoration: none; border-bottom: 1px dashed rgba(65,90,119,.45); padding-bottom: 1px; }
+.doc-alt:hover { color: #a3bffa; border-color: #a3bffa; }
 
-/* ---------- RESPONSIVE ---------- */
-@media (max-width: 768px) {
-  .hero h1 { font-size: 2.2em; }
-  .hero .tagline { font-size: 1.1em; }
-  nav .nav-links { display: none; position: absolute; top: 56px; left: 0; right: 0; background: rgba(13,27,42,.97); flex-direction: column; padding: 16px 24px; gap: 12px; border-bottom: 1px solid rgba(163,191,250,.12); }
-  nav .nav-links.show { display: flex; }
-  .menu-toggle { display: block; }
-  section { padding: 60px 16px; }
-}
+/* ---------- BUSINESS ---------- */
+.biz-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-top: 32px; }
+.biz-card { background: #fff; border-radius: 12px; padding: 26px 22px; box-shadow: 0 2px 12px rgba(0,0,0,.05); border-top: 3px solid #a3bffa; }
+.biz-card .icon { font-size: 1.9em; margin-bottom: 10px; }
+.biz-card h4 { font-size: 1.02em; color: #1b263b; margin-bottom: 8px; }
+.biz-card p { font-size: .87em; color: #4a4a5a; }
+.biz-flow { margin-top: 26px; background: linear-gradient(135deg, #0d1b2a, #1b263b, #415a77); color: #e0e1dd; border-radius: 10px; padding: 18px 24px; text-align: center; font-size: .9em; line-height: 1.9; }
+.biz-flow i { color: #a3bffa; font-style: normal; margin: 0 6px; }
+.biz-note { margin-top: 16px; font-size: .9em; color: #4a4a5a; }
 
-/* ---------- BILINGUAL HIDDEN ---------- */
-[data-zh], [data-en] { display: none; }
-html[lang="en"] [data-en] { display: revert; }
-html[lang="zh"] [data-zh] { display: revert; }
-html[lang="en"] [data-zh] { display: none; }
-html[lang="zh"] [data-en] { display: none; }
-[data-en], [data-zh] { display: none; }
 /* ---------- HIDDEN COUNTER ---------- */
 .counter-wrap { text-align: center; margin-top: 10px; line-height: 1; }
 .counter-toggle { cursor: pointer; color: rgba(224,225,221,.05); font-size: 8px; user-select: none; transition: color .3s; }
@@ -134,6 +155,162 @@ html[lang="zh"] [data-en] { display: none; }
 .mp-card h3 { color: #3a5fd0; font-size: 1.05em; margin-bottom: 8px; }
 .mp-card p { color: rgba(30,35,55,.7); font-size: .9em; line-height: 1.75; }
 @media (max-width: 600px) { .mp-grid { grid-template-columns: 1fr; } }
+
+/* ---------- FOOTER ---------- */
+footer { background: #0d1b2a; color: rgba(224,225,221,.5); text-align: center; padding: 32px 24px; font-size: .85em; }
+footer .footer-links { display: flex; gap: 24px; justify-content: center; margin-bottom: 16px; flex-wrap: wrap; }
+footer a { color: #a3bffa; text-decoration: none; }
+footer a:hover { text-decoration: underline; }
+footer .x-link { display: inline-flex; align-items: center; gap: 5px; vertical-align: -1px; }
+footer .x-link .x-ico { flex: 0 0 auto; }
+footer .x-link:hover { text-decoration: underline; }
+
+/* ---------- 程序框架入口（位于 footer「全球活跃节点」之后，中英双语由 html[lang] 显隐机制控制） ---------- */
+.pf-entry-wrap { margin-top: 22px; }
+.pf-entry { display: inline-flex; align-items: center; gap: 9px; padding: 10px 24px; border-radius: 999px;
+  border: 1px solid rgba(163,191,250,.32); background: rgba(163,191,250,.08); color: #a3bffa;
+  font-size: .95em; font-weight: 600; letter-spacing: .3px; text-decoration: none;
+  transition: background .22s, border-color .22s, color .22s, transform .22s, box-shadow .22s; }
+.pf-entry:hover { background: rgba(163,191,250,.2); border-color: #a3bffa; color: #e0e1dd;
+  transform: translateY(-1px); box-shadow: 0 6px 18px rgba(163,191,250,.18); text-decoration: none; }
+.pf-entry .pf-ico { font-size: .95em; line-height: 1; }
+.pf-entry .pf-arrow { transition: transform .22s; }
+.pf-entry:hover .pf-arrow { transform: translateX(3px); }
+@media (max-width: 540px) { .pf-entry { font-size: .88em; padding: 9px 18px; } }
+
+/* ---------- RESPONSIVE ---------- */
+/* 中等宽度（768–1060px）：压缩导航间距，保证 LOGO 与菜单同排不换行、不溢出 */
+nav .logo, nav .nav-links a { white-space: nowrap; }
+@media (max-width: 1250px) and (min-width: 1061px) {
+  nav .nav-links { gap: 13px; }
+  nav .nav-links a { font-size: .85em; }
+  nav .logo { font-size: 1.08em; }
+}
+@media (max-width: 1060px) and (min-width: 769px) {
+  nav .nav-links { gap: 7px; }
+  nav .nav-links a { font-size: .82em; }
+  nav .logo { font-size: 1.05em; }
+  .lang-btn { padding: 4px 10px; font-size: .8em; }
+}
+@media (max-width: 768px) {
+  .hero .gx-emblem-wrap { width: clamp(98px, 15vh, 118px); height: clamp(98px, 15vh, 118px); margin-bottom: clamp(30px, 6vh, 56px); }
+  .hero h1 { font-size: 2.2em; }
+  .hero .tagline { font-size: 1.1em; }
+  nav .nav-links { display: none; position: absolute; top: 56px; left: 0; right: 0; background: rgba(13,27,42,.97); flex-direction: column; padding: 16px 24px; gap: 12px; border-bottom: 1px solid rgba(163,191,250,.12); }
+  nav .nav-links.show { display: flex; }
+  .menu-toggle { display: block; }
+  section { padding: 60px 16px; }
+}
+
+/* ---------- BILINGUAL HIDDEN ---------- */
+[data-zh], [data-en] { display: none; }
+html[lang="en"] [data-en] { display: revert; }
+html[lang="zh"] [data-zh] { display: revert; }
+html[lang="en"] [data-zh] { display: none; }
+html[lang="zh"] [data-en] { display: none; }
+[data-en], [data-zh] { display: none; }
+
+/* ---------- 统一卡片光影系统（2026-09-29）---------- */
+/* 浅色卡片：顶部常驻高光 + hover 品牌光晕/上浮/光带扫过；深色卡片：边框辉光 + 内辉 + 上浮
+   动效只跑 transform/opacity（合成器层），不触发布局重排 */
+@keyframes gxSheenSweep {
+  from { transform: translateX(-160%) skewX(-18deg); opacity: 0; }
+  18%  { opacity: 1; }
+  to   { transform: translateX(280%) skewX(-18deg); opacity: 0; }
+}
+
+/* --- 浅色卡片：关于 / 文档 / 商业 / FAQ --- */
+.about-card, .doc-card, .biz-card {
+  position: relative; overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,.05), inset 0 1px 0 rgba(255,255,255,.9);
+  transition: transform .35s cubic-bezier(.22,.61,.36,1), box-shadow .35s cubic-bezier(.22,.61,.36,1);
+}
+.about-card::before, .doc-card::before, .biz-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; pointer-events: none;
+  background: linear-gradient(90deg, rgba(163,191,250,0) 0%, rgba(163,191,250,.55) 22%, rgba(227,236,255,.95) 50%, rgba(163,191,250,.55) 78%, rgba(163,191,250,0) 100%);
+  opacity: .75;
+}
+.about-card::after, .doc-card::after, .biz-card::after, .faq-item::after {
+  content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 55%; pointer-events: none;
+  background: linear-gradient(100deg, rgba(163,191,250,0) 0%, rgba(163,191,250,.28) 50%, rgba(163,191,250,0) 100%);
+  transform: translateX(-160%) skewX(-18deg); opacity: 0;
+}
+.about-card:hover::after, .doc-card:hover::after, .biz-card:hover::after, .faq-item:hover::after {
+  animation: gxSheenSweep .95s cubic-bezier(.3,.5,.3,1) forwards;
+}
+.about-card:hover, .doc-card:hover, .biz-card:hover, .faq-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 28px rgba(13,27,42,.16), 0 0 0 1px rgba(163,191,250,.55),
+              0 0 24px rgba(163,191,250,.36), inset 0 1px 0 rgba(255,255,255,.95);
+}
+
+/* --- 深色卡片：步骤 / 运维基金 / 商业闭环条 --- */
+.step, .tax-row, .biz-flow {
+  position: relative; overflow: hidden;
+  transition: transform .35s cubic-bezier(.22,.61,.36,1), box-shadow .35s cubic-bezier(.22,.61,.36,1),
+              border-color .35s, background .35s;
+}
+.step:hover, .tax-row:hover {
+  transform: translateY(-4px);
+  border-color: rgba(163,191,250,.5);
+  background: rgba(163,191,250,.1);
+  box-shadow: 0 10px 26px rgba(5,12,22,.5), 0 0 24px rgba(163,191,250,.3),
+              inset 0 0 26px rgba(163,191,250,.1);
+}
+.biz-flow:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 26px rgba(5,12,22,.5), 0 0 26px rgba(163,191,250,.28);
+}
+.step::after, .tax-row::after, .biz-flow::after {
+  content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 55%; pointer-events: none;
+  background: linear-gradient(100deg, rgba(163,191,250,0) 0%, rgba(163,191,250,.22) 50%, rgba(163,191,250,0) 100%);
+  transform: translateX(-160%) skewX(-18deg); opacity: 0;
+}
+.step:hover::after, .tax-row:hover::after, .biz-flow:hover::after {
+  animation: gxSheenSweep .95s cubic-bezier(.3,.5,.3,1) forwards;
+}
+.step .num { transition: box-shadow .35s; }
+.step:hover .num { box-shadow: 0 0 0 3px rgba(163,191,250,.18), 0 0 16px rgba(163,191,250,.8); }
+
+/* --- 通证数据卡：hover 径向光晕 --- */
+.token-stat { position: relative; border-radius: 12px; transition: transform .35s, box-shadow .35s; }
+.token-stat::before {
+  content: ''; position: absolute; inset: -12%; border-radius: 50%; pointer-events: none; opacity: 0; z-index: 0;
+  background: radial-gradient(circle, rgba(163,191,250,.28) 0%, rgba(163,191,250,.08) 42%, rgba(163,191,250,0) 72%);
+  transition: opacity .35s;
+}
+.token-stat:hover { transform: translateY(-3px); }
+.token-stat:hover::before { opacity: 1; }
+.token-stat .value, .token-stat .label { position: relative; z-index: 1; }
+
+/* --- 运维基金明细行 hover 高亮 --- */
+.tax-item { transition: background .25s; }
+.tax-item:hover { background: rgba(163,191,250,.08); }
+
+/* --- 无障碍：偏好减少动效时关闭扫光与位移 --- */
+@media (prefers-reduced-motion: reduce) {
+  .about-card::after, .doc-card::after, .biz-card::after, .faq-item::after,
+  .step::after, .tax-row::after, .biz-flow::after { animation: none !important; opacity: 0 !important; }
+  .about-card:hover, .doc-card:hover, .biz-card:hover, .faq-item:hover,
+  .step:hover, .tax-row:hover, .biz-flow:hover, .token-stat:hover { transform: none; }
+}
+/* --- 触屏窄屏：弱化抬升 --- */
+@media (max-width: 768px) {
+  .about-card:hover, .doc-card:hover, .biz-card:hover, .faq-item:hover,
+  .step:hover, .tax-row:hover, .biz-flow:hover { transform: translateY(-2px); }
+}
+/* ---------- 实时网络总盘（P5，数据源 /api/platform/metrics） ---------- */
+.live-strip { margin-top: 30px; padding-top: 22px; border-top: 1px solid rgba(163,191,250,.16); }
+.live-strip[hidden] { display: none; }
+.live-cap { font-size: .72em; letter-spacing: 1.4px; text-transform: uppercase; color: rgba(163,191,250,.78); margin-bottom: 13px; }
+.live-grid { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+.live-stat { background: rgba(163,191,250,.09); border: 1px solid rgba(163,191,250,.2); border-radius: 12px; padding: 10px 16px; min-width: 112px; }
+.live-stat b { display: block; font-size: 1.32em; color: #fff; font-variant-numeric: tabular-nums; }
+.live-stat span { display: block; font-size: .72em; color: rgba(224,225,221,.72); margin-top: 3px; }
+.live-chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 16px; }
+.live-chips i { font-style: normal; font-size: .76em; color: #a3bffa; border: 1px solid rgba(163,191,250,.3);
+  background: rgba(163,191,250,.08); border-radius: 999px; padding: 5px 14px; }
+.live-foot { font-size: .7em; color: rgba(224,225,221,.5); margin-top: 12px; }
 </style>
 </head>
 <body>
@@ -141,16 +318,19 @@ html[lang="zh"] [data-en] { display: none; }
 <!-- NAV -->
 <nav>
   <div class="inner">
-    <div class="logo"><span>Guixu</span> Consensus</div>
-    <button class="menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('show')">☰</button>
+    <a class="logo" href="index.html" title="返回首页 / Back to Home"><img class="logo-mark" src="/guixu800tm-96.webp?v=20260925a" alt="Guixu Consensus" width="96" height="96" decoding="async"><span>Guixu</span> Consensus</a>
+    <button class="menu-toggle" onclick="toggleMenu()">☰</button>
     <ul class="nav-links">
       <li><a href="#about" data-en>About</a><a href="#about" data-zh>关于</a></li>
       <li><a href="#how" data-en>How It Works</a><a href="#how" data-zh>机制</a></li>
       <li><a href="#marketplace" data-en>Marketplace</a><a href="#marketplace" data-zh>资源市场</a></li>
       <li><a href="#token" data-en>Token</a><a href="#token" data-zh>通证</a></li>
+      <li><a href="#business" data-en>Business Logic</a><a href="#business" data-zh>商业逻辑</a></li>
       <li><a href="#roadmap" data-en>Roadmap</a><a href="#roadmap" data-zh>路线图</a></li>
+      <li><a href="/token/" data-en>Community Asset</a><a href="/token/" data-zh>社区资产</a></li>
       <li><a href="#faq" data-en>FAQ</a><a href="#faq" data-zh>FAQ</a></li>
-      <li><a href="guixu-platform/index.html" target="_blank" rel="noopener" data-en>Platform</a><a href="guixu-platform/index.html" target="_blank" rel="noopener" data-zh>程序框架</a></li>
+      <li><a href="#docs" data-en>Docs</a><a href="#docs" data-zh>文档</a></li>
+      <li><a href="/guixu-platform/" data-en>Platform Framework</a><a href="/guixu-platform/" data-zh>程序框架</a></li>
       <li><button class="lang-btn" onclick="toggleLang()">中文</button></li>
     </ul>
   </div>
@@ -159,6 +339,10 @@ html[lang="zh"] [data-en] { display: none; }
 <!-- HERO -->
 <section class="hero">
   <div class="hero-content">
+    <div class="gx-emblem-wrap">
+      <span class="gx-emblem-halo"></span>
+      <img class="gx-emblem" src="/guixu800tm-320.webp?v=20260925a" alt="归墟共识 Guixu Consensus" width="320" height="320" decoding="async" fetchpriority="high">
+    </div>
     <h1 data-en>The Great Abyss</h1>
     <h1 data-zh>万流归一</h1>
     <p class="tagline" data-en>Every idle device deserves a purpose.</p>
@@ -170,6 +354,23 @@ html[lang="zh"] [data-en] { display: none; }
       <a href="#how" class="btn btn-primary" data-zh>了解机制</a>
       <a href="#roadmap" class="btn btn-outline" data-en>View Roadmap</a>
       <a href="#roadmap" class="btn btn-outline" data-zh>查看路线图</a>
+    </div>
+    <div class="live-strip" id="liveStrip" hidden>
+      <div class="live-cap" data-en>LIVE NETWORK &#183; PROOF OF RESOURCE</div>
+      <div class="live-cap" data-zh>&#32593;&#32476;&#23454;&#26102; &#183; &#36164;&#28304;&#35777;&#26126;</div>
+      <div class="live-grid">
+        <div class="live-stat"><b id="lvTerminals">&#8212;</b><span data-en>Reporting terminals</span><span data-zh>&#19978;&#25253;&#32456;&#31471;</span></div>
+        <div class="live-stat"><b id="lvStorage">&#8212;</b><span data-en>Pooled storage (GB)</span><span data-zh>&#27719;&#32858;&#23384;&#20648; (GB)</span></div>
+        <div class="live-stat"><b id="lvBw">&#8212;</b><span data-en>Pooled bandwidth (Mbps)</span><span data-zh>&#27719;&#32858;&#24102;&#23485; (Mbps)</span></div>
+        <div class="live-stat"><b id="lvCompute">&#8212;</b><span data-en>Pooled compute (TFLOPS)</span><span data-zh>&#27719;&#32858;&#31639;&#21147; (TFLOPS)</span></div>
+      </div>
+      <div class="live-chips">
+        <i data-en>Join and earn</i><i data-zh>&#21442;&#19982;&#21363;&#24471;</i>
+        <i data-en>Contribute and be rewarded</i><i data-zh>&#36129;&#29486;&#21363;&#22870;</i>
+        <i data-en>Hold and benefit</i><i data-zh>&#25345;&#26377;&#21363;&#21463;&#30410;</i>
+      </div>
+      <div class="live-foot" data-en>Live server aggregation. Figures are declared capacity, not a service-level commitment.</div>
+      <div class="live-foot" data-zh>&#26381;&#21153;&#31471;&#23454;&#26102;&#32858;&#21512;&#12290;&#25968;&#23383;&#20026;&#30003;&#25253;&#23481;&#37327;&#65292;&#19981;&#26500;&#25104;&#26381;&#21153;&#31561;&#32423;&#25215;&#35834;&#12290;</div>
     </div>
   </div>
 </section>
@@ -201,8 +402,8 @@ html[lang="zh"] [data-en] { display: none; }
         <div class="icon">🔗</div>
         <h3 data-en>100% Decentralized</h3>
         <h3 data-zh>100% 去中心化</h3>
-        <p data-en>No private sale, no public sale, no external financing. Self-sustaining through transaction and transfer taxes.</p>
-        <p data-zh>无私募，无公募，不依赖外部融资。通过交易税和转账税自给自足。</p>
+        <p data-en>No private sale, no public sale, no external financing. Self-sustaining through the transaction tax.</p>
+        <p data-zh>无私募，无公募，不依赖外部融资。通过交易税自给自足。</p>
       </div>
     </div>
   </div>
@@ -237,8 +438,8 @@ html[lang="zh"] [data-en] { display: none; }
         <div class="num">3</div>
         <h4 data-en>Earn</h4>
         <h4 data-zh>获得</h4>
-        <p data-en>Based on your contribution score, you receive Guixu tokens automatically.</p>
-        <p data-zh>根据贡献值，系统自动铸造并分配归墟代币给你。</p>
+        <p data-en>Based on your contribution score, you receive gx automatically.</p>
+        <p data-zh>根据贡献值，系统自动铸造并分配 gx 给你。</p>
       </div>
     </div>
 
@@ -247,6 +448,56 @@ html[lang="zh"] [data-en] { display: none; }
         <span data-en>Resources contributed: Bandwidth · Storage · Compute · Stability · Location</span>
         <span data-zh>贡献的资源类型：带宽 · 存储 · 算力 · 稳定性 · 地理位置</span>
       </p>
+    </div>
+  </div>
+</section>
+
+<!-- TOKEN -->
+<section id="token" class="light-section">
+  <div class="section-inner">
+    <h2 class="section-title" data-en>Token Economics</h2>
+    <h2 class="section-title" data-zh>通证经济</h2>
+    <p class="section-subtitle" data-en>gx — fair, transparent, and sustained by the network itself.</p>
+    <p class="section-subtitle" data-zh>gx — 公平、透明，由网络自身持续支撑。</p>
+
+    <div class="token-grid">
+      <div class="token-stat">
+        <div class="value" data-en>No Cap</div>
+        <div class="value" data-zh>按需铸造</div>
+        <div class="label" data-en>Minted on demand, no fixed supply limit</div>
+        <div class="label" data-zh>无固定总量上限，由系统贡献值动态决定发行速度</div>
+      </div>
+      <div class="token-stat">
+        <div class="value" data-en>No Sale</div>
+        <div class="value" data-zh>无私募公募</div>
+        <div class="label" data-en>Zero private or public sale — all earned through contribution</div>
+        <div class="label" data-zh>无私募、无公募，全部通过终端资源贡献自动铸造</div>
+      </div>
+      <div class="token-stat">
+        <div class="value" data-en>1h</div>
+        <div class="value" data-zh>铸造冷却</div>
+        <div class="label" data-en>Minting cooldown: 1 hour prevents high-frequency farming</div>
+        <div class="label" data-zh>每次铸造间隔1小时，防止高频刷取</div>
+      </div>
+      <div class="token-stat">
+        <div class="value" data-en>24/7</div>
+        <div class="value" data-zh>持续运行</div>
+        <div class="label" data-en>Stable devices earn more — 30+ days gets boosted rewards</div>
+        <div class="label" data-zh>设备越稳定，获得越多 — 连续在线30天后奖励逐步提升</div>
+      </div>
+    </div>
+
+    <div class="tax-row">
+      <h4 data-en>Maintenance Fund — Powered by Network Activity</h4>
+      <h4 data-zh>运维基金 — 由网络活动持续驱动</h4>
+      <div class="tax-item">
+        <span data-en>Transaction Tax</span><span data-zh>交易税</span>
+        <span class="amount">1%</span>
+      </div>
+      <div style="margin-top:12px; font-size:.85em; color:rgba(224,225,221,.5);">
+        <span data-en>Fund allocation: Node Rewards 40% · Maintenance &amp; Audits 30% · Upgrades &amp; Dev 20% · Community 10%</span>
+        <span data-zh>基金用途：节点奖励 40% · 网络维护与安全审计 30% · 系统升级与开发 20% · 社区建设 10%</span>
+      </div>
     </div>
   </div>
 </section>
@@ -292,55 +543,49 @@ html[lang="zh"] [data-en] { display: none; }
   </div>
 </section>
 
-<!-- TOKEN -->
-<section id="token" class="light-section">
+<!-- BUSINESS LOGIC & VALUE -->
+<section id="business" class="dark-section">
   <div class="section-inner">
-    <h2 class="section-title" data-en>Token Economics</h2>
-    <h2 class="section-title" data-zh>通证经济</h2>
-    <p class="section-subtitle" data-en>The Guixu Token — fair, transparent, and sustained by the network itself.</p>
-    <p class="section-subtitle" data-zh>归墟代币 — 公平、透明，由网络自身持续支撑。</p>
+    <h2 class="section-title" data-en>Business Logic &amp; Value</h2>
+    <h2 class="section-title" data-zh>商业逻辑与价值</h2>
+    <p class="section-subtitle" data-en>Guixu is not merely a DApp — it is a resource value network that gathers idle devices and idle attention, connects them to real demand, and keeps value flowing.</p>
+    <p class="section-subtitle" data-zh>归墟不只是一个 DApp — 它是一张汇聚闲置设备与闲置注意力、直连真实需求、让价值持续流转的资源价值网。</p>
 
-    <div class="token-grid">
-      <div class="token-stat">
-        <div class="value" data-en>No Cap</div>
-        <div class="value" data-zh>按需铸造</div>
-        <div class="label" data-en>Minted on demand, no fixed supply limit</div>
-        <div class="label" data-zh>无固定总量上限，由系统贡献值动态决定发行速度</div>
+    <div class="steps">
+      <div class="step" style="max-width:300px;">
+        <div class="num">1</div>
+        <h4 data-en>Platform Positioning</h4>
+        <h4 data-zh>平台定位</h4>
+        <p data-en>A resource value network — aggregating physical and traffic resources from idle devices and idle attention, connecting to real commercial demand.</p>
+        <p data-zh>一张资源价值网 — 汇聚闲置设备与闲置注意力中的物理资源与流量资源，对接真实商业需求。</p>
       </div>
-      <div class="token-stat">
-        <div class="value" data-en>No Sale</div>
-        <div class="value" data-zh>无私募公募</div>
-        <div class="label" data-en>Zero private or public sale — all earned through contribution</div>
-        <div class="label" data-zh>无私募、无公募，全部通过终端资源贡献自动铸造</div>
+      <div class="step" style="max-width:300px;">
+        <div class="num">2</div>
+        <h4 data-en>Dual-Layer Resources</h4>
+        <h4 data-zh>双层资源模型</h4>
+        <p data-en>Physical resources (compute / storage / bandwidth / edge) plus traffic resources (attention / visits / social) — both have no value ceiling.</p>
+        <p data-zh>物理资源（算力/存储/带宽/边缘）＋ 流量资源（注意力/访问/社交），两者价值皆无上限。</p>
       </div>
-      <div class="token-stat">
-        <div class="value" data-en>1h</div>
-        <div class="value" data-zh>铸造冷却</div>
-        <div class="label" data-en>Minting cooldown: 1 hour prevents high-frequency farming</div>
-        <div class="label" data-zh>每次铸造间隔1小时，防止高频刷取</div>
+      <div class="step" style="max-width:300px;">
+        <div class="num">3</div>
+        <h4 data-en>Three-Phase Token Economy</h4>
+        <h4 data-zh>通证经济三阶段</h4>
+        <p data-en>Build consensus through token incentives, support business as value converges, then step back to act as a settlement layer.</p>
+        <p data-zh>以通证引流搭建共识，支撑商业汇聚价值，最终退出成为价值结算器。</p>
       </div>
-      <div class="token-stat">
-        <div class="value" data-en>24/7</div>
-        <div class="value" data-zh>持续运行</div>
-        <div class="label" data-en>Stable devices earn more — 30+ days gets boosted rewards</div>
-        <div class="label" data-zh>设备越稳定，获得越多 — 连续在线30天后奖励逐步提升</div>
+      <div class="step" style="max-width:300px;">
+        <div class="num">4</div>
+        <h4 data-en>Sustainable Commercial Loop</h4>
+        <h4 data-zh>可持续商业闭环</h4>
+        <p data-en>Idle devices + attention → aggregated resources → monetized with real buyers → rewards flow back to contributors — a positive cycle.</p>
+        <p data-zh>闲置设备＋注意力 → 资源汇聚 → 对接真实买家变现 → 奖励回馈贡献者，形成正循环。</p>
       </div>
-    </div>
-
-    <div class="tax-row">
-      <h4 data-en>Maintenance Fund — Powered by Network Activity</h4>
-      <h4 data-zh>运维基金 — 由网络活动持续驱动</h4>
-      <div class="tax-item">
-        <span data-en>Transaction Tax</span><span data-zh>交易税</span>
-        <span class="amount">1%</span>
-      </div>
-      <div class="tax-item">
-        <span data-en>Transfer Tax</span><span data-zh>转账税</span>
-        <span class="amount">0.5%</span>
-      </div>
-      <div style="margin-top:12px; font-size:.85em; color:rgba(224,225,221,.5);">
-        <span data-en>Fund allocation: Node Rewards 40% · Maintenance &amp; Audits 30% · Upgrades &amp; Dev 20% · Community 10%</span>
-        <span data-zh>基金用途：节点奖励 40% · 网络维护与安全审计 30% · 系统升级与开发 20% · 社区建设 10%</span>
+      <div class="step" style="max-width:300px;">
+        <div class="num">5</div>
+        <h4 data-en>Value for All</h4>
+        <h4 data-zh>多方共赢价值</h4>
+        <p data-en>Users turn idle into income, businesses gain precise and measurable resources, the platform builds value infrastructure.</p>
+        <p data-zh>用户把闲置变收益，商业方获得精准可度量的资源，平台搭建价值基础设施。</p>
       </div>
     </div>
   </div>
@@ -455,23 +700,93 @@ html[lang="zh"] [data-en] { display: none; }
   </div>
 </section>
 
+<!-- DOCS -->
+<section id="docs" class="light-section">
+  <div class="section-inner">
+    <h2 class="section-title" data-en>Documents</h2>
+    <h2 class="section-title" data-zh>文档资料</h2>
+    <p class="section-subtitle" data-en>Official Guixu Consensus documents — read online, in English or Chinese.</p>
+    <p class="section-subtitle" data-zh>归墟共识官方文档 — 支持中英文在线阅读。</p>
+
+    <div class="docs-grid">
+      <div class="doc-card">
+        <div class="doc-icon">📘</div>
+        <h3 data-en>Guixu Consensus Network Whitepaper</h3>
+        <h3 data-zh>归墟共识网络白皮书</h3>
+        <p class="doc-ver" data-en>Version v1.2 · Proof of Resource consensus, tokenomics, community governance</p>
+        <p class="doc-ver" data-zh>版本 v1.2 · 资源证明共识、通证经济、社区治理</p>
+        <div class="doc-actions">
+          <a class="btn btn-primary doc-btn" href="guixu-consensus-whitepaper-v1-en.html" data-en>Read Whitepaper</a>
+          <a class="btn btn-primary doc-btn" href="guixu-consensus-whitepaper-v1.html" data-zh>阅读白皮书</a>
+          <a class="doc-alt" href="guixu-consensus-whitepaper-v1.html" data-en>中文版</a>
+          <a class="doc-alt" href="guixu-consensus-whitepaper-v1-en.html" data-zh>English</a>
+        </div>
+      </div>
+
+      <div class="doc-card">
+        <div class="doc-icon">📗</div>
+        <h3 data-en>Project Feasibility &amp; Operation Plan</h3>
+        <h3 data-zh>项目可行性运行计划书</h3>
+        <p class="doc-ver" data-en>Feasibility analysis, resource proof mechanism, operation and rollout plan</p>
+        <p class="doc-ver" data-zh>可行性分析、资源证明机制、运营与落地计划</p>
+        <div class="doc-actions">
+          <a class="btn btn-primary doc-btn" href="guixu-consensus-platform-feasibility-plan-en.html" data-en>Read the Plan</a>
+          <a class="btn btn-primary doc-btn" href="guixu-consensus-platform-feasibility-plan-zh.html" data-zh>阅读计划书</a>
+          <a class="doc-alt" href="guixu-consensus-platform-feasibility-plan-zh.html" data-en>中文版</a>
+          <a class="doc-alt" href="guixu-consensus-platform-feasibility-plan-en.html" data-zh>English</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- FOOTER -->
 <footer>
   <div class="footer-links">
-    <a href="#" data-en>GitHub</a><a href="#" data-zh>GitHub</a>
-    <a href="#" data-en>Whitepaper</a><a href="#" data-zh>白皮书</a>
-    <a href="#" data-en>Documentation</a><a href="#" data-zh>技术文档</a>
+    <a href="guixu-consensus-whitepaper-v1-en.html" data-en>Whitepaper</a>
+    <a href="guixu-consensus-whitepaper-v1.html" data-zh>白皮书</a>
+    <a href="guixu-consensus-platform-feasibility-plan-en.html" data-en>Feasibility Plan</a>
+    <a href="guixu-consensus-platform-feasibility-plan-zh.html" data-zh>可行性运行计划书</a>
   </div>
-  <p>&copy; 2026 Guixu Consensus Community · <span data-en>Open Source</span><span data-zh>开源项目</span></p>
+  <p>&copy; 2026 Guixu Consensus Community · <span data-en>Open Source</span><span data-zh>开源项目</span> · <span data-en>Contact</span><span data-zh>联系邮箱</span>: <a href="mailto:guixu2026@gmail.com">guixu2026@gmail.com</a> · <a class="x-link" href="https://x.com/Guixu2026" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter) @Guixu2026"><svg class="x-ico" viewBox="0 0 24 24" width="13" height="13" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg><span>@Guixu2026</span></a></p>
   <div class="counter-wrap">
     <span class="counter-toggle" onclick="document.getElementById('ctrBox').classList.toggle('show')">●</span>
     <div id="ctrBox" class="counter-box">
       <span class="c-num">12,847</span> &nbsp;·&nbsp; <span data-en>Global Active Nodes</span><span data-zh>全球活跃节点</span>
     </div>
   </div>
+
+  <!-- 用户终端入口：指向真实（非演示）用户终端 node.guixu.club（官网底部入口 = 真实程序；
+       顶部「程序框架」才是演示版）。胶囊按钮式，中英双语随 html[lang] 切换 -->
+  <div class="pf-entry-wrap">
+    <a class="pf-entry" href="https://node.guixu.club/">
+      <span class="pf-ico" aria-hidden="true">◈</span>
+      <span data-en>Terminal</span><span data-zh>用户终端</span>
+      <span class="pf-arrow" aria-hidden="true">→</span>
+    </a>
+  </div>
 </footer>
 
 <script>
+(function () {
+  try {
+    var s = localStorage.getItem("gx-lang");
+    if (s === "zh") {
+      document.documentElement.setAttribute("lang", "zh");
+      var btn = document.querySelector('.lang-btn');
+      if (btn) btn.textContent = 'EN';
+    }
+  } catch (e) {}
+})();
+
+/* ---------- 右上角菜单（移动端）----------
+   展开后：选中任一菜单项（锚点跳转 / 切换语言 / 点外部 / 按 Esc）都要收起隐藏 */
+function toggleMenu() {
+  document.querySelector('.nav-links').classList.toggle('show');
+}
+function closeMenu() {
+  document.querySelector('.nav-links').classList.remove('show');
+}
 function toggleLang() {
   var html = document.documentElement;
   var current = html.getAttribute('lang');
@@ -482,7 +797,60 @@ function toggleLang() {
   }
   var btn = document.querySelector('.lang-btn');
   btn.textContent = html.getAttribute('lang') === 'en' ? '中文' : 'EN';
+  closeMenu();
+  try { localStorage.setItem("gx-lang", html.getAttribute('lang')); } catch (e) {}
 }
+document.addEventListener('DOMContentLoaded', function () {
+  var nav = document.querySelector('nav');
+  // 1) 点击菜单里的任一链接（含语言按钮）→ 执行后立即收起
+  document.querySelectorAll('.nav-links a, .nav-links button').forEach(function (el) {
+    el.addEventListener('click', function () { closeMenu(); });
+  });
+  // 2) 点击菜单以外的区域 → 收起
+  document.addEventListener('click', function (e) {
+    if (!nav.contains(e.target)) { closeMenu(); }
+  });
+  // 3) Esc → 收起
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') { closeMenu(); }
+  });
+});
+</script>
+
+<!-- 🎆 烟花特效（含合成音效）已于 2026-10-31 暂停：fireworks.js 文件保留，恢复时取消下一行注释 -->
+<!-- <script src="fireworks.js?v=20260920b"></script> -->
+<!-- ✨ Hero 动态背景：会变动的网状背景 + 游走萤火 -->
+<script src="home-fx.js?v=20261031b"></script>
+<script>
+/* 实时网络总盘（P5）：数据源 /api/platform/metrics。
+   拿不到 / 无数据一律保持隐藏，不用 0 或占位数字填充，也不影响首页其余部分与烟花特效。 */
+(function () {
+  var strip = document.getElementById('liveStrip');
+  if (!strip) { return; }
+  function fmt(n, dp) {
+    var s = Number(n).toFixed(dp);
+    return s.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  }
+  function set(id, v, dp) {
+    var el = document.getElementById(id);
+    if (!el || v === null || v === undefined || v === '' || !isFinite(Number(v))) { return; }
+    el.textContent = fmt(Number(v), dp);
+  }
+  try {
+    fetch('/api/platform/metrics', { cache: 'no-store' })
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        if (!j || !j.ok || !j.data_available) { return; }
+        var t = j.terminals || {}, r = j.resources || {};
+        set('lvTerminals', t.total, 0);
+        set('lvStorage', r.storage_gb, 2);
+        set('lvBw', r.bw_mbps, 1);
+        set('lvCompute', r.compute_tflops, 2);
+        strip.hidden = false;
+      })
+      .catch(function () {});
+  } catch (e) {}
+})();
 </script>
 </body>
 </html>

@@ -3,6 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png?v=20260925c">
+<link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png?v=20260925c">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=20260925c">
 <title>归墟共识平台项目可行性运行计划书</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -30,14 +34,33 @@ tr:hover td { background: #f9f9fc; }
 .chart .val { width: 65px; font-size: 0.88em; font-weight: 600; color: #3a5a8c; }
 .flow { background: linear-gradient(135deg, #1b263b, #415a77); color: #e0e1dd; padding: 20px 24px; margin: 16px 0; border-radius: 10px; text-align: center; font-size: 1em; }
 .flow .ar { color: #a3bffa; font-size: 1.4em; margin: 0 6px; }
+
+  /* 品牌词返回首页 */
+  .home-link { color: inherit; text-decoration: none; border-bottom: 2px solid transparent;
+               transition: color .2s, border-color .2s; cursor: pointer; }
+  .home-link:hover { color: #a3bffa; border-bottom-color: rgba(163,191,250,.5); }
+  .back-home { margin-top: 14px; font-size: .9em; }
+  .back-home a { color: #a3bffa; text-decoration: none; border-bottom: 1px dashed rgba(163,191,250,.45); }
+  .back-home a:hover { border-bottom-style: solid; color: #c7d7ff; }
+  /* ---- 品牌横版 LOGO ---- */
+  .gx-logo-wide { display: inline-block; background: #fff; border-radius: 16px; padding: 12px 22px;
+    box-shadow: 0 12px 30px rgba(0,0,0,.42); line-height: 0; margin-bottom: 22px; transition: transform .2s; }
+  .gx-logo-wide:hover { transform: translateY(-2px); }
+  .gx-logo-wide img { display: block; width: 100%; max-width: 320px; height: auto; }
+  .footer a { color: #415a77; text-decoration: none; }
+  .footer a:hover { color: #a3bffa; text-decoration: underline; }
 </style>
+  <!-- 统一卡片光影系统 v2（2026-09-29） -->
+  <link rel="stylesheet" href="guixu-platform/shared/gx-cards.css?v=20260929c">
 </head>
 <body>
 
 <div class="hero">
-  <h1>归墟共识平台项目可行性运行计划书</h1>
-  <p class="sub">v1.1 · 2026年9月</p>
+  <a class="gx-logo-wide" href="/" title="归墟共识官网 / Guixu Consensus"><img src="/brand-wide-640.webp?v=20260925f" alt="Guixu Consensus — Proof of Resource Network"></a>
+  <h1><a class="home-link" href="/" title="返回归墟共识平台首页">归墟</a>共识平台项目可行性运行计划书</h1>
+  <p class="sub">v1.2 · 2026年9月</p>
   <p class="tagline">万流归一，共筑共识</p>
+  <p class="back-home"><a href="/">← 返回官网首页</a></p>
 </div>
 
 <div class="container">
@@ -53,9 +76,9 @@ tr:hover td { background: #f9f9fc; }
   <div class="card">
     <strong>项目性质：</strong>去中心化共识网络平台<br>
     <strong>核心机制：</strong>PoR（Proof of Resource）资源证明共识<br>
-    <strong>通证类型：</strong>归墟代币（Guixu Token）<br>
+    <strong>通证类型：</strong>gx<br>
     <strong>运营方式：</strong>社区共治、链上治理、全链上透明<br>
-    <strong>资金模式：</strong>100%去中心化，不依赖外部融资，通过交易税和转账税自给自足
+    <strong>资金模式：</strong>100%去中心化，不依赖外部融资，通过交易税自给自足
   </div>
 
   <h3>1.3 运营现状</h3>
@@ -90,6 +113,11 @@ tr:hover td { background: #f9f9fc; }
 </div>
 
 <!-- 第三章 -->
+<div class="card" style="margin-top:14px">
+<strong>有效贡献者门槛（对齐白皮书第三章）：</strong><br>
+资源贡献统计仅对<b>有效资源贡献者</b>产生结算意义——终端须在 7 天评估周期内同时满足四项：硬件门槛（PC ≥ 4 核 + 8GB + 50GB；手机 ≥ 4GB + 20GB）、网络带宽（下行 ≥ 50Mbps / 上行 ≥ 20Mbps）、在线稳定性（7 天在线率 ≥ 90%）、贡献值达标（PC ≥ 200 / 手机 ≥ 100 / 服务器·NAS ≥ 500）。达标为 Lv1，上行 ≥ 100Mbps 且连续在线 60 天升 Lv2，上行 ≥ 500Mbps + GPU 参与共识 + 连续 180 天升 Lv3。低于硬件门槛的终端贡献值上限封顶。<br>
+<span style="font-size:.9em;color:#4a4a5a">完整定义与分级激励见《归墟共识网络白皮书 v1.2》第三章「有效贡献者门槛」。</span>
+</div>
 <div class="section">
   <h2>第三章 社区治理机制</h2>
   <h3>3.1 PoR共识机制</h3>
@@ -116,17 +144,16 @@ tr:hover td { background: #f9f9fc; }
 
   <h3>3.3 税务机制 — 运维基金</h3>
   <div class="card">
-    <strong>交易税：</strong>每笔交易（Transfer）收取1%归墟代币作为交易税<br>
-    <strong>转账税：</strong>每笔转账收取0.5%归墟代币作为转账税<br>
+    <strong>交易税：</strong>每笔交易（Transfer）收取1% gx 作为交易税<br>
     <strong>税率调整：</strong>税率可在社区治理中投票调整<br>
-    <strong>基金去向：</strong>交易税和转账税收入自动转入运维基金池<br><br>
+    <strong>基金去向：</strong>交易税收入自动转入运维基金池<br><br>
     <strong>基金用途分配：</strong>节点奖励（40%）、网络维护与安全审计（30%）、系统升级与开发（20%）、社区建设与市场推广（10%）
   </div>
 
   <h3>3.4 社区治理投票</h3>
-  <p>归墟代币持有者通过链上投票参与社区治理，主要投票事项包括：</p>
+  <p>gx 持有者通过链上投票参与社区治理，主要投票事项包括：</p>
   <ul>
-    <li>税率调整（交易税1%、转账税0.5%的修改）</li>
+    <li>税率调整（交易税1%的修改）</li>
     <li>贡献系数调整（各资源类型权重的变更）</li>
     <li>运维基金使用审批</li>
     <li>技术升级与协议变更</li>
@@ -157,6 +184,12 @@ tr:hover td { background: #f9f9fc; }
     <strong>游戏化设计：</strong>贡献面板、排行榜、贡献等级系统
   </div>
 
+<div class="card" style="margin-top:14px">
+<strong>市场推广者（团队长）定义（对齐白皮书第九章第二节）：</strong><br>
+采用「贡献值加成 + 团队活跃奖励」而非直接通证分润。认定为有效团队长须同时满足：直接邀请 ≥ 10 个有效资源贡献者（Lv1+）、团队成员 ≥ 30% 为 Lv2、团队长自身为 Lv1+、过去 30 天团队日均活跃终端 ≥ 15。<br>
+激励三层：①<b>招募奖励</b>（一次性）——每招募 1 个 Lv1 / Lv2 / Lv3 分别获得贡献值加成 +5% / +15% / +30%，仅对团队长个人贡献值生效，不影响网络整体发行速度；②<b>团队活跃奖励</b>——日均活跃 ≥ 20 终端得团队总贡献值 0.5%，≥ 50 终端提至 1.0%，按月由运维基金社区推广预算支出，不计入通证发行；③<b>生态贡献奖励</b>——团队成员资源被商业采购后按采购额 1% 计，从商业化收入支出，仅对 Lv2+ 成员有效。<br>
+<span style="font-size:.9em;color:#4a4a5a">完整定义与防作弊机制见白皮书第九章第二节。</span>
+</div>
   <h3>4.3 技术路线图</h3>
   <table>
     <thead><tr><th>技术模块</th><th>当前进度</th><th>下一阶段</th></tr></thead>
@@ -170,26 +203,51 @@ tr:hover td { background: #f9f9fc; }
   </table>
 </div>
 
-<!-- 资源对接与商业闭环 -->
-<div class="section">
-  <h3>4.4 资源对接与商业闭环</h3>
-  <p>平台聚合的闲置资源已规划标准化对接通道，直接面向真实需求方实体平台输出，确保资源"有处可去、有价可变"。运营层面按资源类型分线推进：</p>
-  <table>
-    <thead><tr><th>资源类型</th><th>对接方向</th><th>运营动作</th></tr></thead>
-    <tbody>
-      <tr><td>磁盘存储</td><td>专业存储服务商、分布式云存储 / 备份归档平台</td><td>签订容量采购协议，按可用容量与在线时长结算</td></tr>
-      <tr><td>带宽资源</td><td>CDN 服务商、边缘网络、矿业资源运营商</td><td>打包闲置带宽资源池，按流量 / 时长出租（含挖矿相关用途）</td></tr>
-      <tr><td>终端算力</td><td>AI 训练与推理服务商、渲染与科学计算平台</td><td>算力调度接入，按任务计费结算</td></tr>
-      <tr><td>流量与生态</td><td>通证持有者与生态应用方</td><td>流量聚合形成通证经济效益，税费注入运维基金</td></tr>
-    </tbody>
-  </table>
-  <p>上述对接构成项目的商业生存基础：即便在通证价格波动的情况下，资源本身的真实需求仍可持续产生收益，反哺运维基金并支撑网络长期运营。同时，平台积聚的流量与用户注意力本身即可形成通证经济效益，与资源变现在收益结构上互为补充。</p>
-</div>
-
 <!-- 第五章 -->
 <div class="section">
-  <h2>第五章 风险评估与应对</h2>
-  <h3>5.1 技术风险</h3>
+  <h2>第五章 商业变现与资源对接</h2>
+  <h3>5.1 商业化总思路</h3>
+  <p>项目要实现长期生存，必须让「闲置资源」产生真实销售收入。归墟共识平台的定位不是封闭的挖矿网络，而是一个<strong>资源聚合与调度平台</strong>：把分散在用户终端上的存储、带宽与算力标准化，再对接给有真实采购需求的专业实体平台。</p>
+  <div class="card">
+    <strong>一句话总结：</strong>共识层计量资源 → 商业层出售资源 → 收入反哺参与者与运维基金 → 吸引更多设备接入，形成可自我维持的商业闭环。
+  </div>
+
+  <h3>5.2 资源—需求方对接矩阵</h3>
+  <table>
+    <thead><tr><th>资源类型</th><th>对接需求方（实体平台）</th><th>落地业务方向</th><th>计费与结算</th></tr></thead>
+    <tbody>
+      <tr><td>磁盘存储</td><td>分布式存储服务商、冷备份／归档平台、数据托管方</td><td>数据归档、备份副本、内容源站存储</td><td>按容量 × 在线时长，USDT／代币结算</td></tr>
+      <tr><td>网络带宽</td><td>CDN／加速服务商、带宽型挖矿平台（CDN 挖矿、代理出口、去中心化 VPN 等）</td><td>内容分发、边缘加速、出口带宽租赁</td><td>按流量（GB）与在线稳定性</td></tr>
+      <tr><td>终端算力</td><td>AI 算力需求方（推理服务、模型服务、渲染／科研计算平台）</td><td>AI 推理、批量渲染、模型微调与数据处理</td><td>按算力时长／任务量，GPU 设备优先</td></tr>
+      <tr><td>网络流量与用户规模</td><td>生态合作方、数据服务方、品牌与广告主</td><td>生态合作、数据服务、品牌曝光、节点增值服务</td><td>按合作周期／服务量结算，形成代币需求侧</td></tr>
+    </tbody>
+  </table>
+
+  <h3>5.3 流量转化为通证经济效益</h3>
+  <p>当网络积累了足够的设备与用户规模，流量本身就具备商业价值。平台可将这些流量与合作需求对接，形成收入，并通过资源结算与代币机制把这些收入导回网络参与者，使代币具备「使用需求」而不只是「发行供给」。</p>
+  <div class="flow-box">
+    闲置资源 <span class="arrow">→</span> 归墟聚合与计量 <span class="arrow">→</span> 专业需求方采购 <span class="arrow">→</span> 收入回流 <span class="arrow">→</span> 参与者分配 + 运维基金 <span class="arrow">→</span> 网络规模扩大
+  </div>
+
+<div class="card" style="margin-top:14px">
+<strong>有效流量用户定义（对齐白皮书第九章第一节）：</strong><br>
+流量变现的前提是流量可定价，而可定价的前提是流量为真实人类。计入有效流量的访问须同时满足四项：<b>身份唯一性</b>（一个自然人一个钱包，且与设备指纹绑定）、<b>非自动挂机</b>（有随机性、停留与交互，无固定脚本模式）、<b>有效停留</b>（单次会话 ≥ 15 秒且至少 1 次有意义的交互）、<b>来源质量</b>（排除爬虫、CDN 预加载与已知代理池）。<br>
+防作弊分层：L1 自动化脚本直接拦截、不产生贡献值；L2 真人+脚本辅助系数降至 0.3；L3 完全真人系数 1.0，连续有效在线 30 天后逐步升至 1.5。<br>
+<span style="font-size:.9em;color:#4a4a5a">完整定义见白皮书第九章第一节。</span>
+</div>
+  <h3>5.4 收入结构与抗风险能力</h3>
+  <ul>
+    <li><strong>不依赖单一收入：</strong>存储、带宽、算力、流量四条线并行推进，任意一条成熟即可支撑网络基本运转。</li>
+    <li><strong>轻资产成本结构：</strong>资源来自用户闲置设备，边际成本极低，具备对传统 IDC 与算力市场的价格优势。</li>
+    <li><strong>需求方为专业实体：</strong>采购方是存储、带宽、算力等领域的实体平台，需求相对刚性、可签订长期协议。</li>
+    <li><strong>合规与可控：</strong>资源调度以标准化服务输出，不涉及资金募集，配合社区治理与运维基金机制降低法律与运营风险。</li>
+  </ul>
+</div>
+
+<!-- 第六章 -->
+<div class="section">
+  <h2>第六章 风险评估与应对</h2>
+  <h3>6.1 技术风险</h3>
   <table>
     <thead><tr><th>风险项</th><th>影响</th><th>应对方案</th></tr></thead>
     <tbody>
@@ -200,7 +258,7 @@ tr:hover td { background: #f9f9fc; }
     </tbody>
   </table>
 
-  <h3>5.2 法律风险</h3>
+  <h3>6.2 法律风险</h3>
   <table>
     <thead><tr><th>风险项</th><th>影响</th><th>应对方案</th></tr></thead>
     <tbody>
@@ -210,7 +268,7 @@ tr:hover td { background: #f9f9fc; }
     </tbody>
   </table>
 
-  <h3>5.3 市场风险</h3>
+  <h3>6.3 市场风险</h3>
   <table>
     <thead><tr><th>风险项</th><th>影响</th><th>应对方案</th></tr></thead>
     <tbody>
@@ -221,10 +279,10 @@ tr:hover td { background: #f9f9fc; }
   </table>
 </div>
 
-<!-- 第六章 -->
+<!-- 第七章 -->
 <div class="section">
-  <h2>第六章 运营展望</h2>
-  <h3>6.1 短期展望（2027年）</h3>
+  <h2>第七章 运营展望</h2>
+  <h3>7.1 短期展望（2027年）</h3>
   <ul>
     <li>完成PoR算法的原型验证与内测</li>
     <li>主网上线，移动端App发布</li>
@@ -232,7 +290,7 @@ tr:hover td { background: #f9f9fc; }
     <li>社区治理机制运行正常</li>
   </ul>
 
-  <h3>6.2 中期展望（2028年）</h3>
+  <h3>7.2 中期展望（2028年）</h3>
   <ul>
     <li>节点数量突破10000，覆盖全球主要地区</li>
     <li>DeFi生态初步建立（流动性挖矿、借贷协议）</li>
@@ -240,7 +298,7 @@ tr:hover td { background: #f9f9fc; }
     <li>通证经济模型稳定运行，税务收入可持续支持网络运营</li>
   </ul>
 
-  <h3>6.3 长期愿景</h3>
+  <h3>7.3 长期愿景</h3>
   <div class="card">
     <strong>2028+：</strong>成为全球最大的分布式共识网络，真正的去中心化不再是一个口号，而是现实。<br>
     每一位拥有闲置设备的普通人，都可以通过自己的设备参与区块链网络的建设，并获得合理的回报。<br>
@@ -250,9 +308,9 @@ tr:hover td { background: #f9f9fc; }
 
 <!-- 页脚 -->
 <div class="footer" style="text-align:center;padding:20px;color:#888;font-size:0.85em;">
-  <p><strong>归墟共识平台项目可行性运行计划书 v1.1</strong></p>
-  <p>文档版本：2026-09-20 v1.1</p>
-  <p>版权所有 © 2026 归墟共识社区</p>
+  <p><strong>归墟共识平台项目可行性运行计划书 v1.2</strong></p>
+  <p>文档版本：2026-09-20 v1.2</p>
+  <p>版权所有 © 2026 归墟共识社区 · 联系邮箱： <a href="mailto:guixu2026@gmail.com">guixu2026@gmail.com</a> · X (Twitter)： <a href="https://x.com/Guixu2026" target="_blank" rel="noopener noreferrer">@Guixu2026</a></p>
 </div>
 
 </div>

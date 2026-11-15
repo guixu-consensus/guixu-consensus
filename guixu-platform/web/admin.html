@@ -3,8 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png?v=20260925c">
+<link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png?v=20260925c">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=20260925c">
 <title data-i18n="ad.title">Admin Console · Guixu Consensus Platform</title>
-<link rel="stylesheet" href="../shared/guixu-theme.css">
+<link rel="stylesheet" href="../shared/guixu-theme.css?v=20260925j">
 <style>
   .panel { display: none; animation: gxFadeIn .35s ease both; }
   .panel.active { display: block; }
@@ -27,14 +31,32 @@
   .flow-row .fn { width: 132px; font-size: .87em; flex: 0 0 auto; }
   .flow-row .fb { flex: 1; min-width: 50px; }
   .flow-row .fv { width: 84px; text-align: right; font-size: .85em; font-variant-numeric: tabular-nums; }
-</style>
+    /* ===== 重要信息公告面板 ===== */
+    .nt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .nt-field { margin-bottom: 12px; }
+    .nt-field .sl { margin-bottom: 6px; }
+    .nt-input { width: 100%; box-sizing: border-box; background: rgba(0,0,0,.25); border: 1px solid var(--gx-line, rgba(255,255,255,.14)); border-radius: 9px; padding: 9px 11px; color: inherit; font-family: inherit; font-size: .85em; outline: none; }
+    .nt-input:focus { border-color: var(--gx-line-strong, rgba(255,255,255,.28)); }
+    textarea.nt-input { min-height: 76px; resize: vertical; line-height: 1.6; }
+    .nt-bar { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; padding-top: 14px; border-top: 1px solid var(--gx-line, rgba(255,255,255,.12)); }
+    .nt-btn { background: var(--gx-accent, #7fb0ff); color: #0b1622; border: 0; border-radius: 9px; padding: 9px 18px; font-size: .83em; font-weight: 700; cursor: pointer; font-family: inherit; }
+    .nt-btn.ghost { background: transparent; color: var(--gx-accent, #7fb0ff); border: 1px solid var(--gx-line-strong, rgba(255,255,255,.24)); }
+    .nt-btn:disabled { opacity: .5; cursor: default; }
+    .nt-msg { margin-top: 10px; font-size: .82em; color: var(--gx-dim, #93a3b5); min-height: 18px; }
+    .nt-msg.ok { color: #7fe0b0; }
+    .nt-msg.warn { color: #ffbf7f; }
+    .nt-meta { margin-top: 6px; font-size: .76em; color: var(--gx-faint, #6b7c8f); }
+    @media (max-width: 820px) { .nt-grid { grid-template-columns: 1fr; } }
+  </style>
+  <!-- 统一卡片光影系统 v2（2026-09-29） -->
+  <link rel="stylesheet" href="../shared/gx-cards.css?v=20260929c">
 </head>
 <body>
 
 <div class="gx-shell">
   <aside class="gx-side">
     <div class="brand">
-      <span class="mark" data-i18n="brand.mark">归</span>
+      <img class="brand-mark" src="/guixu800tm-96.webp?v=20260925a" alt="Guixu Consensus">
       <span><b data-i18n="brand.name">Guixu Consensus</b><small data-i18n="ad.brand.sub">ADMIN CONSOLE</small></span>
     </div>
 
@@ -67,6 +89,10 @@
     </a>
 
     <div class="nav-label" data-i18n="ad.side.sys">系统</div>
+    <a class="nav-item" data-panel="notice">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5v3a1.5 1.5 0 001.5 1.5h1.6L12 19V5L6.1 9H4.5A1.5 1.5 0 003 10.5z"/><path d="M15.5 8.6a4.4 4.4 0 010 6.8M18.2 6a8 8 0 010 12"/></svg>
+      <span data-i18n="ad.nav.notice">重要信息公告</span>
+    </a>
     <a class="nav-item" data-panel="settings">
       <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2.5v2.6M12 18.9v2.6M2.5 12h2.6M18.9 12h2.6M5.2 5.2l1.9 1.9M16.9 16.9l1.9 1.9M18.8 5.2l-1.9 1.9M7.1 16.9l-1.9 1.9"/></svg>
       <span data-i18n="ad.nav.settings">系统设置</span>
@@ -86,6 +112,7 @@
         <h2 style="font-size:1.3em;font-weight:700;margin-top:3px" id="panelTitle">Overview</h2>
       </div>
       <div class="gx-row">
+        <span class="gx-tag gx-tag-warn" data-i18n="ad.demo.tag">演示版 · 不含真实管理功能</span>
         <span class="gx-live-badge"><i class="gx-dot gx-dot-pulse"></i> <span data-i18n="ad.sync">数据同步正常</span></span>
         <a class="gx-btn gx-btn-ghost gx-btn-sm" href="network.html" data-i18n="ad.link.network">查看全球网络</a>
       </div>
@@ -106,13 +133,13 @@
         </div>
         <div class="gx-card gx-kpi">
           <div class="kpi-label" data-i18n="ad.kpi.reward">日发放代币</div>
-          <div class="kpi-value"><span id="k3">0</span><span class="kpi-unit">x</span></div>
+          <div class="kpi-value"><span id="k3">0</span><span class="kpi-unit">gx</span></div>
           <div class="kpi-foot" data-i18n="ad.kpi.reward.foot">按 PoR 贡献权重分配</div>
         </div>
         <div class="gx-card gx-kpi">
           <div class="kpi-label" data-i18n="ad.kpi.fund">运维基金余额</div>
-          <div class="kpi-value"><span id="k4">0</span><span class="kpi-unit">x</span></div>
-          <div class="kpi-foot" data-i18n="ad.kpi.fund.foot">来源：交易税 1% + 转账税 0.5%</div>
+          <div class="kpi-value"><span id="k4">0</span><span class="kpi-unit">gx</span></div>
+          <div class="kpi-foot" data-i18n="ad.kpi.fund.foot">来源：交易税 1%</div>
         </div>
       </div>
 
@@ -177,7 +204,7 @@
           <div class="rd" data-i18n="ad.market.rd.storage">可调度存储总量</div>
           <div style="margin-top:14px">
             <div class="rline"><span class="gx-dim" data-i18n="ad.market.l.contracted">已签约</span><span>1,240 TB</span></div>
-            <div class="rline"><span class="gx-dim" data-i18n="ad.market.l.range">报价区间</span><span data-i18n="ad.market.storage.quote">0.015 – 0.018 x/GB·月</span></div>
+            <div class="rline"><span class="gx-dim" data-i18n="ad.market.l.range">报价区间</span><span data-i18n="ad.market.storage.quote">0.015 – 0.018 gx/GB·月</span></div>
             <div class="rline"><span class="gx-dim" data-i18n="ad.market.l.buyers">对接需求方</span><span data-i18n="ad.market.buyers.two">2 家</span></div>
             <div class="rline"><span class="gx-dim" data-i18n="ad.market.l.use">主要去向</span><span data-i18n="ad.market.storage.use">冷数据归档 / 副本冗余</span></div>
           </div>
@@ -188,7 +215,7 @@
           <div class="rd" data-i18n="ad.market.rd.bw">可调度上行带宽总量</div>
           <div style="margin-top:14px">
             <div class="rline"><span class="gx-dim" data-i18n="ad.market.l.contracted">已签约</span><span>500 Gbps</span></div>
-            <div class="rline"><span class="gx-dim" data-i18n="ad.market.l.range">报价区间</span><span data-i18n="ad.market.bw.quote">0.36 – 0.42 x/Mbps·月</span></div>
+            <div class="rline"><span class="gx-dim" data-i18n="ad.market.l.range">报价区间</span><span data-i18n="ad.market.bw.quote">0.36 – 0.42 gx/Mbps·月</span></div>
             <div class="rline"><span class="gx-dim" data-i18n="ad.market.l.buyers">对接需求方</span><span data-i18n="ad.market.buyers.two">2 家</span></div>
             <div class="rline"><span class="gx-dim" data-i18n="ad.market.l.use">主要去向</span><span data-i18n="ad.market.bw.use">边缘分发 / 矿业带宽</span></div>
           </div>
@@ -199,7 +226,7 @@
           <div class="rd" data-i18n="ad.market.rd.cpu">可调度算力总量</div>
           <div style="margin-top:14px">
             <div class="rline"><span class="gx-dim" data-i18n="ad.market.l.contracted">已签约</span><span>260 TFLOPS</span></div>
-            <div class="rline"><span class="gx-dim" data-i18n="ad.market.l.range">报价区间</span><span data-i18n="ad.market.cpu.quote">1.35 x/TFLOPS·天</span></div>
+            <div class="rline"><span class="gx-dim" data-i18n="ad.market.l.range">报价区间</span><span data-i18n="ad.market.cpu.quote">1.35 gx/TFLOPS·天</span></div>
             <div class="rline"><span class="gx-dim" data-i18n="ad.market.l.buyers">对接需求方</span><span data-i18n="ad.market.buyers.one">1 家</span></div>
             <div class="rline"><span class="gx-dim" data-i18n="ad.market.l.use">主要去向</span><span data-i18n="ad.market.cpu.use">模型推理 / 渲染批次</span></div>
           </div>
@@ -232,25 +259,20 @@
 
     <!-- ============ 通证结算 ============ -->
     <section class="panel" data-panel="token">
-      <div class="gx-grid gx-grid-4">
+      <div class="gx-grid gx-grid-3">
         <div class="gx-card gx-kpi">
           <div class="kpi-label" data-i18n="ad.token.kpi.issue">日发放</div>
-          <div class="kpi-value"><span id="t1">0</span><span class="kpi-unit">x</span></div>
+          <div class="kpi-value"><span id="t1">0</span><span class="kpi-unit">gx</span></div>
           <div class="kpi-foot" data-i18n="ad.token.kpi.issue.foot">PoR 贡献分配</div>
         </div>
         <div class="gx-card gx-kpi">
           <div class="kpi-label" data-i18n="ad.token.kpi.trade">交易税收入</div>
-          <div class="kpi-value"><span id="t2">0</span><span class="kpi-unit">x</span></div>
+          <div class="kpi-value"><span id="t2">0</span><span class="kpi-unit">gx</span></div>
           <div class="kpi-foot" data-i18n="ad.token.kpi.trade.foot">税率 1%，计入运维基金</div>
         </div>
         <div class="gx-card gx-kpi">
-          <div class="kpi-label" data-i18n="ad.token.kpi.transfer">转账税收入</div>
-          <div class="kpi-value"><span id="t3">0</span><span class="kpi-unit">x</span></div>
-          <div class="kpi-foot" data-i18n="ad.token.kpi.transfer.foot">税率 0.5%，计入运维基金</div>
-        </div>
-        <div class="gx-card gx-kpi">
           <div class="kpi-label" data-i18n="ad.token.kpi.pending">待结算</div>
-          <div class="kpi-value"><span id="t4">0</span><span class="kpi-unit">x</span></div>
+          <div class="kpi-value"><span id="t4">0</span><span class="kpi-unit">gx</span></div>
           <div class="kpi-foot" data-i18n="ad.token.kpi.pending.foot">T+1 结算周期</div>
         </div>
       </div>
@@ -271,10 +293,6 @@
           <div class="setting-row">
             <div><div class="sl" data-i18n="ad.token.rule.trade">交易税</div><div class="sd" data-i18n="ad.token.rule.trade.desc">每次资源交易结算自动计提</div></div>
             <div class="sr gx-accent" style="font-weight:700">1.0%</div>
-          </div>
-          <div class="setting-row">
-            <div><div class="sl" data-i18n="ad.token.rule.transfer">转账税</div><div class="sd" data-i18n="ad.token.rule.transfer.desc">链上转账按金额计提</div></div>
-            <div class="sr gx-accent" style="font-weight:700">0.5%</div>
           </div>
           <div class="setting-row">
             <div><div class="sl" data-i18n="ad.token.rule.fundUse">运维基金用途</div><div class="sd" data-i18n="ad.token.rule.fundUse.desc">基础设施、安全审计、研发与生态激励</div></div>
@@ -329,17 +347,17 @@
       <div class="gx-grid gx-grid-3">
         <div class="gx-card gx-kpi">
           <div class="kpi-label" data-i18n="ad.fund.kpi.balance">基金余额</div>
-          <div class="kpi-value"><span id="f1">0</span><span class="kpi-unit">x</span></div>
+          <div class="kpi-value"><span id="f1">0</span><span class="kpi-unit">gx</span></div>
           <div class="kpi-foot" data-i18n="ad.fund.kpi.balance.foot">持续累积中</div>
         </div>
         <div class="gx-card gx-kpi">
           <div class="kpi-label" data-i18n="ad.fund.kpi.income">本期收入</div>
-          <div class="kpi-value"><span id="f2">0</span><span class="kpi-unit">x</span></div>
+          <div class="kpi-value"><span id="f2">0</span><span class="kpi-unit">gx</span></div>
           <div class="kpi-foot" data-i18n="ad.fund.kpi.income.foot">税费 + 对接服务费</div>
         </div>
         <div class="gx-card gx-kpi">
           <div class="kpi-label" data-i18n="ad.fund.kpi.cost">本期支出</div>
-          <div class="kpi-value"><span id="f3">0</span><span class="kpi-unit">x</span></div>
+          <div class="kpi-value"><span id="f3">0</span><span class="kpi-unit">gx</span></div>
           <div class="kpi-foot" id="f3foot" data-i18n="ad.fund.kpi.cost.foot">基础设施 / 安全 / 生态 / 研发</div>
         </div>
       </div>
@@ -353,6 +371,66 @@
           <div class="gx-card-head"><h3 data-i18n="ad.fund.cost.h3">支出构成</h3><span class="gx-sub" id="costTotal"></span></div>
           <div id="costList"></div>
         </div>
+      </div>
+    </section>
+
+    <!-- ============ 重要信息公告（后台设置并推送到全部终端） ============ -->
+    <section class="panel" data-panel="notice">
+      <div class="gx-card">
+        <div class="gx-card-head">
+          <h3 data-i18n="ad.notice.h3">重要信息公告</h3>
+          <span class="gx-sub" data-i18n="ad.notice.sub">发布后自动推送到入口页 / PC 端 / 手机端</span>
+        </div>
+
+        <div class="setting-row">
+          <div>
+            <div class="sl" data-i18n="ad.notice.enable">启用公告弹窗</div>
+            <div class="sd" data-i18n="ad.notice.enable.desc">关闭后所有终端不再弹出，已发布的图文内容仍保留</div>
+          </div>
+          <div class="sr"><button class="gx-switch" id="ntEnabled" type="button"></button></div>
+        </div>
+
+        <div class="nt-grid">
+          <div class="nt-field">
+            <div class="sl" data-i18n="ad.notice.titleZh">中文标题</div>
+            <input class="nt-input" id="ntTitleZh" type="text" maxlength="120" placeholder="例如：节点质押规则更新">
+          </div>
+          <div class="nt-field">
+            <div class="sl" data-i18n="ad.notice.titleEn">英文标题</div>
+            <input class="nt-input" id="ntTitleEn" type="text" maxlength="120" placeholder="e.g. Staking rule update">
+          </div>
+          <div class="nt-field">
+            <div class="sl" data-i18n="ad.notice.bodyZh">中文正文</div>
+            <textarea class="nt-input" id="ntBodyZh" maxlength="2000" placeholder="支持换行，建议 2-4 行"></textarea>
+          </div>
+          <div class="nt-field">
+            <div class="sl" data-i18n="ad.notice.bodyEn">英文正文</div>
+            <textarea class="nt-input" id="ntBodyEn" maxlength="2000" placeholder="Keep it short"></textarea>
+          </div>
+          <div class="nt-field">
+            <div class="sl" data-i18n="ad.notice.image">简图地址（可选）</div>
+            <input class="nt-input" id="ntImage" type="text" maxlength="500" placeholder="/notice/xxx.webp 或 https://...">
+          </div>
+          <div class="nt-field">
+            <div class="sl" data-i18n="ad.notice.link">跳转链接（可选）</div>
+            <input class="nt-input" id="ntLink" type="text" maxlength="500" placeholder="https://...">
+          </div>
+        </div>
+
+        <div class="nt-field">
+          <div class="sl" data-i18n="ad.notice.key">发布密钥</div>
+          <input class="nt-input" id="ntKey" type="password" maxlength="120" placeholder="X-Admin-Key（服务器 data/notice_admin_key.txt）">
+          <div class="sd" data-i18n="ad.notice.key.desc">密钥只保存在本机浏览器，不会写入页面</div>
+        </div>
+
+        <div class="nt-bar">
+          <button class="nt-btn" id="ntPublish" type="button" data-i18n="ad.notice.publish">发布并推送</button>
+          <button class="nt-btn ghost" id="ntPreview" type="button" data-i18n="ad.notice.preview">预览弹窗</button>
+          <button class="nt-btn ghost" id="ntOff" type="button" data-i18n="ad.notice.takeOff">下架公告</button>
+          <button class="nt-btn ghost" id="ntReload" type="button" data-i18n="ad.notice.reload">读取当前</button>
+        </div>
+        <div class="nt-msg" id="ntMsg"></div>
+        <div class="nt-meta" id="ntMeta"></div>
       </div>
     </section>
 
@@ -385,17 +463,63 @@
   </main>
 </div>
 
-<script src="../shared/world-dots.js"></script>
-<script src="../shared/mock-data.js"></script>
-<script src="../shared/guixu-core.js"></script>
-<script src="../shared/guixu-i18n.js"></script>
+<script src="../shared/world-dots.js?v=20260925h"></script>
+<script src="../shared/mock-data.js?v=20260925h"></script>
+<script src="../shared/guixu-core.js?v=20260925h"></script>
+<script src="../shared/guixu-i18n.js?v=20261115a"></script>
+<script src="../shared/gx-notice.js?v=20260927a" data-auto="off"></script>
 <script>
 (function () {
   var D = window.GX_DATA;
+
+  /* 重要信息公告面板文案：register 合并写入，不改动 shared/i18n/*.js */
+  if (GX.i18n && GX.i18n.register) {
+    GX.i18n.register('zh', {
+      'ad.nav.notice': '重要信息公告',
+      'ad.notice.h3': '重要信息公告',
+      'ad.notice.sub': '演示版：仅本页本地预览，不写任何生产接口；真实发布在内部管理后台（不对外）',
+      'ad.notice.enable': '启用公告弹窗',
+      'ad.notice.enable.desc': '关闭后所有终端不再弹出，已发布的图文内容仍保留',
+      'ad.notice.titleZh': '中文标题',
+      'ad.notice.titleEn': '英文标题',
+      'ad.notice.bodyZh': '中文正文',
+      'ad.notice.bodyEn': '英文正文',
+      'ad.notice.image': '简图地址（可选）',
+      'ad.notice.link': '跳转链接（可选）',
+      'ad.notice.key': '发布密钥',
+      'ad.notice.key.desc': '演示版不需要密钥',
+      'ad.notice.publish': '发布并推送',
+      'ad.notice.preview': '预览弹窗',
+      'ad.notice.takeOff': '下架公告',
+      'ad.notice.reload': '读取当前',
+      'ad.demo.tag': '演示版 · 不含真实管理功能'
+    });
+    GX.i18n.register('en', {
+      'ad.nav.notice': 'Notice',
+      'ad.notice.h3': 'Important Notice',
+      'ad.notice.sub': 'Demo build: local preview only, no write API; real publishing lives in the internal console',
+      'ad.notice.enable': 'Enable notice popup',
+      'ad.notice.enable.desc': 'When off, no client shows the popup; content is kept',
+      'ad.notice.titleZh': 'Title (ZH)',
+      'ad.notice.titleEn': 'Title (EN)',
+      'ad.notice.bodyZh': 'Body (ZH)',
+      'ad.notice.bodyEn': 'Body (EN)',
+      'ad.notice.image': 'Image URL (optional)',
+      'ad.notice.link': 'Link URL (optional)',
+      'ad.notice.key': 'Publish key',
+      'ad.notice.key.desc': 'Not needed in the demo build',
+      'ad.notice.publish': 'Publish & push',
+      'ad.notice.preview': 'Preview popup',
+      'ad.notice.takeOff': 'Take offline',
+      'ad.notice.reload': 'Reload current',
+      'ad.demo.tag': 'Demo build · no real admin actions'
+    });
+  }
+
   GX.i18n.init();
 
   var curPanel = 'overview';
-  var PANELS = ['overview', 'nodes', 'market', 'token', 'biz', 'fund', 'settings'];
+  var PANELS = ['overview', 'nodes', 'market', 'token', 'biz', 'fund', 'notice', 'settings'];
 
   function panelKey(p) { return 'ad.nav.' + p; }
 
@@ -541,7 +665,6 @@
   function renderToken() {
     GX.countUp(GX.qs('#t1'), D.global.dailyReward, { decimals: 0 });
     GX.countUp(GX.qs('#t2'), D.fundFlow.income[0].value, { decimals: 0 });
-    GX.countUp(GX.qs('#t3'), D.fundFlow.income[1].value, { decimals: 0 });
     GX.countUp(GX.qs('#t4'), 86420, { decimals: 0 });
   }
   function drawTkChart() {
@@ -572,6 +695,61 @@
         '<span class="fv">' + GX.num(i.value) + '</span></div>';
     }).join('');
   }
+
+  /* ---------- 重要信息公告（演示版：只做本页预览，绝不调用任何生产接口） ----------
+     真实发布入口：内部管理后台（不对外公开，需管理员密钥 X-Admin-Key） */
+  function nt(id) { return document.getElementById(id); }
+  function ntTip(kind, text) {
+    var el = nt('ntMsg');
+    if (!el) { return; }
+    el.className = kind ? ('nt-msg ' + kind) : 'nt-msg';
+    el.textContent = text || '';
+  }
+  function ntCollect() {
+    return {
+      enabled: nt('ntEnabled').className.indexOf('on') >= 0,
+      title_zh: nt('ntTitleZh').value.trim(),
+      title_en: nt('ntTitleEn').value.trim(),
+      body_zh: nt('ntBodyZh').value.trim(),
+      body_en: nt('ntBodyEn').value.trim(),
+      image: nt('ntImage').value.trim(),
+      link: nt('ntLink').value.trim()
+    };
+  }
+  function ntDemoOnly() {
+    ntTip('warn', '这里是演示版：不写入任何生产接口。真实发布请到内部管理后台（需管理员密钥）。');
+  }
+
+  (function ntInit() {
+    if (!nt('ntPreview')) { return; }
+    if (nt('ntKey')) {
+      nt('ntKey').value = '';
+      nt('ntKey').disabled = true;
+      nt('ntKey').placeholder = '演示版不需要密钥 · 真实发布请到内部管理后台';
+    }
+    if (nt('ntMeta')) { nt('ntMeta').textContent = '演示版：未连接生产接口，不读取也不写入服务器公告。'; }
+    nt('ntEnabled').addEventListener('click', function () {
+      this.className = this.className.indexOf('on') >= 0 ? 'gx-switch' : 'gx-switch on';
+      ntTip('', '演示版开关：仅本页显示效果，不会保存。');
+    });
+    ['ntPublish', 'ntOff', 'ntReload'].forEach(function (id) {
+      var b = nt(id);
+      if (!b) { return; }
+      b.title = '演示版不调用生产接口';
+      b.addEventListener('click', ntDemoOnly);
+    });
+    nt('ntPreview').addEventListener('click', function () {
+      var d = ntCollect();
+      if (!(d.title_zh || d.title_en || d.body_zh || d.body_en || d.image)) {
+        ntTip('warn', '请先填写标题、正文或简图，再预览。');
+        return;
+      }
+      if (!window.GX_NOTICE) { ntTip('warn', '预览组件未加载，请刷新页面。'); return; }
+      d.version = '';
+      window.GX_NOTICE.show(d);
+      ntTip('ok', '这是本页本地预览，未调用任何接口。');
+    });
+  })();
 
   /* ---------- 系统设置 ---------- */
   GX.qsa('[data-switch]').forEach(function (s) { GX.bindSwitch(s); });

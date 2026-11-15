@@ -3,9 +3,28 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png?v=20260925c">
+<link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png?v=20260925c">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=20260925c">
 <title data-i18n="web.title">Guixu Consensus Platform · Portal</title>
-<link rel="stylesheet" href="../shared/guixu-theme.css">
+<link rel="stylesheet" href="../shared/guixu-theme.css?v=20260925j">
 <style>
+  /* ---------- 窄屏（手机 / TP 钱包等内置浏览器）：顶部菜单改为 ☰ 展开 ---------- */
+  .gx-nav .menu-toggle { display: none; width: 38px; height: 38px; padding: 0; place-items: center;
+    background: rgba(163,191,250,.10); border: 1px solid var(--gx-line); border-radius: 9px;
+    color: var(--gx-accent); font-size: 1.1em; line-height: 1; cursor: pointer; font-family: inherit; }
+  .gx-nav .menu-toggle:active { transform: scale(.95); }
+  @media (max-width: 1080px) {
+    .gx-nav .menu-toggle { display: grid; }
+    .gx-nav .nav-links { display: none; position: absolute; top: 58px; left: 0; right: 0; z-index: 101;
+      flex-direction: column; align-items: stretch; gap: 2px; padding: 12px 16px 14px;
+      background: #0c1725; border-bottom: 1px solid var(--gx-line-strong);
+      box-shadow: 0 18px 40px rgba(0,0,0,.45); max-height: 70vh; overflow-y: auto; }
+    .gx-nav .nav-links.show { display: flex; }
+    .gx-nav .nav-links a { padding: 11px 12px; font-size: .95em; border-radius: 10px; }
+  }
+
   /* ---------- Hero ---------- */
   .hero { position: relative; overflow: hidden; padding: 68px 24px 56px; background: linear-gradient(135deg, #0b1724, #132437, #1b263b); border-bottom: 1px solid var(--gx-line); }
   .hero::before { content: ''; position: absolute; top: -30%; right: -8%; width: 520px; height: 520px; border-radius: 50%; background: radial-gradient(circle, rgba(163,191,250,.13), transparent 70%); }
@@ -80,22 +99,25 @@
 
   @media (max-width: 980px) { .hero-inner { grid-template-columns: 1fr; gap: 30px; } .hero h1 { font-size: 2.1em; } }
 </style>
+  <!-- 统一卡片光影系统 v2（2026-09-29） -->
+  <link rel="stylesheet" href="../shared/gx-cards.css?v=20260929c">
 </head>
 <body>
 
 <nav class="gx-nav">
   <div class="nav-inner">
-    <a class="nav-brand" href="index.html"><span class="mark" data-i18n="brand.mark">归</span><span data-i18n="brand.name">Guixu Consensus</span></a>
+    <a class="nav-brand" href="index.html"><img class="brand-mark" src="/guixu800tm-96.webp?v=20260925a" alt="Guixu Consensus"><span data-i18n="brand.name">Guixu Consensus</span></a>
     <ul class="nav-links">
       <li><a href="index.html" class="active" data-i18n="nav.home">Portal</a></li>
       <li><a href="network.html" data-i18n="nav.network">Global Network</a></li>
       <li><a href="admin.html" data-i18n="nav.admin">Admin</a></li>
-      <li><a href="../desktop/index.html" data-i18n="nav.pc">PC Client</a></li>
-      <li><a href="../mobile/index.html" data-i18n="nav.mobile">Mobile App</a></li>
+      <li><a href="https://www.guixu.club/terminal/desktop/" data-i18n="nav.pc">PC Client</a></li>
+      <li><a href="https://www.guixu.club/terminal/mobile/" data-i18n="nav.mobile">Mobile App</a></li>
       <li><a href="https://www.guixu.club/" target="_blank" rel="noopener" data-i18n="nav.site">Brand Site</a></li>
     </ul>
     <span data-gx-lang-switch></span>
     <a class="gx-btn gx-btn-ghost gx-btn-sm" href="admin.html" data-i18n="nav.console">Console</a>
+    <button class="menu-toggle" id="gxMenuToggle" type="button" aria-label="Menu" aria-expanded="false">&#9776;</button>
   </div>
 </nav>
 
@@ -108,7 +130,7 @@
       <p class="hero-tag" data-i18n="web.hero.tag">Idle is value — make every device a node of the network</p>
       <p class="hero-desc" data-i18n="web.hero.desc">
         Aggregating idle disk storage, uplink bandwidth and AI compute from around the world, directly connecting storage providers, edge CDNs and compute buyers.
-        No private sale, no public sale — a 1% transaction tax and a 0.5% transfer tax sustain the operations fund, giving the platform real commercial viability.
+        No private sale, no public sale — a 1% transaction tax sustains the operations fund, giving the platform real commercial viability.
       </p>
       <div class="hero-cta">
         <a class="gx-btn gx-btn-primary" href="network.html" data-i18n="web.hero.cta1">View global network</a>
@@ -217,7 +239,7 @@
       <div class="idx" data-i18n="web.biz.4.idx">04 / TOKEN</div>
       <h3 data-i18n="web.biz.4.h3">Traffic token economy</h3>
       <p data-i18n="web.biz.4.p">The traffic and trading activity accumulated by the platform itself creates a token-economy effect that continuously feeds the operations fund.</p>
-      <div class="to" data-i18n="web.biz.4.to">→ Source: 1% transaction tax + 0.5% transfer tax</div>
+      <div class="to" data-i18n="web.biz.4.to">→ Source: 1% transaction tax</div>
     </div>
   </div>
 </section>
@@ -236,7 +258,7 @@
       <div>
         <h4 data-i18n="web.dl.pc.h4">PC Client</h4>
         <div class="meta" data-i18n="web.dl.pc.meta">Windows 10 / 11 · full-resource node</div>
-        <a class="gx-btn gx-btn-primary gx-btn-sm" href="../desktop/index.html" data-i18n="web.dl.btn">View UI prototype</a>
+        <a class="gx-btn gx-btn-primary gx-btn-sm" href="https://www.guixu.club/terminal/desktop/" data-i18n="web.dl.btn">View UI prototype</a>
       </div>
     </div>
     <div class="dl-card">
@@ -246,7 +268,7 @@
       <div>
         <h4 data-i18n="web.dl.mobile.h4">Mobile App</h4>
         <div class="meta" data-i18n="web.dl.mobile.meta">Android / iOS · lightweight node</div>
-        <a class="gx-btn gx-btn-primary gx-btn-sm" href="../mobile/index.html" data-i18n="web.dl.btn">View UI prototype</a>
+        <a class="gx-btn gx-btn-primary gx-btn-sm" href="https://www.guixu.club/terminal/mobile/" data-i18n="web.dl.btn">View UI prototype</a>
       </div>
     </div>
   </div>
@@ -261,14 +283,14 @@
   <div class="rm-grid" id="rmGrid"></div>
 </section>
 
-<div class="gx-foot" style="margin-top:56px" data-i18n="web.foot">
+<div class="gx-foot" style="margin-top:56px" data-i18n-html="web.foot">
   Guixu Consensus Platform  |  This page is a framework-stage build; data comes from a mock data source
 </div>
 
-<script src="../shared/guixu-i18n.js"></script>
-<script src="../shared/world-dots.js"></script>
-<script src="../shared/mock-data.js"></script>
-<script src="../shared/guixu-core.js"></script>
+<script src="../shared/guixu-i18n.js?v=20261115a"></script>
+<script src="../shared/world-dots.js?v=20260925h"></script>
+<script src="../shared/mock-data.js?v=20260925h"></script>
+<script src="../shared/guixu-core.js?v=20260925h"></script>
 <script>
 (function () {
   /* 语言初始化：填充静态 data-i18n 文案（默认英文，localStorage 记忆） */
@@ -329,6 +351,30 @@
 
   /* ---------- 切换语言时重渲染动态区块 ---------- */
   GX.i18n.onChange(function () { renderAll(); });
+})();
+</script>
+
+<script>
+/* 窄屏顶部菜单：☰ 展开；点菜单项 / 点外部 / Esc 收起。
+   手机端主要入口是 TP 钱包等内置浏览器，原来菜单在 <=1080px 被整块隐藏、无法点击。 */
+(function () {
+  var btn = document.getElementById('gxMenuToggle');
+  var nav = document.querySelector('.gx-nav');
+  var links = nav ? nav.querySelector('.nav-links') : null;
+  if (!btn || !links) { return; }
+  function close() { links.classList.remove('show'); btn.setAttribute('aria-expanded', 'false'); }
+  btn.addEventListener('click', function (e) {
+    e.stopPropagation();
+    var on = links.classList.toggle('show');
+    btn.setAttribute('aria-expanded', on ? 'true' : 'false');
+  });
+  links.addEventListener('click', function (e) {
+    if (e.target && e.target.closest && e.target.closest('a')) { close(); }
+  });
+  document.addEventListener('click', function (e) {
+    if (e.target !== btn && !btn.contains(e.target)) { close(); }
+  });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { close(); } });
 })();
 </script>
 </body>

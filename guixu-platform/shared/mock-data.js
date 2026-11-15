@@ -112,8 +112,8 @@ window.GX_DATA = {
   /* ---------- 用户端：本机节点信息 ---------- */
   me: {
     nodeId: 'GX-CN-SZ-0F3A',
-    owner: '闵宇清',
-    ownerEn: 'Min Yuqing',
+    owner: '',
+    ownerEn: '',
     devicePC:     { name: 'DESKTOP-GX01',  os: 'Windows 11', cpu: 'i7-12700K', gpu: 'RTX 4070', mem: '32GB', disk: '2TB NVMe' },
     deviceMobile: { name: 'HUAWEI Mate 60', os: 'HarmonyOS 4.2', cpu: 'Kirin 9000s', mem: '12GB', disk: '512GB' },
     wallet: { balance: 12864.42, todayEarn: 86.35, pending: 12.80, taxPaid: 214.60 },
@@ -203,7 +203,6 @@ window.GX_DATA = {
   fundFlow: {
     income: [
       { labelKey: 'd.fund.income.1', value: 628400 },
-      { labelKey: 'd.fund.income.2', value: 214100 },
       { labelKey: 'd.fund.income.3', value: 96300 }
     ],
     cost: [

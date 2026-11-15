@@ -8,9 +8,10 @@ A decentralized network project built on **Proof of Resource (PoR)**: turning ev
 
 | 资料 / Material | 中文 | English |
 |---|---|---|
-| 白皮书 v1.1 | [guixu-consensus-whitepaper-v1.html](guixu-consensus-whitepaper-v1.html) | [guixu-consensus-whitepaper-v1-en.html](guixu-consensus-whitepaper-v1-en.html) |
+| 白皮书 v1.2 | [guixu-consensus-whitepaper-v1.html](guixu-consensus-whitepaper-v1.html) | [guixu-consensus-whitepaper-v1-en.html](guixu-consensus-whitepaper-v1-en.html) |
 | 可行性运行计划书 | [guixu-consensus-platform-feasibility-plan-zh.html](guixu-consensus-platform-feasibility-plan-zh.html) | [guixu-consensus-platform-feasibility-plan-en.html](guixu-consensus-platform-feasibility-plan-en.html) |
 | 品牌官网（单页双语） | [guixu-website.html](guixu-website.html) | — |
+| 社区资产机制披露（gx） | [guixu-token.html](guixu-token.html) | — |
 | 多端程序框架入口 | [guixu-platform/index.html](guixu-platform/index.html) | — |
 
 官网地址 / Official website：<https://www.guixu.club/>
@@ -91,19 +92,29 @@ A decentralized network project built on **Proof of Resource (PoR)**: turning ev
 ├── LICENSE                                        MIT 许可证
 ├── .gitignore                                     Git 忽略规则
 │
-├── guixu-consensus-whitepaper-v1.html             白皮书 v1.1（中文）
-├── guixu-consensus-whitepaper-v1-en.html          白皮书 v1.1（English）
+├── guixu-consensus-whitepaper-v1.html             白皮书 v1.2（中文）
+├── guixu-consensus-whitepaper-v1-en.html          白皮书 v1.2（English）
 ├── guixu-consensus-platform-feasibility-plan-zh.html   可行性运行计划书（中文）
 ├── guixu-consensus-platform-feasibility-plan-en.html   可行性运行计划书（English）
+├── guixu-token.html                               社区资产（gx）机制披露页
 ├── guixu-website.html                             品牌官网单页（中英双语单页）
+├── fireworks.js / home-fx.js                      官网烟花特效与背景特效
+├── favicon.ico / favicon-*.png / apple-touch-icon.png   站点图标套图
+├── guixu800tm-96.webp / guixu800tm-320.webp       品牌徽标（导航 / 主视觉）
 │
 ├── guixu-platform/                                ▍多端程序框架（纯静态）
 │   ├── index.html                                 框架总览入口
 │   ├── README.md                                  框架说明文档
 │   ├── shared/                                    全端共享资源
 │   │   ├── guixu-theme.css                        主题变量 + 组件库
+│   │   ├── gx-cards.css                           卡片 / 布局组件样式
 │   │   ├── guixu-i18n.js                          多语言引擎（默认英文 / localStorage 持久化）
 │   │   ├── guixu-core.js                          数据访问层 + 工具函数 + 地图渲染 + 轻量图表
+│   │   ├── gx-wallet.js                           钱包连接 / 身份 / 推荐关系组件（手动授权，不自动连接）
+│   │   ├── gx-notice.js                           公告弹窗组件
+│   │   ├── gx-log.js                              终端侧运行日志上报
+│   │   ├── gx-pauseflag.js                        全网暂停标志位
+│   │   ├── gx-firefly.js                          终端页萤火特效
 │   │   ├── mock-data.js                           模拟数据集（文案已 key 化）
 │   │   ├── world-dots.js                          点阵世界地图底图
 │   │   └── i18n/                                  语言包（新增语言只需加 <code>.js）
@@ -147,7 +158,23 @@ python -m http.server 8000
 
 **多语言**：全站默认英文，页面右上角（移动端为顶部状态栏）提供 `EN / 中` 切换按钮，选择结果写入 `localStorage(gx-lang)`，刷新后保持。扩展新语言只需新增 `shared/i18n/<code>.js` 并在 `guixu-i18n.js` 的 `LOCALES` 中登记，页面 HTML 零改动。
 
-## 五、许可证
+## 五、更新记录
+
+### v1.1 · 2026-11-15
+
+- 白皮书升版到 **v1.2**（机制与术语口径更新）
+- 官网首页：实时总盘条、开屏动画与合成音效、官方 X [@Guixu2026](https://x.com/Guixu2026)
+- 程序框架：PC / 手机终端接入**真实钱包身份**（手动授权，绝不自动连接）、资源上报与收益结算面板、共识价值看板、当前 IP 与归属地
+- 新增 `guixu-token.html`：社区资产（gx）机制披露，交易税四桶 **分红 50% · 流动性 30% · 创作者 10% · 销毁 10%**
+- 全站代币显示单位统一为 **`gx`**
+- 补齐页面依赖的 shared 资源（gx-wallet / gx-notice / gx-log / gx-pauseflag / gx-firefly / gx-cards.css）与站点图标、品牌徽标
+- 安全：公开仓库不含服务端代码、管理员密钥或内部域名
+
+### v1.0 · 2026-09-24
+
+初始发布：双语文档、双语官网、多端纯静态程序框架。
+
+## 六、许可证
 
 本项目采用 **MIT 许可证**，详见 [LICENSE](LICENSE)。
 
@@ -231,19 +258,29 @@ Score = Σ (resource type × coefficient × duration × stability weight × anti
 ├── LICENSE                                        MIT License
 ├── .gitignore                                     Git ignore rules
 │
-├── guixu-consensus-whitepaper-v1.html             Whitepaper v1.1 (Chinese)
-├── guixu-consensus-whitepaper-v1-en.html          Whitepaper v1.1 (English)
+├── guixu-consensus-whitepaper-v1.html             Whitepaper v1.2 (Chinese)
+├── guixu-consensus-whitepaper-v1-en.html          Whitepaper v1.2 (English)
 ├── guixu-consensus-platform-feasibility-plan-zh.html   Feasibility & operation plan (Chinese)
 ├── guixu-consensus-platform-feasibility-plan-en.html   Feasibility & operation plan (English)
+├── guixu-token.html                               Community asset (gx) mechanism disclosure
 ├── guixu-website.html                             Brand website, single-page bilingual
+├── fireworks.js / home-fx.js                      Website fireworks & background effects
+├── favicon.ico / favicon-*.png / apple-touch-icon.png   Site icon set
+├── guixu800tm-96.webp / guixu800tm-320.webp       Brand emblem (nav / hero)
 │
 ├── guixu-platform/                                ▍Multi-end program framework (pure static)
 │   ├── index.html                                 Framework overview entry
 │   ├── README.md                                  Framework documentation
 │   ├── shared/                                    Shared assets for all ends
 │   │   ├── guixu-theme.css                        Theme variables + component library
+│   │   ├── gx-cards.css                           Card / layout component styles
 │   │   ├── guixu-i18n.js                          i18n engine (default English / localStorage persistence)
 │   │   ├── guixu-core.js                          Data access layer + utils + map rendering + lightweight charts
+│   │   ├── gx-wallet.js                           Wallet connect / identity / referral component (manual auth, never auto-connect)
+│   │   ├── gx-notice.js                           Notice dialog component
+│   │   ├── gx-log.js                              Terminal-side runtime log reporting
+│   │   ├── gx-pauseflag.js                        Network-wide pause flag
+│   │   ├── gx-firefly.js                          Terminal page firefly effect
 │   │   ├── mock-data.js                           Mock dataset (all copy keyed)
 │   │   ├── world-dots.js                          Dotted world map base layer
 │   │   └── i18n/                                  Locale packs (add <code>.js to add a language)
@@ -287,7 +324,23 @@ VS Code Live Server, or any static server (Nginx / Caddy) pointed at the folder,
 
 **Localization**: the site defaults to English; an `EN / 中` switch sits at the top-right of each page (top status bar on mobile). The choice is persisted in `localStorage(gx-lang)` and survives refresh. Adding a language only requires a new `shared/i18n/<code>.js` plus registering it in `LOCALES` inside `guixu-i18n.js` — no HTML changes.
 
-## 5. License
+## 5. Changelog
+
+### v1.1 · 2026-11-15
+
+- Whitepaper bumped to **v1.2** (mechanism and terminology update)
+- Website: live network strip, splash animation with synthesised audio, official X [@Guixu2026](https://x.com/Guixu2026)
+- Framework: PC / mobile terminals now use **real wallet identity** (manual authorisation, never auto-connect), resource reporting & earnings panel, consensus-value dashboard, current IP and location
+- New `guixu-token.html`: community asset (gx) mechanism disclosure — trade tax split into four buckets **Dividend 50% · Liquidity 30% · Creator 10% · Burn 10%**
+- Token display unit unified to **`gx`**
+- Added the shared assets the pages depend on (gx-wallet / gx-notice / gx-log / gx-pauseflag / gx-firefly / gx-cards.css) plus site icons and brand emblem
+- Security: the public repository contains no server-side code, admin keys or internal domain names
+
+### v1.0 · 2026-09-24
+
+Initial release: bilingual docs, bilingual website, multi-end pure-static framework.
+
+## 6. License
 
 Released under the **MIT License**. See [LICENSE](LICENSE).
 

@@ -1,0 +1,191 @@
+/* ==========================================================================
+   归墟共识 · 统一卡片光影系统 v2（2026-09-29）
+   适用：全站除 www 根首页（其自身 <style> 内已有同源实现）以外的所有页面
+     - 平台：guixu-platform/{index, desktop, mobile, web/*}
+     - 终端/节点：terminal、node.guixu.club（含 /terminal）
+     - 文档：guixu-consensus-whitepaper-v1(.html/-en)、guixu-consensus-platform-feasibility-plan-{zh,en}
+     - 跳转页：内部管理后台域（不对外公布）
+   实现：伪元素承载 顶部常驻高光 + hover 斜向扫光 + 品牌光晕/上浮
+   约束：不引入 overflow 裁剪、不改动任何 HTML 结构与既有规则；动效只跑
+         transform / opacity / background-position
+   ========================================================================== */
+
+@keyframes gxSheenSlide {
+  from { background-position: 135% 0; }
+  to   { background-position: -135% 0; }
+}
+@keyframes gxSheenSweep {
+  from { transform: translateX(-160%) skewX(-18deg); opacity: 0; }
+  18%  { opacity: 1; }
+  to   { transform: translateX(280%) skewX(-18deg); opacity: 0; }
+}
+
+/* ---------------- 1. 深色半透明卡片：平台 / 终端 / 节点 ---------------- */
+.gx-card, .mod, .pm-card, .dl-card, .res-card, .res-item, .biz-card,
+.m-item, .cards .card {
+  position: relative;
+  transition: transform .35s cubic-bezier(.22,.61,.36,1),
+              box-shadow .35s cubic-bezier(.22,.61,.36,1),
+              border-color .35s;
+}
+
+.gx-card::before, .mod::before, .pm-card::before, .dl-card::before,
+.res-card::before, .res-item::before, .m-item::before, .cards .card::before {
+  content: ''; position: absolute; top: 0; left: 9%; right: 9%; height: 1px;
+  pointer-events: none; border-radius: 2px;
+  background: linear-gradient(90deg,
+      rgba(163,191,250,0) 0%, rgba(163,191,250,.5) 30%,
+      rgba(227,236,255,.8) 50%, rgba(163,191,250,.5) 70%, rgba(163,191,250,0) 100%);
+  opacity: .5; transition: opacity .35s;
+}
+
+.gx-card::after, .mod::after, .pm-card::after, .dl-card::after, .res-item::after,
+.m-item::after, .cards .card::after {
+  content: ''; position: absolute; inset: 0; border-radius: inherit;
+  pointer-events: none; opacity: 0;
+  background: linear-gradient(100deg,
+      rgba(163,191,250,0) 34%, rgba(163,191,250,.17) 50%, rgba(163,191,250,0) 66%);
+  background-size: 260% 100%; background-position: 135% 0;
+  transition: opacity .3s;
+}
+
+.gx-card:hover, .mod:hover, .pm-card:hover, .dl-card:hover, .res-card:hover, .biz-card:hover,
+.res-item:not(.off):hover, .m-item:not(.off):hover, .cards .card:not(.off):hover {
+  transform: translateY(-4px);
+  border-color: rgba(163,191,250,.5);
+  box-shadow: 0 12px 30px rgba(3,9,17,.45),
+              0 0 26px rgba(163,191,250,.26),
+              inset 0 0 24px rgba(163,191,250,.07);
+}
+
+.gx-card:hover::before, .mod:hover::before, .pm-card:hover::before, .dl-card:hover::before,
+.res-card:hover::before, .res-item:hover::before, .m-item:hover::before, .cards .card:hover::before {
+  opacity: 1;
+}
+
+.gx-card:hover::after, .mod:hover::after, .pm-card:hover::after, .dl-card:hover::after,
+.res-item:hover::after, .m-item:hover::after, .cards .card:hover::after {
+  opacity: 1; animation: gxSheenSlide .95s cubic-bezier(.3,.5,.3,1) forwards;
+}
+
+/* .biz-card 的 ::after 已被页面用于右上角径向光斑，扫光改用 ::before 承载（其自身已 overflow:hidden） */
+.biz-card { overflow: hidden; }
+.biz-card::before {
+  content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 55%;
+  pointer-events: none; opacity: 0;
+  background: linear-gradient(100deg,
+      rgba(163,191,250,0) 0%, rgba(163,191,250,.20) 50%, rgba(163,191,250,0) 100%);
+  transform: translateX(-160%) skewX(-18deg);
+}
+.biz-card:hover::before {
+  opacity: 1; animation: gxSheenSweep .95s cubic-bezier(.3,.5,.3,1) forwards;
+}
+.biz-card::after { transition: opacity .35s; }
+.biz-card:hover::after { opacity: .35; }
+
+/* ---------------- 2. 深色统计卡：资源统计 / 指标卡 ---------------- */
+.res-card::before, .res-card::after { border-radius: 10px; }
+
+/* ---------------- 3. 密集数据单元：概览数字条（不抬升，仅高亮） ---------------- */
+.ls-item { transition: background .3s, box-shadow .3s; }
+.ls-item .v { transition: text-shadow .3s; }
+.ls-item:hover { background: rgba(163,191,250,.07); box-shadow: inset 0 0 18px rgba(163,191,250,.12); }
+.ls-item:hover .v { text-shadow: 0 0 14px rgba(163,191,250,.55); }
+
+/* 版本路线条目：左侧竖线亮起 + 底色微亮（web 门户） */
+.rm-card {
+  transition: border-left-color .3s, background .3s, padding-left .3s;
+}
+.rm-card:hover {
+  border-left-color: rgba(163,191,250,.85);
+  background: rgba(163,191,250,.05);
+}
+
+/* ---------------- 4. 浅色文档卡片：白皮书 / 可行性方案 ---------------- */
+.container .section {
+  position: relative;
+  transition: transform .35s cubic-bezier(.22,.61,.36,1),
+              box-shadow .35s cubic-bezier(.22,.61,.36,1);
+}
+.container .section::before {
+  content: ''; position: absolute; top: 0; left: 8%; right: 8%; height: 1px;
+  pointer-events: none; opacity: .75;
+  background: linear-gradient(90deg,
+      rgba(163,191,250,0) 0%, rgba(163,191,250,.55) 22%,
+      rgba(227,236,255,.95) 50%, rgba(163,191,250,.55) 78%, rgba(163,191,250,0) 100%);
+}
+.container .section::after {
+  content: ''; position: absolute; inset: 0; border-radius: 12px;
+  pointer-events: none; opacity: 0;
+  background: linear-gradient(100deg,
+      rgba(163,191,250,0) 34%, rgba(163,191,250,.22) 50%, rgba(163,191,250,0) 66%);
+  background-size: 260% 100%; background-position: 135% 0;
+  transition: opacity .3s;
+}
+.container .section:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 34px rgba(13,27,42,.14),
+              0 0 0 1px rgba(163,191,250,.5),
+              0 0 26px rgba(163,191,250,.30);
+}
+.container .section:hover::after {
+  opacity: 1; animation: gxSheenSlide .95s cubic-bezier(.3,.5,.3,1) forwards;
+}
+
+.container .card {
+  transition: background .3s, box-shadow .3s, border-left-color .3s;
+}
+.container .card:hover {
+  background: #eef3ff;
+  border-left-color: #a3bffa;
+  box-shadow: 0 8px 20px rgba(65,90,119,.12);
+}
+
+/* 文档内深色横幅：流程条 / 命名条 */
+.flow-box, .name-box {
+  position: relative;
+  transition: transform .35s cubic-bezier(.22,.61,.36,1),
+              box-shadow .35s cubic-bezier(.22,.61,.36,1);
+}
+.flow-box::after, .name-box::after {
+  content: ''; position: absolute; inset: 0; border-radius: 10px;
+  pointer-events: none; opacity: 0;
+  background: linear-gradient(100deg,
+      rgba(163,191,250,0) 34%, rgba(227,236,255,.20) 50%, rgba(163,191,250,0) 66%);
+  background-size: 260% 100%; background-position: 135% 0;
+  transition: opacity .3s;
+}
+.flow-box:hover, .name-box:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(5,12,22,.35), 0 0 24px rgba(163,191,250,.28);
+}
+.flow-box:hover::after, .name-box:hover::after {
+  opacity: 1; animation: gxSheenSlide .95s cubic-bezier(.3,.5,.3,1) forwards;
+}
+
+/* ---------------- 5. 跳转页容器 ---------------- */
+.box { transition: box-shadow .35s, transform .35s; }
+.box:hover { transform: translateY(-2px); box-shadow: 0 0 30px rgba(163,191,250,.22); }
+
+/* ---------------- 6. 无障碍：偏好减少动效 ---------------- */
+@media (prefers-reduced-motion: reduce) {
+  .gx-card::after, .mod::after, .pm-card::after, .dl-card::after, .res-card::after, .res-item::after,
+  .biz-card::before, .m-item::after, .cards .card::after,
+  .container .section::after, .flow-box::after, .name-box::after {
+    animation: none !important; opacity: 0 !important;
+  }
+  .gx-card:hover, .mod:hover, .pm-card:hover, .dl-card:hover, .res-card:hover, .biz-card:hover,
+  .res-item:hover, .m-item:hover, .cards .card:hover, .container .section:hover,
+  .flow-box:hover, .name-box:hover, .box:hover { transform: none; }
+}
+
+/* ---------------- 7. 触屏窄屏：弱化抬升与扫光 ---------------- */
+@media (max-width: 768px) {
+  .gx-card:hover, .mod:hover, .pm-card:hover, .dl-card:hover, .res-card:hover, .biz-card:hover,
+  .res-item:hover, .cards .card:hover, .container .section:hover, .flow-box:hover, .name-box:hover {
+    transform: translateY(-2px);
+  }
+  .gx-card::after, .mod::after, .pm-card::after, .dl-card::after, .res-card::after, .res-item::after,
+  .m-item::after, .cards .card::after, .container .section::after,
+  .flow-box::after, .name-box::after { display: none; }
+}

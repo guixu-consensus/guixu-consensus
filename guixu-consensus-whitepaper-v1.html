@@ -3,7 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>归墟共识网络白皮书 v1.1</title>
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png?v=20260925c">
+<link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png?v=20260925c">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=20260925c">
+<title>归墟共识网络白皮书 v1.2</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { font-family: 'Microsoft YaHei', 'Segoe UI', sans-serif; background: #f0f2f5; color: #1a1a2e; line-height: 1.9; }
@@ -26,17 +30,84 @@ tr:hover td { background: #f7f9fc; }
 .flow-box .arrow { color: #a3bffa; font-size: 1.5em; margin: 0 8px; }
 .name-box { background: linear-gradient(135deg, #0d1b2a, #1b263b); color: #e0e1dd; padding: 25px 30px; margin: 18px 0; border-radius: 10px; text-align: center; }
 .name-box h3 { color: #a3bffa; margin-bottom: 10px; }
+
+  /* 品牌词返回首页 */
+  .home-link { color: inherit; text-decoration: none; border-bottom: 2px solid transparent;
+               transition: color .2s, border-color .2s; cursor: pointer; }
+  .home-link:hover { color: #a3bffa; border-bottom-color: rgba(163,191,250,.5); }
+  .back-home { margin-top: 14px; font-size: .9em; }
+  .back-home a { color: #a3bffa; text-decoration: none; border-bottom: 1px dashed rgba(163,191,250,.45); }
+  .back-home a:hover { border-bottom-style: solid; color: #c7d7ff; }
+  /* ---- 品牌横版 LOGO ---- */
+  .gx-logo-wide { display: inline-block; background: #fff; border-radius: 16px; padding: 12px 22px;
+    box-shadow: 0 12px 30px rgba(0,0,0,.42); line-height: 0; margin-bottom: 22px; transition: transform .2s; }
+  .gx-logo-wide:hover { transform: translateY(-2px); }
+  .gx-logo-wide img { display: block; width: 100%; max-width: 320px; height: auto; }
+  .footer a { color: #415a77; text-decoration: none; }
+  .footer a:hover { color: #a3bffa; text-decoration: underline; }
 </style>
+  <!-- 统一卡片光影系统 v2（2026-09-29） -->
+  <link rel="stylesheet" href="guixu-platform/shared/gx-cards.css?v=20260929c">
 </head>
 <body>
 
 <div class="hero">
-  <h1>归墟共识</h1>
-  <p class="version">白皮书 v1.1 · 基础理念版</p>
+  <a class="gx-logo-wide" href="/" title="归墟共识官网 / Guixu Consensus"><img src="/brand-wide-640.webp?v=20260925f" alt="Guixu Consensus — Proof of Resource Network"></a>
+  <h1><a class="home-link" href="/" title="返回归墟共识平台首页">归墟</a>共识</h1>
+  <p class="version">白皮书 v1.2 · 基础理念版</p>
   <p class="tagline">万流归一，共筑共识</p>
+  <p class="back-home"><a href="/">← 返回官网首页</a></p>
 </div>
 
 <div class="container">
+
+<!-- ========== 平台定位与价值阐述 ========== -->
+<div class="section">
+  <h2>开篇说明 · 平台定位与价值阐述</h2>
+
+  <h3>一、平台定位：一张资源价值网</h3>
+  <p>归墟共识网络不是一个单纯的 DApp 或工具，而是一张<strong>资源价值网</strong>——它的核心使命，是把散落在用户闲置设备与闲置注意力中的物理资源与流量资源汇聚起来，对接真实商业需求，形成一个可持续流转的商业闭环。</p>
+
+  <h3>二、双层资源模型</h3>
+  <p><strong>物理资源：</strong>用户闲置的设备（PC、手机、路由器、边缘节点等）本身具备可计算、可存储、可传输的能力。这些能力在归墟网络中被调度为算力节点、存储节点、带宽节点与边缘计算节点。物理资源的价值没有上限——用户设备越多、越空闲，平台可调用的物理底座就越庞大。</p>
+  <p><strong>流量资源：</strong>用户的注意力、访问行为、社交关系与内容消费路径，都是流量。归墟通过终端入口（node.guixu.club）、桌面端（desktop）、移动端（mobile）构建多触点触达，把用户的活跃行为转化为可度量的流量池。流量资源的价值同样没有上限——用户基数越大、粘性越强、内容生态越丰富，流量池的商业定价空间就越大。</p>
+
+  <h3>三、通证经济作为价值锚点</h3>
+  <p>通证（Token）不是目的，而是<strong>价值共识的载体</strong>。归墟的运作分为三个阶段：</p>
+  <ul>
+    <li><strong>阶段一 · 通证引流，搭建共识：</strong>用通证经济作为钩子——参与即得、贡献即奖、持有即受益——吸引早期用户。通证在这里的作用是降低信任成本：用户不需要理解复杂的底层技术，只需要知道「我参与，我受益」。</li>
+    <li><strong>阶段二 · 通证支撑商业，汇聚价值：</strong>当用户规模达到临界点，通证开始发挥商业锚定作用——物理资源贡献者获得通证奖励，形成持续参与的激励；流量资源产生者（终端用户）通过行为获得通证回馈；商业需求方通过通证体系购买平台资源。通证成为衡量资源价值的通用标尺，使物理资源与流量资源可以在同一套估值体系下被定价和交易。</li>
+    <li><strong>阶段三 · 通证退出，商业闭环独立运转：</strong>当平台成熟后，通证的角色从「吸引器」转变为「结算器」。商业闭环不再依赖通证本身作为目的，而是通证作为价值流转的媒介，确保每个参与者的贡献都能获得合理回报。</li>
+  </ul>
+
+  <h3>四、商业闭环</h3>
+  <div class="flow-box">
+    用户闲置设备 + 用户注意力 <span class="arrow">→</span> 归墟终端（入口层） <span class="arrow">→</span> 物理资源汇聚（算力/存储/带宽）＋ 流量资源汇聚（访问/行为/社交） <span class="arrow">→</span> 通证激励绑定 ＋ 通证行为回馈 <span class="arrow">→</span> 归墟共识网络（价值中枢） <span class="arrow">→</span> 商业需求方（企业/开发者/项目方） <span class="arrow">→</span> 资源变现（物理资源出售）＋ 流量变现（广告/推广/分销） <span class="arrow">→</span> 通证分发（奖励贡献者） <span class="arrow">→</span> 用户继续贡献，形成正循环
+  </div>
+  <p>这个闭环的关键在于<strong>可持续性</strong>——物理资源不会因为消耗而减少（相反，设备越用越成熟，网络越用越庞大），流量资源也不会因为变现而枯竭（用户的商业行为可以反哺用户，形成更多贡献）。通证作为润滑剂，确保价值在贡献者、平台、需求方之间公平流转。</p>
+  <p>归墟共识网络聚合的闲置资源并非仅在网络内部记账，而是通过标准化接口直接对接真实需求方的实体平台，形成"贡献 — 聚合 — 对接 — 变现 — 反哺"的完整商业闭环。这是归墟区别于纯概念型网络的核心生存能力：资源始终有真实买家。</p>
+  <table>
+    <thead>
+      <tr><th>资源类型</th><th>对接需求方实体平台</th><th>变现路径</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>磁盘存储</td><td>专业存储服务商、分布式云存储与备份归档服务商</td><td>企业级备份、冷数据归档、对象存储容量租赁</td></tr>
+      <tr><td>带宽资源</td><td>CDN 服务商、边缘计算网络、矿业资源运营商</td><td>流量分发、节点加速、带宽资源租赁（含挖矿相关用途）</td></tr>
+      <tr><td>终端算力</td><td>AI 训练与推理服务商、渲染及科学计算平台</td><td>GPU / CPU 算力租赁、模型推理托管</td></tr>
+      <tr><td>流量与网络效应</td><td>通证持有者、生态应用方、通证二级市场</td><td>流量聚合本身即形成通证经济效益</td></tr>
+    </tbody>
+  </table>
+  <p>除三类实体资源的直接变现外，网络规模的增长本身即构成独立的商业价值。随着接入终端与活跃地址持续增加，平台所积聚的流量、用户注意力与交易活跃度本身就可以形成通证经济效益：交易税持续注入运维基金，网络活跃度提升带动通证需求，最终形成"资源贡献者 — 需求方 — 通证持有者"三方正向循环。</p>
+
+  <h3>五、价值阐述总结</h3>
+  <p>归墟共识网络的价值不是单一维度的。它是一个<strong>从用户闲置出发、以通证为共识基石、以资源汇聚为手段、以商业闭环为目标</strong>的完整体系。</p>
+  <ul>
+    <li><strong>对用户：</strong>把闲置变成收益，把注意力变成价值，把参与变成权益。</li>
+    <li><strong>对商业方：</strong>以通证为信用媒介，以平台为信用载体，获取精准、可度量、可持续的流量与算力资源。</li>
+    <li><strong>对平台：</strong>不卖资源、不囤资源，而是搭建一个让资源自然汇聚、自然定价、自然流转的价值基础设施。</li>
+  </ul>
+  <p>商业的终局不是榨取，而是<strong>共赢的持续循环</strong>。归墟想做的，就是让每一次贡献、每一次访问、每一次交易，都能在这个循环中找到自己的位置。</p>
+</div>
 
 <!-- ========== 第一章 ========== -->
 <div class="section">
@@ -115,30 +186,12 @@ tr:hover td { background: #f7f9fc; }
   </table>
 </div>
 
-<!-- ========== 新增：资源对接与商业闭环 ========== -->
-<div class="section">
-  <h3>资源对接与商业闭环</h3>
-  <p>归墟共识网络聚合的闲置资源并非仅在网络内部记账，而是通过标准化接口直接对接真实需求方的实体平台，形成"贡献 — 聚合 — 对接 — 变现 — 反哺"的完整商业闭环。这是归墟区别于纯概念型网络的核心生存能力：资源始终有真实买家。</p>
-  <table>
-    <thead>
-      <tr><th>资源类型</th><th>对接需求方实体平台</th><th>变现路径</th></tr>
-    </thead>
-    <tbody>
-      <tr><td>磁盘存储</td><td>专业存储服务商、分布式云存储与备份归档服务商</td><td>企业级备份、冷数据归档、对象存储容量租赁</td></tr>
-      <tr><td>带宽资源</td><td>CDN 服务商、边缘计算网络、矿业资源运营商</td><td>流量分发、节点加速、带宽资源租赁（含挖矿相关用途）</td></tr>
-      <tr><td>终端算力</td><td>AI 训练与推理服务商、渲染及科学计算平台</td><td>GPU / CPU 算力租赁、模型推理托管</td></tr>
-      <tr><td>流量与网络效应</td><td>通证持有者、生态应用方、通证二级市场</td><td>流量聚合本身即形成通证经济效益</td></tr>
-    </tbody>
-  </table>
-  <p>除三类实体资源的直接变现外，网络规模的增长本身即构成独立的商业价值。随着接入终端与活跃地址持续增加，平台所积聚的流量、用户注意力与交易活跃度本身就可以形成通证经济效益：交易税与转账税持续注入运维基金，网络活跃度提升带动通证需求，最终形成"资源贡献者 — 需求方 — 通证持有者"三方正向循环。</p>
-</div>
-
 <!-- ========== 第三章 ========== -->
 <div class="section">
   <h2>第三章 通证经济模型</h2>
 
   <h3>通证基础信息</h3>
-  <p>归墟共识网络通证（以下简称「归墟代币」），是社区成员参与共识网络建设并获得贡献奖励的唯一凭证。该通证通过合约内置的「交易税」和「转账税」机制，持续为运维基金提供资金支持。</p>
+  <p>归墟共识网络通证（以下简称「gx」），是社区成员参与共识网络建设并获得贡献奖励的唯一凭证。该通证通过合约内置的「交易税」机制，持续为运维基金提供资金支持。</p>
 
   <h3>通证发行规则</h3>
   <table>
@@ -159,8 +212,7 @@ tr:hover td { background: #f7f9fc; }
 
   <h3>税务机制 — 运维基金</h3>
   <div class="card">
-    <strong>交易税：</strong>每笔交易（Transfer）收取 1% 的归墟代币作为交易税。<br>
-    <strong>转账税：</strong>每笔转账收取 0.5% 的归墟代币作为转账税。<br>
+    <strong>交易税：</strong>每笔交易（Transfer）收取 1% 的 gx 作为交易税。<br>
     <strong>防机器人策略：</strong>税率刻意设定较高，大幅提高自动化脚本批量刷量、薅羊毛的成本，保护真实持币用户的权益。<br>
     <strong>税率说明：</strong>税率可在社区治理中投票调整，确保费率既能提供足够的运维资金，又不会过高影响用户体验。<br>
     <strong>基金去向：</strong>所有税费收入自动转入运维基金池，用于节点奖励发放、网络维护、安全审计和系统升级。
@@ -168,6 +220,26 @@ tr:hover td { background: #f7f9fc; }
 
   <h3>贡献值计算模型</h3>
   <p>贡献值 = ∑(资源类型 × 贡献系数 × 贡献时长 × 稳定性权重 × 防作弊系数)</p>
+
+  <h3>有效贡献者门槛</h3>
+  <p>并非所有接入网络的终端都能产生有效的资源贡献。为确保网络整体资源质量，满足商业需求方的采购标准，系统对「有效资源贡献者」设有以下最低门槛：</p>
+  <table>
+    <thead>
+      <tr><th>评估维度</th><th>最低要求</th><th>说明</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>硬件门槛</td><td>PC ≥ 4 核 CPU + 8GB 内存 + 50GB 可用存储；手机 ≥ 4GB RAM + 20GB 可用存储</td><td>低于此门槛的终端贡献值上限封顶</td></tr>
+      <tr><td>网络带宽</td><td>下行 ≥ 50Mbps，上行 ≥ 20Mbps（连续 7 天）</td><td>贡献值系数 = 上行带宽 / 100Mbps，封顶 1.5</td></tr>
+      <tr><td>在线稳定性</td><td>7 天内在线率 ≥ 90%</td><td>不满足则当日贡献值清零</td></tr>
+      <tr><td>贡献值达标</td><td>7 天累计贡献值 ≥ 100</td><td>不同设备类型差异化基准：PC ≥ 200，手机 ≥ 100，服务器/NAS ≥ 500</td></tr>
+    </tbody>
+  </table>
+  <div class="card">
+    <strong>分级激励：</strong><br>
+    <strong>Lv1 普通贡献者</strong>：满足上述四项 → 贡献值系数 1.0<br>
+    <strong>Lv2 优质贡献者</strong>：上行带宽 ≥ 100Mbps 且连续在线 60 天 → 系数提升至 1.5<br>
+    <strong>Lv3 核心贡献者</strong>：上行带宽 ≥ 500Mbps + GPU 参与共识 + 连续 180 天稳定 → 系数 2.0，享有治理投票权重 +1 倍
+  </div>
 
   <h3>防薅羊毛与反作弊</h3>
   <p>为防止自动化脚本、AI代理和恶意用户大量制造虚假终端进行薅羊毛，系统内置多层防御机制：</p>
@@ -225,9 +297,9 @@ tr:hover td { background: #f7f9fc; }
   <h2>第五章 运营与治理</h2>
 
   <h3>社区治理</h3>
-  <p>系统完全去中心化治理，所有重大决策由归墟代币持有者投票决定：</p>
+  <p>系统完全去中心化治理，所有重大决策由 gx 持有者投票决定：</p>
   <ul>
-    <li>税率调整（交易税1%、转账税0.5%的修改）</li>
+    <li>税率调整（交易税1%的修改）</li>
     <li>贡献系数调整（各资源类型权重的变更）</li>
     <li>运维基金使用审批</li>
     <li>技术升级与协议变更</li>
@@ -236,7 +308,7 @@ tr:hover td { background: #f7f9fc; }
 
   <h3>运维基金</h3>
   <div class="card">
-    <strong>资金来源：</strong>交易税（1%）+ 转账税（0.5%），持续流入。<br>
+    <strong>资金来源：</strong>交易税（1%），持续流入。<br>
     <strong>资金用途：</strong><br>
     &nbsp;&nbsp;• 节点奖励发放（40%）<br>
     &nbsp;&nbsp;• 网络维护与安全审计（30%）<br>
@@ -268,7 +340,7 @@ tr:hover td { background: #f7f9fc; }
     <li>完成终端贡献数据采集系统开发</li>
     <li>部署PoR共识算法原型</li>
     <li>发布PC端beta测试版</li>
-    <li>建立通证合约（1%交易税 + 0.5%转账税）</li>
+    <li>建立通证合约（1%交易税）</li>
     <li>启动内测社区</li>
   </ul>
 
@@ -329,6 +401,93 @@ tr:hover td { background: #f7f9fc; }
   <p>归墟共识网络——万流归一，共筑共识。</p>
 </div>
 
+<!-- ========== 第九章 ========== -->
+<div class="section">
+  <h2>第九章 资源价值网运营规范</h2>
+
+  <p>归墟共识网络不仅依赖物理资源的汇聚，更依赖对「人」和「行为」的精准定义。以下三个角色定义是网络商业闭环可持续运转的核心前提。</p>
+
+  <h3>一、有效流量用户定义</h3>
+  <p>归墟通过终端入口（node.guixu.club）、桌面端、移动端构建多触点触达，把用户的活跃行为转化为可度量的流量池。但流量资源必须排除机器人、自动挂机刷量，否则商业变现端（广告/推广/分销）将失去定价权。</p>
+  <p><strong>一个访问行为被计入有效流量，必须同时满足以下全部条件：</strong></p>
+  <table>
+    <thead>
+      <tr><th>判定维度</th><th>标准</th><th>技术实现</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>身份唯一性</td><td>一个自然人一个钱包地址，且地址与设备指纹绑定</td><td>钱包签名 + 设备指纹哈希（IP + User-Agent + 屏幕分辨率 + Canvas 指纹）；跨设备新建钱包需行为验证</td></tr>
+      <tr><td>非自动挂机</td><td>访问行为有随机性、有停留、有交互，无固定脚本模式</td><td>行为分析引擎：记录鼠标轨迹、滚动速度、按键间隔；偏离人类操作分布（如恒速滚动、固定间隔点击）自动降权</td></tr>
+      <tr><td>有效停留</td><td>单次会话停留时间 ≥ 15 秒，且至少发生 1 次有意义的交互（点击、表单输入、路由跳转）</td><td>前端埋点 + 后端聚合，15 秒阈值可在社区治理中调整</td></tr>
+      <tr><td>来源质量</td><td>排除搜索引擎爬虫、CDN 预加载请求、已知代理池 IP</td><td>爬虫检测 + 代理 IP 黑名单 + 反向 DNS 验证</td></tr>
+    </tbody>
+  </table>
+  <div class="card">
+    <strong>防作弊分层：</strong><br>
+    <strong>L1（自动化脚本）</strong>：固定 IP 批量创建钱包、恒速操作 → 直接拦截，不产生贡献值<br>
+    <strong>L2（真人 + 脚本辅助）</strong>：真人操作但使用自动化工具 → 行为偏离人类分布，贡献值系数降至 0.3<br>
+    <strong>L3（完全真人）</strong>：贡献值系数 1.0，连续有效在线 30 天后系数逐步升至 1.5
+  </div>
+
+  <h3>二、有效资源贡献者定义</h3>
+  <p>系统根据终端设备实际贡献的资源类型分别记录贡献值。但并非所有接入网络的终端都能产生有效的资源贡献。为确保网络整体资源质量、满足商业需求方的采购标准，一个终端在 7 天评估周期内必须同时满足以下四项，才定义为「有效资源贡献者」：</p>
+  <table>
+    <thead>
+      <tr><th>维度</th><th>最低要求</th><th>说明</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>硬件门槛</td><td>PC ≥ 4 核 CPU + 8GB 内存 + 50GB 可用存储；手机 ≥ 4GB RAM + 20GB 可用存储；路由器/网关 ≥ 256MB RAM</td><td>低于此门槛的终端贡献值上限封顶，不视为有效贡献者</td></tr>
+      <tr><td>网络带宽</td><td>下行 ≥ 50Mbps，上行 ≥ 20Mbps（至少连续 7 天）</td><td>贡献值系数 = 上行带宽 / 100Mbps，封顶 1.5</td></tr>
+      <tr><td>在线稳定性</td><td>7 天内在线率 ≥ 90%（每天在线 ≥ 18 小时）</td><td>不满足则当日贡献值清零</td></tr>
+      <tr><td>贡献值达标</td><td>7 天累计贡献值 ≥ 100</td><td>差异化基准：PC ≥ 200，手机 ≥ 100，服务器/NAS ≥ 500</td></tr>
+    </tbody>
+  </table>
+  <div class="card">
+    <strong>分级激励：</strong><br>
+    <strong>Lv1 普通贡献者</strong>：满足上述四项 → 贡献值系数 1.0<br>
+    <strong>Lv2 优质贡献者</strong>：上行带宽 ≥ 100Mbps 且连续在线 60 天 → 系数提升至 1.5<br>
+    <strong>Lv3 核心贡献者</strong>：上行带宽 ≥ 500Mbps + GPU 参与共识 + 连续 180 天稳定 → 系数 2.0，享有治理投票权重 +1 倍
+  </div>
+
+  <h3>三、市场推广者定义（团队长）</h3>
+  <p>归墟共识网络无私募、无公募，但需要市场推广。团队长不能是「拉人头吃提成」的传销模式，也不能是「躺赚分润」破坏 PoR 共识的去中心化原则。推广激励通过「贡献值加成 + 团队活跃奖励」实现，而非「直接通证分润」。</p>
+  <p><strong>同时满足以下条件的角色，定义为有效团队长：</strong></p>
+  <table>
+    <thead>
+      <tr><th>维度</th><th>判定标准</th><th>说明</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>招募规模</td><td>直接邀请 ≥ 10 个有效资源贡献者（Lv1 及以上）加入归墟网络</td><td>仅有效贡献者计入，无效流量/零贡献注册不计</td></tr>
+      <tr><td>团队质量</td><td>团队成员中 ≥ 30% 为 Lv2 优质贡献者</td><td>防止刷低配设备充数</td></tr>
+      <tr><td>个人参与</td><td>团队长本人也必须是有效资源贡献者（Lv1 及以上）</td><td>避免纯拉新模式</td></tr>
+      <tr><td>持续活跃</td><td>过去 30 天内团队整体日均活跃终端 ≥ 15 个</td><td>防止一次性拉新后团队解散</td></tr>
+    </tbody>
+  </table>
+  <p><strong>激励方案（三个层级，逐层解锁）：</strong></p>
+  <div class="card">
+    <strong>层级一 · 招募奖励（一次性）：</strong>每招募 1 个 Lv1 有效贡献者 → 贡献值加成 +5%；每招募 1 个 Lv2 → +15%；每招募 1 个 Lv3 核心贡献者 → +30%。加成仅对团队长个人贡献值生效，不影响网络整体发行速度。<br><br>
+    <strong>层级二 · 团队活跃奖励（持续）：</strong>团队日均活跃终端 ≥ 20 个 → 额外获得团队总贡献值的 0.5%（从运维基金 10% 社区推广预算支付）；≥ 50 个 → 提至 1.0%。按月发放，不计入通证发行。<br><br>
+    <strong>层级三 · 生态贡献奖励（长期）：</strong>团队成员贡献的资源被商业需求方采购后，团队长获得采购额的 1%（从商业化收入支出，不计入通证发行），仅对 Lv2+ 成员产生的采购有效。
+  </div>
+  <p><strong>防作弊关键机制：</strong></p>
+  <table>
+    <thead>
+      <tr><th>风险</th><th>防范措施</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>团队长用脚本批量制造假贡献者</td><td>团队成员必须满足「有效流量用户」定义（行为分析引擎），脚本账号贡献值归零</td></tr>
+      <tr><td>团队长拉低配设备充数</td><td>Lv2/Lv3 加成仅对真实有效贡献者生效，低配设备贡献值封顶</td></tr>
+      <tr><td>团队解散后继续领取奖励</td><td>持续活跃考核：30 天无活跃则奖励资格暂停，重新激活需 7 天考核</td></tr>
+      <tr><td>团队长自拉自奖</td><td>团队成员须完成 KYC/设备绑定，同一自然人不得同时作为团队长和团队成员</td></tr>
+    </tbody>
+  </table>
+  <p><strong>三个角色的设计核心逻辑：</strong></p>
+  <ul>
+    <li><strong>有效流量用户</strong> — 确保流量池是真实人类，商业变现端有定价权</li>
+    <li><strong>有效资源贡献者</strong> — 确保物理资源池质量达标，商业需求方愿买单</li>
+    <li><strong>市场推广者</strong> — 用贡献值加成替代直接分润，保持 PoR 共识公平性，同时激励社区增长</li>
+  </ul>
+</div>
+
 <!-- ========== 附录 ========== -->
 <div class="section">
   <h2>附录：术语表</h2>
@@ -344,8 +503,8 @@ tr:hover td { background: #f7f9fc; }
       <tr><td>The Great Abyss</td><td>归墟的英文释义，指海洋中最深的深渊</td></tr>
       <tr><td>PoR</td><td>Proof of Resource，资源证明共识机制</td></tr>
       <tr><td>贡献值</td><td>终端资源贡献的量化指标，决定通证分配比例</td></tr>
-      <tr><td>运维基金</td><td>由交易税和转账税形成的系统运维资金池</td></tr>
-      <tr><td>通证</td><td>归墟共识网络代币，链上价值交换凭证</td></tr>
+      <tr><td>运维基金</td><td>由交易税形成的系统运维资金池</td></tr>
+      <tr><td>通证</td><td>gx（归墟共识网络代币），链上价值交换凭证</td></tr>
       <tr><td>节点</td><td>参与归墟共识网络的终端设备</td></tr>
     </tbody>
   </table>
@@ -353,9 +512,9 @@ tr:hover td { background: #f7f9fc; }
 
 <!-- ========== 页脚 ========== -->
 <div class="footer">
-  <p><strong>归墟共识网络白皮书 v1.1</strong> · 基础理念版</p>
-  <p>文档版本：2026-09-20 v1.1</p>
-  <p>版权所有 © 2026 归墟共识社区</p>
+  <p><strong>归墟共识网络白皮书 v1.2</strong> · 基础理念版</p>
+  <p>文档版本：初版 2026-09-20 / 修订 2026-10-02 · v1.2</p>
+  <p>版权所有 © 2026 归墟共识社区 · 联系邮箱： <a href="mailto:guixu2026@gmail.com">guixu2026@gmail.com</a> · X (Twitter)： <a href="https://x.com/Guixu2026" target="_blank" rel="noopener noreferrer">@Guixu2026</a></p>
 </div>
 
 </div>

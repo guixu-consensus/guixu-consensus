@@ -3,15 +3,37 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png?v=20260925c">
+<link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png?v=20260925c">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=20260925c">
 <title data-i18n="ov.title">Guixu Consensus Platform · Framework Overview</title>
-<link rel="stylesheet" href="shared/guixu-theme.css">
+<link rel="stylesheet" href="shared/guixu-theme.css?v=20260925j">
+<!-- 首屏 LOGO 预加载：避免等 CSS/JS 解析完才发现图片 -->
+<link rel="preload" as="image" href="/guixu800tm-320.webp?v=20260925a">
+<link rel="preload" as="image" href="/brand-wide-640.webp?v=20260925f">
 <style>
   body { background: radial-gradient(ellipse at 50% -10%, #16304a 0%, #0a1520 55%, #060d14 100%); min-height: 100vh; }
-  .topbar { max-width: 1180px; margin: 0 auto; padding: 24px 24px 0; display: flex; justify-content: flex-end; }
+  .topbar { max-width: 1180px; margin: 0 auto; padding: 24px 24px 0; display: flex; justify-content: space-between; align-items: center; gap: 18px; }
+  /* 左上横版 LOGO：托板收窄、图片按 2x 高清供图，尺寸比原先小一档 */
+  .topbar .gx-logo-top { padding: 7px 13px; border-radius: 12px; }
+  .topbar .gx-logo-top img { max-width: 132px; }
   .wrap { max-width: 1180px; margin: 0 auto; padding: 32px 24px 60px; }
   .hero { text-align: center; margin-bottom: 44px; }
   .hero .mark { width: 56px; height: 56px; border-radius: 16px; background: linear-gradient(135deg, var(--gx-accent), var(--gx-600)); display: grid; place-items: center; color: var(--gx-800); font-weight: 800; font-size: 1.5em; margin: 0 auto 18px; box-shadow: var(--gx-glow); }
-  .hero h1 { font-size: 1.9em; font-weight: 700; letter-spacing: .5px; }
+  .hero h1 { font-size: 1.9em; font-weight: 700; letter-spacing: .5px; text-shadow: 0 0 30px rgba(163,191,250,.3); }
+  /* ---- 品牌主视觉：guixu800tm-320.webp（透明新徽标，2x 高清） ---- */
+  /* 光影动画只跑 opacity/transform（合成器层，不触发重绘重排），性能优先 */
+  .hero .gx-emblem-wrap { position: relative; width: 118px; height: 118px; margin: 0 auto 20px; display: grid; place-items: center; }
+  .hero .gx-emblem-halo { position: absolute; inset: -50%; border-radius: 50%; pointer-events: none;
+    background: radial-gradient(circle, rgba(163,191,250,.5) 0%, rgba(163,191,250,.18) 36%, rgba(163,191,250,0) 70%);
+    will-change: opacity; animation: gxHaloPulse 4.6s ease-in-out infinite; }
+  .hero .gx-emblem { position: relative; width: 100%; height: 100%; display: block; object-fit: contain;
+    filter: drop-shadow(0 0 10px rgba(163,191,250,.72)) drop-shadow(0 0 24px rgba(163,191,250,.5)) drop-shadow(0 14px 22px rgba(0,0,0,.6));
+    will-change: transform; backface-visibility: hidden; animation: gxEmblemFloat 6.5s ease-in-out infinite; }
+  @keyframes gxEmblemFloat { 0%, 100% { transform: translate3d(0,0,0); } 50% { transform: translate3d(0,-8px,0); } }
+  /* 只动 opacity，不动 scale —— scale 会让大范围径向渐变每帧重新栅格化 */
+  @keyframes gxHaloPulse { 0%, 100% { opacity: .7; } 50% { opacity: 1; } }
   .hero p { color: var(--gx-dim); font-size: .94em; margin-top: 10px; }
   .hero .meta { display: flex; gap: 10px; justify-content: center; margin-top: 18px; flex-wrap: wrap; }
   .grp-title { display: flex; align-items: center; gap: 10px; font-size: .84em; color: var(--gx-faint); letter-spacing: 1.6px; text-transform: uppercase; margin: 34px 0 16px; }
@@ -24,16 +46,21 @@
   .mod .tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 14px; }
   .mod .go { margin-top: 14px; font-size: .82em; color: var(--gx-accent); font-weight: 600; }
 </style>
+  <!-- 统一卡片光影系统 v2（2026-09-29） -->
+  <link rel="stylesheet" href="shared/gx-cards.css?v=20260929c">
 </head>
 <body>
 
-<div class="topbar"><span data-gx-lang-switch></span></div>
+<div class="topbar"><a class="gx-logo-wide gx-logo-top" href="https://www.guixu.club/" title="归墟共识官网 / Guixu Consensus"><img src="/brand-wide-640.webp?v=20260925f" alt="Guixu Consensus — Proof of Resource Network" width="640" height="213" decoding="async" fetchpriority="high"></a><span data-gx-lang-switch></span></div>
 
 <div class="wrap">
 
   <div class="hero">
-    <div class="mark" data-i18n="brand.mark">归</div>
-    <h1 data-i18n="ov.h1">Guixu Consensus Platform · Framework</h1>
+    <div class="gx-emblem-wrap">
+      <span class="gx-emblem-halo"></span>
+      <img class="gx-emblem" src="/guixu800tm-320.webp?v=20260925a" alt="归墟共识 Guixu Consensus" width="320" height="320" decoding="async" fetchpriority="high">
+    </div>
+    <h1 data-i18n="ov.h1">Guixu Consensus · Framework</h1>
     <p data-i18n="ov.sub">Proof-of-Resource network · Platform-side and client-side skeletons are ready for direct preview</p>
     <div class="meta">
       <span class="gx-tag" data-i18n="tag.frameworkVer">Framework v0.1</span>
@@ -100,16 +127,16 @@
     <div class="gx-section-title" data-i18n="ov.notes.title">Framework-stage conventions</div>
     <p class="gx-sub" style="line-height:1.9;font-size:.87em" data-i18n-html="ov.notes.body">
       1. All pages are fully static HTML/CSS/JS with no backend dependency &mdash; double-click to preview in a browser.<br>
-      2. All data comes from the shared mock layer <span class="gx-mono gx-accent">shared/mock-data.js</span>; when the real API is ready, only <span class="gx-mono gx-accent">GX.api</span> needs to be replaced &mdash; no page changes required.<br>
-      3. Visual specification and UI components are consolidated in <span class="gx-mono gx-accent">shared/guixu-theme.css</span>, sharing the same palette and components as the existing bilingual brand site.<br>
+      2. All data comes from the shared mock layer <span class="gx-mono gx-accent">shared/mock-data.js?v=20260925h</span>; when the real API is ready, only <span class="gx-mono gx-accent">GX.api</span> needs to be replaced &mdash; no page changes required.<br>
+      3. Visual specification and UI components are consolidated in <span class="gx-mono gx-accent">shared/guixu-theme.css?v=20260925j</span>, sharing the same palette and components as the existing bilingual brand site.<br>
       4. Platform side and client side share one node system; the differentiated resource configuration between PC and mobile is a core design point.<br>
-      5. Multilingual support is driven by <span class="gx-mono gx-accent">shared/guixu-i18n.js</span> with language packs under <span class="gx-mono gx-accent">shared/i18n/</span> &mdash; adding a language only requires adding one language-pack file.
+      5. Multilingual support is driven by <span class="gx-mono gx-accent">shared/guixu-i18n.js?v=20261115a</span> with language packs under <span class="gx-mono gx-accent">shared/i18n/</span> &mdash; adding a language only requires adding one language-pack file.
     </p>
   </div>
 
 </div>
 
-<script src="shared/guixu-i18n.js"></script>
+<script src="shared/guixu-i18n.js?v=20261115a"></script>
 <script>GX.i18n.init();</script>
 </body>
 </html>

@@ -3,6 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png?v=20260925c">
+<link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png?v=20260925c">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=20260925c">
 <title>Guixu Consensus Platform Project Feasibility Operation Plan</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -30,14 +34,33 @@ tr:hover td { background: #f9f9fc; }
 .chart .val { width: 65px; font-size: 0.88em; font-weight: 600; color: #3a5a8c; }
 .flow { background: linear-gradient(135deg, #1b263b, #415a77); color: #e0e1dd; padding: 20px 24px; margin: 16px 0; border-radius: 10px; text-align: center; font-size: 1em; }
 .flow .ar { color: #a3bffa; font-size: 1.4em; margin: 0 6px; }
+
+  /* 品牌词返回首页 */
+  .home-link { color: inherit; text-decoration: none; border-bottom: 2px solid transparent;
+               transition: color .2s, border-color .2s; cursor: pointer; }
+  .home-link:hover { color: #a3bffa; border-bottom-color: rgba(163,191,250,.5); }
+  .back-home { margin-top: 14px; font-size: .9em; }
+  .back-home a { color: #a3bffa; text-decoration: none; border-bottom: 1px dashed rgba(163,191,250,.45); }
+  .back-home a:hover { border-bottom-style: solid; color: #c7d7ff; }
+  /* ---- 品牌横版 LOGO ---- */
+  .gx-logo-wide { display: inline-block; background: #fff; border-radius: 16px; padding: 12px 22px;
+    box-shadow: 0 12px 30px rgba(0,0,0,.42); line-height: 0; margin-bottom: 22px; transition: transform .2s; }
+  .gx-logo-wide:hover { transform: translateY(-2px); }
+  .gx-logo-wide img { display: block; width: 100%; max-width: 320px; height: auto; }
+  .footer a { color: #415a77; text-decoration: none; }
+  .footer a:hover { color: #a3bffa; text-decoration: underline; }
 </style>
+  <!-- 统一卡片光影系统 v2（2026-09-29） -->
+  <link rel="stylesheet" href="guixu-platform/shared/gx-cards.css?v=20260929c">
 </head>
 <body>
 
 <div class="hero">
-  <h1>Guixu Consensus Platform Project Feasibility Operation Plan</h1>
-  <p class="sub">v1.1 · September 2026</p>
+  <a class="gx-logo-wide" href="/" title="归墟共识官网 / Guixu Consensus"><img src="/brand-wide-640.webp?v=20260925f" alt="Guixu Consensus — Proof of Resource Network"></a>
+  <h1><a class="home-link" href="/" title="Back to Guixu Consensus Home">Guixu</a> Consensus Platform Project Feasibility Operation Plan</h1>
+  <p class="sub">v1.2 · September 2026</p>
   <p class="tagline">All Streams Converge, Consensus Builds Together</p>
+  <p class="back-home"><a href="/">← Back to Home</a></p>
 </div>
 
 <div class="container">
@@ -53,9 +76,9 @@ tr:hover td { background: #f9f9fc; }
   <div class="card">
     <strong>Project Nature:</strong> Decentralized consensus network platform<br>
     <strong>Core Mechanism:</strong> PoR (Proof of Resource) Resource Proof Consensus<br>
-    <strong>Token Type:</strong> Guixu Token<br>
+    <strong>Token Type:</strong> gx<br>
     <strong>Operations Mode:</strong> Community Co-Governance, on-chain governance, fully transparent on-chain<br>
-    <strong>Funding Model:</strong> 100% decentralized, no reliance on external financing, self-sufficient through transaction tax and transfer tax
+    <strong>Funding Model:</strong> 100% decentralized, no reliance on external financing, self-sufficient through the transaction tax
   </div>
 
   <h3>1.3 Operations Status</h3>
@@ -90,6 +113,11 @@ tr:hover td { background: #f9f9fc; }
 </div>
 
 <!-- Chapter 3 -->
+<div class="card" style="margin-top:14px">
+<strong>Effective Contributor Threshold (aligned with Whitepaper Chapter 3):</strong><br>
+Resource contribution only carries settlement value for an <b>Effective Resource Contributor</b> — a terminal must meet all four within a 7-day assessment window: hardware floor (PC ≥ 4-core + 8GB + 50GB; phone ≥ 4GB + 20GB), bandwidth (downlink ≥ 50Mbps / uplink ≥ 20Mbps), stability (≥ 90% uptime over 7 days), and score threshold (PC ≥ 200 / phone ≥ 100 / server·NAS ≥ 500). Meeting these makes Lv1; uplink ≥ 100Mbps with 60 consecutive days upgrades to Lv2; uplink ≥ 500Mbps + GPU consensus participation + 180 consecutive days upgrades to Lv3. Terminals below the hardware floor have their contribution capped.<br>
+<span style="font-size:.9em;color:#4a4a5a">Full definition and graded incentives: Whitepaper v1.2, Chapter 3, "Effective Contributor Threshold".</span>
+</div>
 <div class="section">
   <h2>Chapter 3: Community Governance Mechanism</h2>
   <h3>3.1 PoR Consensus Mechanism</h3>
@@ -116,17 +144,16 @@ tr:hover td { background: #f9f9fc; }
 
   <h3>3.3 Tax Mechanism — Operations Reserve Fund</h3>
   <div class="card">
-    <strong>Transaction Tax:</strong> 1% Guixu token per transaction (Transfer)<br>
-    <strong>Transfer Tax:</strong> 0.5% Guixu token per transfer<br>
+    <strong>Transaction Tax:</strong> 1% gx per transaction (Transfer)<br>
     <strong>Rate Adjustment:</strong> Tax rates can be adjusted via community governance voting<br>
-    <strong>Fund Destination:</strong> Transaction and transfer tax revenue automatically flows into the operations reserve pool<br><br>
+    <strong>Fund Destination:</strong> Transaction tax revenue automatically flows into the operations reserve pool<br><br>
     <strong>Fund Usage Allocation:</strong> Node rewards (40%), network maintenance &amp; security audits (30%), system upgrades &amp; development (20%), community building &amp; marketing (10%)
   </div>
 
   <h3>3.4 Community Governance Voting</h3>
-  <p>Guixu token holders participate in community governance through on-chain voting. Key voting items include:</p>
+  <p>gx holders participate in community governance through on-chain voting. Key voting items include:</p>
   <ul>
-    <li>Tax rate adjustments (modification of 1% transaction tax and 0.5% transfer tax)</li>
+    <li>Tax rate adjustments (modification of the 1% transaction tax)</li>
     <li>Contribution coefficient adjustments (changes to weights for each resource type)</li>
     <li>Operations reserve fund usage approval</li>
     <li>Technology upgrades and protocol changes</li>
@@ -157,6 +184,12 @@ tr:hover td { background: #f9f9fc; }
     <strong>Gamification Design:</strong> Contribution dashboard, leaderboard, contribution tier system
   </div>
 
+<div class="card" style="margin-top:14px">
+<strong>Market Promoter (Team Lead) definition (aligned with Whitepaper Chapter 9, Section 2):</strong><br>
+The model uses "contribution bonus + team activity reward" rather than direct token profit-sharing. A valid Team Lead must simultaneously: have directly invited ≥ 10 Effective Resource Contributors (Lv1+), have ≥ 30% of the team at Lv2, be an Lv1+ contributor personally, and maintain a team daily-active average of ≥ 15 terminals over the past 30 days.<br>
+Three incentive tiers: (1) <b>Recruitment Reward</b> (one-off) — each Lv1 / Lv2 / Lv3 recruited grants a +5% / +15% / +30% contribution bonus, applied to the Team Lead's own score only and not affecting network-wide issuance speed; (2) <b>Team Activity Reward</b> — 0.5% of total team contribution at ≥ 20 daily-active terminals, rising to 1.0% at ≥ 50, paid monthly from the Operations Reserve Fund's community budget and excluded from token issuance; (3) <b>Ecosystem Contribution Reward</b> — 1% of purchase value when team members' resources are commercially procured, paid from commercial revenue and valid only for Lv2+ members.<br>
+<span style="font-size:.9em;color:#4a4a5a">Full definition and anti-fraud mechanisms: Whitepaper Chapter 9, Section 2.</span>
+</div>
   <h3>4.3 Technology Roadmap</h3>
   <table>
     <thead><tr><th>Module</th><th>Current Progress</th><th>Next Phase</th></tr></thead>
@@ -170,26 +203,51 @@ tr:hover td { background: #f9f9fc; }
   </table>
 </div>
 
-<!-- Resource Integration & Commercial Loop -->
-<div class="section">
-  <h3>4.4 Resource Integration &amp; Commercial Loop</h3>
-  <p>Standardized integration channels have been planned for the idle resources aggregated by the platform, delivering directly to real-world demand-side platforms so that resources always have somewhere to go and a price to realize. Operations advance along separate lines by resource type:</p>
-  <table>
-    <thead><tr><th>Resource Type</th><th>Integration Direction</th><th>Operations Action</th></tr></thead>
-    <tbody>
-      <tr><td>Disk storage</td><td>Professional storage providers, distributed cloud storage / backup &amp; archive platforms</td><td>Sign capacity purchase agreements; settle by available capacity and online duration</td></tr>
-      <tr><td>Bandwidth</td><td>CDN providers, edge networks, mining resource operators</td><td>Package idle bandwidth pools; lease by traffic / duration (including mining-related use)</td></tr>
-      <tr><td>Terminal compute</td><td>AI training &amp; inference providers, rendering and scientific computing platforms</td><td>Connect compute scheduling; bill and settle per task</td></tr>
-      <tr><td>Traffic &amp; ecosystem</td><td>Token holders and ecosystem applications</td><td>Accumulated traffic forms token economic value; taxes feed the Operations Reserve Fund</td></tr>
-    </tbody>
-  </table>
-  <p>These integrations constitute the commercial survival foundation of the project: even amid token price volatility, genuine demand for the underlying resources continues to generate revenue that feeds the Operations Reserve Fund and sustains long-term network operations. Meanwhile, the traffic and user attention accumulated by the platform itself can form token economic value, complementing resource monetization within the revenue structure.</p>
-</div>
-
 <!-- Chapter 5 -->
 <div class="section">
-  <h2>Chapter 5: Risk Assessment &amp; Mitigation</h2>
-  <h3>5.1 Technical Risks</h3>
+  <h2>Chapter 5: Commercial Monetization &amp; Resource Matching</h2>
+  <h3>5.1 Overall Commercial Approach</h3>
+  <p>For the project to survive long term, "idle resources" must generate real sales revenue. The Guixu Consensus Platform is not a closed mining network but a <strong>resource aggregation and scheduling platform</strong>: it standardizes the storage, bandwidth and compute scattered across users' devices and matches them to professional platforms with genuine purchasing demand.</p>
+  <div class="card">
+    <strong>In one sentence:</strong> the consensus layer meters resources &rarr; the business layer sells them &rarr; revenue flows back to participants and the operations fund &rarr; more devices join, forming a self-sustaining commercial loop.
+  </div>
+
+  <h3>5.2 Resource &ndash; Demand-Side Matching Matrix</h3>
+  <table>
+    <thead><tr><th>Resource</th><th>Demand Side (Platforms)</th><th>Business Direction</th><th>Billing &amp; Settlement</th></tr></thead>
+    <tbody>
+      <tr><td>Disk storage</td><td>Distributed storage providers, cold backup / archiving platforms, data hosting parties</td><td>Data archiving, backup replicas, origin storage</td><td>Capacity &times; uptime, settled in USDT / tokens</td></tr>
+      <tr><td>Network bandwidth</td><td>CDN / acceleration providers, bandwidth-type mining platforms (CDN mining, proxy egress, decentralized VPN, etc.)</td><td>Content delivery, edge acceleration, egress bandwidth leasing</td><td>Traffic (GB) and online stability</td></tr>
+      <tr><td>Device compute</td><td>AI compute buyers (inference services, model services, rendering / research computing platforms)</td><td>AI inference, batch rendering, fine-tuning, data processing</td><td>Compute time / task volume, GPU prioritized</td></tr>
+      <tr><td>Traffic &amp; user scale</td><td>Ecosystem partners, data service providers, brands and advertisers</td><td>Ecosystem partnerships, data services, brand exposure, value-added node services</td><td>Settled by engagement term / service volume; creates token demand</td></tr>
+    </tbody>
+  </table>
+
+  <h3>5.3 Converting Traffic into Token Economy Value</h3>
+  <p>Once the network has accumulated enough devices and users, that traffic itself carries commercial value. The platform can match this traffic with partnership demand to generate revenue, and route that revenue back to network participants through resource settlement and token mechanisms — giving the token real usage demand rather than issuance supply alone.</p>
+  <div class="flow-box">
+    Idle resources <span class="arrow">→</span> aggregation &amp; metering by Guixu <span class="arrow">→</span> purchased by professional demand side <span class="arrow">→</span> revenue returns <span class="arrow">→</span> participant payouts + operations fund <span class="arrow">→</span> network scale expands
+  </div>
+
+<div class="card" style="margin-top:14px">
+<strong>Effective Traffic User definition (aligned with Whitepaper Chapter 9, Section 1):</strong><br>
+Traffic can only be monetized if it can be priced, and it can only be priced if it is genuinely human. An access event counts as effective traffic only if it meets all four: <b>identity uniqueness</b> (one wallet per natural person, bound to a device fingerprint), <b>non-automated behaviour</b> (randomness, dwell time and interaction; no fixed script pattern), <b>meaningful dwell</b> (single session ≥ 15 seconds with at least one meaningful interaction), and <b>source quality</b> (excluding crawlers, CDN prefetch and known proxy pools).<br>
+Anti-fraud tiers: L1 automated scripts are blocked outright and generate no contribution value; L2 human-plus-script-assisted is reduced to a 0.3 coefficient; L3 fully human starts at 1.0 and gradually rises to 1.5 after 30 consecutive days of effective online presence.<br>
+<span style="font-size:.9em;color:#4a4a5a">Full definition: Whitepaper Chapter 9, Section 1.</span>
+</div>
+  <h3>5.4 Revenue Structure &amp; Resilience</h3>
+  <ul>
+    <li><strong>No single-source dependency:</strong> storage, bandwidth, compute and traffic advance in parallel; any one of them maturing is enough to sustain basic network operations.</li>
+    <li><strong>Asset-light cost structure:</strong> resources come from users' idle devices at near-zero marginal cost, giving a price advantage over traditional IDC and compute markets.</li>
+    <li><strong>Professional buyers:</strong> purchasers are established storage, bandwidth and compute platforms with relatively rigid demand and the ability to sign long-term agreements.</li>
+    <li><strong>Compliant and controllable:</strong> resources are delivered as standardized services without capital raising, and combined with community governance and the operations fund mechanism to reduce legal and operational risk.</li>
+  </ul>
+</div>
+
+<!-- Chapter 6 -->
+<div class="section">
+  <h2>Chapter 6: Risk Assessment &amp; Mitigation</h2>
+  <h3>6.1 Technical Risks</h3>
   <table>
     <thead><tr><th>Risk Item</th><th>Impact</th><th>Mitigation</th></tr></thead>
     <tbody>
@@ -200,7 +258,7 @@ tr:hover td { background: #f9f9fc; }
     </tbody>
   </table>
 
-  <h3>5.2 Legal Risks</h3>
+  <h3>6.2 Legal Risks</h3>
   <table>
     <thead><tr><th>Risk Item</th><th>Impact</th><th>Mitigation</th></tr></thead>
     <tbody>
@@ -210,7 +268,7 @@ tr:hover td { background: #f9f9fc; }
     </tbody>
   </table>
 
-  <h3>5.3 Market Risks</h3>
+  <h3>6.3 Market Risks</h3>
   <table>
     <thead><tr><th>Risk Item</th><th>Impact</th><th>Mitigation</th></tr></thead>
     <tbody>
@@ -221,10 +279,10 @@ tr:hover td { background: #f9f9fc; }
   </table>
 </div>
 
-<!-- Chapter 6 -->
+<!-- Chapter 7 -->
 <div class="section">
-  <h2>Chapter 6: Operations Outlook</h2>
-  <h3>6.1 Short-Term (2027)</h3>
+  <h2>Chapter 7: Operations Outlook</h2>
+  <h3>7.1 Short-Term (2027)</h3>
   <ul>
     <li>Complete PoR algorithm prototype validation and beta testing</li>
     <li>Mainnet launches with mobile App release</li>
@@ -232,7 +290,7 @@ tr:hover td { background: #f9f9fc; }
     <li>Community governance mechanism operates normally</li>
   </ul>
 
-  <h3>6.2 Mid-Term (2028)</h3>
+  <h3>7.2 Mid-Term (2028)</h3>
   <ul>
     <li>Node count exceeds 10,000, covering major regions globally</li>
     <li>DeFi ecosystem takes initial shape (liquidity mining, lending protocols)</li>
@@ -240,7 +298,7 @@ tr:hover td { background: #f9f9fc; }
     <li>Token economic model operates stably, tax revenue sustainably supports network operations</li>
   </ul>
 
-  <h3>6.3 Long-Term Vision</h3>
+  <h3>7.3 Long-Term Vision</h3>
   <div class="card">
     <strong>2028+:</strong> Become the world's largest distributed consensus network. True decentralization becomes reality, not just a slogan.<br>
     Every ordinary person with idle devices can participate in building the blockchain network through their own devices and receive fair returns.<br>
@@ -250,9 +308,9 @@ tr:hover td { background: #f9f9fc; }
 
 <!-- Footer -->
 <div class="footer" style="text-align:center;padding:20px;color:#888;font-size:0.85em;">
-  <p><strong>Guixu Consensus Platform Project Feasibility Operation Plan v1.1</strong></p>
-  <p>Document Version: 2026-09-20 v1.1</p>
-  <p>Copyright © 2026 Guixu Consensus Community</p>
+  <p><strong>Guixu Consensus Platform Project Feasibility Operation Plan v1.2</strong></p>
+  <p>Document Version: 2026-09-20 v1.2</p>
+  <p>Copyright © 2026 Guixu Consensus Community · Contact: <a href="mailto:guixu2026@gmail.com">guixu2026@gmail.com</a> · X (Twitter): <a href="https://x.com/Guixu2026" target="_blank" rel="noopener noreferrer">@Guixu2026</a></p>
 </div>
 
 </div>

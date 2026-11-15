@@ -3,7 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Guixu Consensus Network Whitepaper v1.1</title>
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png?v=20260925c">
+<link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png?v=20260925c">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=20260925c">
+<title>Guixu Consensus Network Whitepaper v1.2</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif; background: #f0f2f5; color: #1a1a2e; line-height: 1.9; }
@@ -26,17 +30,84 @@ tr:hover td { background: #f7f9fc; }
 .flow-box .arrow { color: #a3bffa; font-size: 1.5em; margin: 0 8px; }
 .name-box { background: linear-gradient(135deg, #0d1b2a, #1b263b); color: #e0e1dd; padding: 25px 30px; margin: 18px 0; border-radius: 10px; text-align: center; }
 .name-box h3 { color: #a3bffa; margin-bottom: 10px; }
+
+  /* 品牌词返回首页 */
+  .home-link { color: inherit; text-decoration: none; border-bottom: 2px solid transparent;
+               transition: color .2s, border-color .2s; cursor: pointer; }
+  .home-link:hover { color: #a3bffa; border-bottom-color: rgba(163,191,250,.5); }
+  .back-home { margin-top: 14px; font-size: .9em; }
+  .back-home a { color: #a3bffa; text-decoration: none; border-bottom: 1px dashed rgba(163,191,250,.45); }
+  .back-home a:hover { border-bottom-style: solid; color: #c7d7ff; }
+  /* ---- 品牌横版 LOGO ---- */
+  .gx-logo-wide { display: inline-block; background: #fff; border-radius: 16px; padding: 12px 22px;
+    box-shadow: 0 12px 30px rgba(0,0,0,.42); line-height: 0; margin-bottom: 22px; transition: transform .2s; }
+  .gx-logo-wide:hover { transform: translateY(-2px); }
+  .gx-logo-wide img { display: block; width: 100%; max-width: 320px; height: auto; }
+  .footer a { color: #415a77; text-decoration: none; }
+  .footer a:hover { color: #a3bffa; text-decoration: underline; }
 </style>
+  <!-- 统一卡片光影系统 v2（2026-09-29） -->
+  <link rel="stylesheet" href="guixu-platform/shared/gx-cards.css?v=20260929c">
 </head>
 <body>
 
 <div class="hero">
-  <h1>Guixu Consensus Network</h1>
-  <p class="version">Whitepaper v1.1 · Foundational Concept</p>
+  <a class="gx-logo-wide" href="/" title="归墟共识官网 / Guixu Consensus"><img src="/brand-wide-640.webp?v=20260925f" alt="Guixu Consensus — Proof of Resource Network"></a>
+  <h1><a class="home-link" href="/" title="Back to Guixu Consensus Home">Guixu</a> Consensus Network</h1>
+  <p class="version">Whitepaper v1.2 · Foundational Concept</p>
   <p class="tagline">All Streams Converge, Consensus Builds Together</p>
+  <p class="back-home"><a href="/">← Back to Home</a></p>
 </div>
 
 <div class="container">
+
+<!-- ========== Platform Positioning & Value Statement ========== -->
+<div class="section">
+  <h2>Opening Note · Platform Positioning &amp; Value Statement</h2>
+
+  <h3>I. Platform Positioning: A Resource Value Network</h3>
+  <p>The Guixu Consensus Network is not merely a DApp or a tool, but a <strong>resource value network</strong> &mdash; its core mission is to aggregate the physical resources and traffic resources scattered across users' idle devices and idle attention, connect them to real commercial demand, and form a sustainable commercial loop.</p>
+
+  <h3>II. Dual-Layer Resource Model</h3>
+  <p><strong>Physical Resources:</strong> Users' idle devices (PCs, phones, routers, edge nodes, etc.) are inherently capable of computing, storing and transmitting. Within the Guixu network these capabilities are scheduled as compute nodes, storage nodes, bandwidth nodes and edge-computing nodes. The value of physical resources has no ceiling &mdash; the more devices, and the more idle they are, the larger the physical foundation the platform can mobilize.</p>
+  <p><strong>Traffic Resources:</strong> Users' attention, visit behavior, social relations and content-consumption paths are all traffic. Through the terminal entry (node.guixu.club), desktop and mobile, Guixu builds multi-touch reach and turns users' active behavior into a measurable traffic pool. The value of traffic resources likewise has no ceiling &mdash; the larger the user base, the stronger the stickiness and the richer the content ecosystem, the greater the commercial pricing room of the traffic pool.</p>
+
+  <h3>III. Token Economy as the Value Anchor</h3>
+  <p>The token is not the goal, but the <strong>carrier of value consensus</strong>. Guixu operates in three phases:</p>
+  <ul>
+    <li><strong>Phase 1 &middot; Token Traffic-Building, Building Consensus:</strong> Use the token economy as a hook &mdash; participate to earn, contribute to be rewarded, hold to benefit &mdash; to attract early users. Here the token lowers the cost of trust: users need not understand complex underlying technology, they only need to know "I participate, I benefit".</li>
+    <li><strong>Phase 2 &middot; Token Supports Business, Converging Value:</strong> Once user scale reaches a critical point, the token begins to play a business-anchoring role &mdash; contributors of physical resources earn token rewards, forming sustained participation incentives; producers of traffic resources (terminal users) receive token returns through their behavior; commercial demand-side parties purchase platform resources through the token system. The token becomes the universal yardstick of resource value, letting physical and traffic resources be priced and traded under one valuation system.</li>
+    <li><strong>Phase 3 &middot; Token Steps Back, the Commercial Loop Runs Independently:</strong> As the platform matures, the token shifts from "attractor" to "settler". The commercial loop no longer treats the token itself as the goal; instead the token serves as the medium of value flow, ensuring every participant's contribution is fairly rewarded.</li>
+  </ul>
+
+  <h3>IV. Commercial Loop</h3>
+  <div class="flow-box">
+    Idle devices + user attention <span class="arrow">&rarr;</span> Guixu terminal (entry layer) <span class="arrow">&rarr;</span> Physical resources converge (compute/storage/bandwidth) + traffic resources converge (visits/behavior/social) <span class="arrow">&rarr;</span> Token incentives + token behavior rewards <span class="arrow">&rarr;</span> Guixu Consensus Network (value hub) <span class="arrow">&rarr;</span> Demand side (enterprises/developers/projects) <span class="arrow">&rarr;</span> Resource monetization (physical resource sales) + traffic monetization (ads/promotion/distribution) <span class="arrow">&rarr;</span> Token distribution (reward contributors) <span class="arrow">&rarr;</span> Users keep contributing, forming a positive cycle
+  </div>
+  <p>The key to this loop is <strong>sustainability</strong> &mdash; physical resources do not shrink through consumption (on the contrary, the more they are used, the more mature the devices and the larger the network); traffic resources do not dry up through monetization (users' commercial behavior can feed back to users, generating more contribution). The token acts as lubricant, ensuring value flows fairly among contributors, platform and demand side.</p>
+  <p>Idle resources aggregated by the Guixu Consensus Network are not merely bookkept internally. Through standardized interfaces they connect directly to real-world demand-side platforms, forming a complete commercial loop: contribute &rarr; aggregate &rarr; match &rarr; monetize &rarr; reinvest. This is Guixu's core survival capability and what distinguishes it from purely conceptual networks &mdash; its resources always have real buyers.</p>
+  <table>
+    <thead>
+      <tr><th>Resource Type</th><th>Demand-Side Platforms</th><th>Monetization Path</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Disk storage</td><td>Professional storage providers, distributed cloud storage &amp; backup/archive services</td><td>Enterprise backup, cold-data archiving, object storage capacity leasing</td></tr>
+      <tr><td>Bandwidth</td><td>CDN providers, edge computing networks, mining resource operators</td><td>Traffic distribution, node acceleration, bandwidth leasing (including mining-related use)</td></tr>
+      <tr><td>Terminal compute</td><td>AI training &amp; inference providers, rendering and scientific computing platforms</td><td>GPU / CPU compute leasing, model inference hosting</td></tr>
+      <tr><td>Traffic &amp; network effects</td><td>Token holders, ecosystem applications, secondary markets</td><td>Accumulated traffic itself generates token economic value</td></tr>
+    </tbody>
+  </table>
+  <p>Beyond direct monetization of the three physical resource classes, the growth of the network itself constitutes independent commercial value. As connected terminals and active addresses keep increasing, the traffic, user attention and transaction activity accumulated by the platform can themselves form token economic value: the transaction tax continuously feeds the Operations Reserve Fund, rising network activity drives token demand, and ultimately a positive three-way loop emerges among resource contributors, demand-side buyers and token holders.</p>
+
+  <h3>V. Value Statement Summary</h3>
+  <p>The value of the Guixu Consensus Network is not single-dimensional. It is a complete system that <strong>starts from idle user resources, takes the token as the cornerstone of consensus, resource aggregation as the means, and the commercial loop as the goal</strong>.</p>
+  <ul>
+    <li><strong>For users:</strong> turn idle resources into income, attention into value, participation into rights.</li>
+    <li><strong>For business:</strong> use the token as a credit medium and the platform as a credit carrier to obtain precise, measurable and sustainable traffic and compute resources.</li>
+    <li><strong>For the platform:</strong> neither sells nor hoards resources, but builds a value infrastructure where resources converge, price and flow naturally.</li>
+  </ul>
+  <p>The endgame of business is not extraction, but a <strong>continuing cycle of mutual benefit</strong>. What Guixu wants to do is to let every contribution, every visit and every transaction find its place in this cycle.</p>
+</div>
 
 <!-- ========== Chapter 1 ========== -->
 <div class="section">
@@ -115,30 +186,12 @@ tr:hover td { background: #f7f9fc; }
   </table>
 </div>
 
-<!-- ========== Added: Resource Integration & Commercial Loop ========== -->
-<div class="section">
-  <h3>Resource Integration &amp; Commercial Loop</h3>
-  <p>Idle resources aggregated by the Guixu Consensus Network are not merely bookkept internally. Through standardized interfaces they connect directly to real-world demand-side platforms, forming a complete commercial loop: contribute &rarr; aggregate &rarr; match &rarr; monetize &rarr; reinvest. This is Guixu's core survival capability and what distinguishes it from purely conceptual networks &mdash; its resources always have real buyers.</p>
-  <table>
-    <thead>
-      <tr><th>Resource Type</th><th>Demand-Side Platforms</th><th>Monetization Path</th></tr>
-    </thead>
-    <tbody>
-      <tr><td>Disk storage</td><td>Professional storage providers, distributed cloud storage &amp; backup/archive services</td><td>Enterprise backup, cold-data archiving, object storage capacity leasing</td></tr>
-      <tr><td>Bandwidth</td><td>CDN providers, edge computing networks, mining resource operators</td><td>Traffic distribution, node acceleration, bandwidth leasing (including mining-related use)</td></tr>
-      <tr><td>Terminal compute</td><td>AI training &amp; inference providers, rendering and scientific computing platforms</td><td>GPU / CPU compute leasing, model inference hosting</td></tr>
-      <tr><td>Traffic &amp; network effects</td><td>Token holders, ecosystem applications, secondary markets</td><td>Accumulated traffic itself generates token economic value</td></tr>
-    </tbody>
-  </table>
-  <p>Beyond direct monetization of the three physical resource classes, the growth of the network itself constitutes independent commercial value. As connected terminals and active addresses keep increasing, the traffic, user attention and transaction activity accumulated by the platform can themselves form token economic value: transaction and transfer taxes continuously feed the Operations Reserve Fund, rising network activity drives token demand, and ultimately a positive three-way loop emerges among resource contributors, demand-side buyers and token holders.</p>
-</div>
-
 <!-- ========== Chapter 3 ========== -->
 <div class="section">
   <h2>Chapter 3: Token Economic Model</h2>
 
   <h3>Token Basic Information</h3>
-  <p>The Guixu Consensus Network token (hereinafter referred to as the "Guixu Token") is the sole credential for community members to participate in consensus network construction and earn contribution rewards. This token continuously provides funding for the operations reserve fund through the contract's built-in "transaction tax" and "transfer tax" mechanisms.</p>
+  <p>The Guixu Consensus Network token (hereinafter referred to as "gx") is the sole credential for community members to participate in consensus network construction and earn contribution rewards. This token continuously provides funding for the operations reserve fund through the contract's built-in "transaction tax" mechanism.</p>
 
   <h3>Token Issuance Rules</h3>
   <table>
@@ -159,8 +212,7 @@ tr:hover td { background: #f7f9fc; }
 
   <h3>Tax Mechanism — Operations Reserve Fund</h3>
   <div class="card">
-    <strong>Transaction Tax:</strong> Each transaction (Transfer) incurs a 1% Guixu token transaction tax.<br>
-    <strong>Transfer Tax:</strong> Each transfer incurs a 0.5% Guixu token transfer tax.<br>
+    <strong>Transaction Tax:</strong> Each transaction (Transfer) incurs a 1% gx transaction tax.<br>
     <strong>Anti-Bot Strategy:</strong> The tax rates are deliberately set high, substantially increasing the cost for automated scripts to batch-farm and exploit the system, protecting the interests of genuine token holders.<br>
     <strong>Rate Rationale:</strong> Tax rates can be adjusted via community governance voting, ensuring fees both provide sufficient operations funding and do not excessively impact user experience.<br>
     <strong>Fund Destination:</strong> All tax revenue automatically flows into the operations reserve pool, used for node reward distribution, network maintenance, security audits, and system upgrades.
@@ -168,6 +220,26 @@ tr:hover td { background: #f7f9fc; }
 
   <h3>Contribution Score Calculation Model</h3>
   <p>Contribution Score = Σ(Resource Type × Contribution Coefficient × Contribution Duration × Stability Weight × Anti-Exploit Coefficient)</p>
+
+  <h3>Effective Contributor Threshold</h3>
+  <p>Not all connected terminals can produce effective resource contribution. To ensure overall network quality and meet commercial demand standards, the system sets the following minimum thresholds for an "Effective Resource Contributor":</p>
+  <table>
+    <thead>
+      <tr><th>Dimension</th><th>Minimum Requirement</th><th>Note</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Hardware</td><td>PC ≥ 4-core CPU + 8GB RAM + 50GB free storage; Phone ≥ 4GB RAM + 20GB free storage</td><td>Terminals below this threshold have their contribution capped</td></tr>
+      <tr><td>Bandwidth</td><td>Downlink ≥ 50Mbps, Uplink ≥ 20Mbps (continuous 7 days)</td><td>Coefficient = Uplink / 100Mbps, capped at 1.5</td></tr>
+      <tr><td>Stability</td><td>Uptime ≥ 90% within 7 days</td><td>Non-compliance zeroes that day's contribution</td></tr>
+      <tr><td>Value Score</td><td>7-day cumulative contribution ≥ 100</td><td>Tiered: PC ≥ 200, Phone ≥ 100, Server/NAS ≥ 500</td></tr>
+    </tbody>
+  </table>
+  <div class="card">
+    <strong>Graded Incentives:</strong><br>
+    <strong>Lv1 Standard Contributor</strong>: meets all four → coefficient 1.0<br>
+    <strong>Lv2 Premium Contributor</strong>: Uplink ≥ 100Mbps and 60 consecutive days online → coefficient 1.5<br>
+    <strong>Lv3 Core Contributor</strong>: Uplink ≥ 500Mbps + GPU consensus participation + 180 consecutive stable days → coefficient 2.0, governance voting weight ×2
+  </div>
 
   <h3>Anti-Exploit & Anti-Exploitation</h3>
   <p>To prevent automated scripts, AI agents, and malicious users from mass-producing fake terminals for exploiting the system, the network integrates a multi-layer defense mechanism:</p>
@@ -225,9 +297,9 @@ tr:hover td { background: #f7f9fc; }
   <h2>Chapter 5: Operations & Governance</h2>
 
   <h3>Community Governance</h3>
-  <p>The system operates on fully decentralized governance. All major decisions are determined by Guixu token holder voting:</p>
+  <p>The system operates on fully decentralized governance. All major decisions are determined by gx holder voting:</p>
   <ul>
-    <li>Tax rate adjustments (modification of 1% transaction tax and 0.5% transfer tax)</li>
+    <li>Tax rate adjustments (modification of the 1% transaction tax)</li>
     <li>Contribution coefficient adjustments (change of weights for each resource type)</li>
     <li>Operations reserve fund usage approval</li>
     <li>Technology upgrades and protocol changes</li>
@@ -236,7 +308,7 @@ tr:hover td { background: #f7f9fc; }
 
   <h3>Operations Reserve Fund</h3>
   <div class="card">
-    <strong>Funding Source:</strong> Transaction tax (1%) + Transfer tax (0.5%), flowing continuously.<br>
+    <strong>Funding Source:</strong> Transaction tax (1%), flowing continuously.<br>
     <strong>Fund Usage:</strong><br>
     &nbsp;&nbsp;• Node reward distribution (40%)<br>
     &nbsp;&nbsp;• Network maintenance and security audits (30%)<br>
@@ -268,7 +340,7 @@ tr:hover td { background: #f7f9fc; }
     <li>Complete terminal contribution data collection system development</li>
     <li>Deploy PoR consensus algorithm prototype</li>
     <li>Release PC beta version</li>
-    <li>Establish token contract (1% transaction tax + 0.5% transfer tax)</li>
+    <li>Establish token contract (1% transaction tax)</li>
     <li>Launch beta testing community</li>
   </ul>
 
@@ -329,6 +401,93 @@ tr:hover td { background: #f7f9fc; }
   <p>Guixu Consensus Network — All Streams Converge, Consensus Builds Together.</p>
 </div>
 
+<!-- ========== Chapter 9 ========== -->
+<div class="section">
+  <h2>Chapter 9: Operating Norms for the Resource Value Network</h2>
+
+  <p>The Guixu Consensus Network relies not only on the aggregation of physical resources, but also on precise definitions of "people" and "behavior." The following three role definitions are the core prerequisites for the sustainable operation of the network's commercial loop.</p>
+
+  <h3>I. Definition of Effective Traffic User</h3>
+  <p>Guixu reaches users through multiple touchpoints — the terminal entrance (node.guixu.club), desktop, and mobile — transforming user activity into a measurable traffic pool. However, traffic resources must exclude bots and automated farming; otherwise the commercial monetization end (advertising / promotion / distribution) loses its pricing power.</p>
+  <p><strong>An access event counts as effective traffic only if it simultaneously meets all of the following conditions:</strong></p>
+  <table>
+    <thead>
+      <tr><th>Dimension</th><th>Standard</th><th>Implementation</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Identity Uniqueness</td><td>One wallet address per natural person, bound to a device fingerprint</td><td>Wallet signature + device fingerprint hash (IP + User-Agent + screen resolution + Canvas fingerprint); new wallets on different devices require behavioral verification</td></tr>
+      <tr><td>Non-Automated</td><td>Behavior has randomness, dwell time and interaction; no fixed script pattern</td><td>Behavior analysis engine: records mouse trajectory, scroll speed, key intervals; deviations from human distributions (e.g. constant-speed scrolling, fixed-interval clicks) trigger automatic downweighting</td></tr>
+      <tr><td>Effective Dwell</td><td>Single-session dwell ≥ 15 seconds with at least 1 meaningful interaction (click, form input, route jump)</td><td>Frontend tracking + backend aggregation; the 15s threshold is adjustable via community governance</td></tr>
+      <tr><td>Source Quality</td><td>Excludes search engine crawlers, CDN preload requests and known proxy-pool IPs</td><td>Bot detection + proxy IP blacklist + reverse DNS verification</td></tr>
+    </tbody>
+  </table>
+  <div class="card">
+    <strong>Fraud Prevention Tiers:</strong><br>
+    <strong>L1 (Automated Scripts)</strong>: fixed-IP batch wallet creation, constant-speed operation → blocked outright, no contribution generated<br>
+    <strong>L2 (Human + Assistive Script)</strong>: human operation assisted by automation tools → behavior deviates from human distribution, coefficient drops to 0.3<br>
+    <strong>L3 (Fully Human)</strong>: coefficient 1.0, gradually rising to 1.5 after 30 consecutive days of effective online presence
+  </div>
+
+  <h3>II. Definition of Effective Resource Contributor</h3>
+  <p>The system records contribution scores separately according to the resource types a terminal actually contributes. However, not every connected terminal produces effective resource contribution. To ensure overall network quality and meet commercial demand-side purchasing standards, a terminal must simultaneously satisfy the following four criteria within a 7-day evaluation cycle to be defined as an "Effective Resource Contributor":</p>
+  <table>
+    <thead>
+      <tr><th>Dimension</th><th>Minimum Requirement</th><th>Note</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Hardware</td><td>PC ≥ 4-core CPU + 8GB RAM + 50GB free storage; Phone ≥ 4GB RAM + 20GB free storage; Router/Gateway ≥ 256MB RAM</td><td>Terminals below this threshold have their contribution capped and are not counted as effective contributors</td></tr>
+      <tr><td>Bandwidth</td><td>Downlink ≥ 50Mbps, Uplink ≥ 20Mbps (at least 7 consecutive days)</td><td>Coefficient = Uplink / 100Mbps, capped at 1.5</td></tr>
+      <tr><td>Stability</td><td>Uptime ≥ 90% within 7 days (≥ 18 hours online per day)</td><td>Non-compliance zeroes that day's contribution</td></tr>
+      <tr><td>Value Score</td><td>7-day cumulative contribution ≥ 100</td><td>Tiered: PC ≥ 200, Phone ≥ 100, Server/NAS ≥ 500</td></tr>
+    </tbody>
+  </table>
+  <div class="card">
+    <strong>Graded Incentives:</strong><br>
+    <strong>Lv1 Standard Contributor</strong>: meets all four → coefficient 1.0<br>
+    <strong>Lv2 Premium Contributor</strong>: Uplink ≥ 100Mbps and 60 consecutive days online → coefficient 1.5<br>
+    <strong>Lv3 Core Contributor</strong>: Uplink ≥ 500Mbps + GPU consensus participation + 180 consecutive stable days → coefficient 2.0, governance voting weight ×2
+  </div>
+
+  <h3>III. Definition of Market Promoter (Team Lead)</h3>
+  <p>The Guixu Consensus Network has no private placement and no public offering, yet it requires market promotion. A team lead must not operate as a "recruit-heads-and-take-commission" pyramid scheme, nor "sit back and earn" in a way that undermines PoR consensus decentralization. Promotion incentives are realized through "contribution-value bonuses + team activity rewards," not "direct token dividends."</p>
+  <p><strong>A role that simultaneously satisfies the following criteria is defined as an effective team lead:</strong></p>
+  <table>
+    <thead>
+      <tr><th>Dimension</th><th>Criterion</th><th>Note</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Recruitment Scale</td><td>Directly invited ≥ 10 effective resource contributors (Lv1 or above) to join the Guixu Network</td><td>Only effective contributors count; invalid traffic / zero-contribution registrations excluded</td></tr>
+      <tr><td>Team Quality</td><td>≥ 30% of team members are Lv2 Premium Contributors</td><td>Prevents padding with low-spec devices</td></tr>
+      <tr><td>Personal Participation</td><td>The team lead must also be an effective resource contributor (Lv1 or above)</td><td>Avoids pure recruitment models</td></tr>
+      <tr><td>Continuous Activity</td><td>Team average daily active terminals ≥ 15 over the past 30 days</td><td>Prevents dissolution after one-off recruitment</td></tr>
+    </tbody>
+  </table>
+  <p><strong>Incentive Structure (three tiers, progressively unlocked):</strong></p>
+  <div class="card">
+    <strong>Tier 1 · Recruitment Reward (one-time):</strong> each Lv1 effective contributor recruited → +5% contribution bonus; each Lv2 → +15%; each Lv3 core contributor → +30%. The bonus applies only to the team lead's personal contribution score and does not affect overall network issuance speed.<br><br>
+    <strong>Tier 2 · Team Activity Reward (ongoing):</strong> team average daily active terminals ≥ 20 → an additional 0.5% of total team contribution value (paid from the 10% community-promotion budget of the operations reserve); ≥ 50 → raised to 1.0%. Paid monthly and not counted toward token issuance.<br><br>
+    <strong>Tier 3 · Ecosystem Contribution Reward (long-term):</strong> when resources contributed by team members are purchased by commercial demand parties, the team lead earns 1% of the purchase amount (paid from commercialization revenue and not counted toward token issuance); applies only to purchases generated by Lv2+ members.
+  </div>
+  <p><strong>Key Anti-Fraud Mechanisms:</strong></p>
+  <table>
+    <thead>
+      <tr><th>Risk</th><th>Prevention</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Team lead mass-creates fake contributors via scripts</td><td>Team members must meet the "Effective Traffic User" definition (behavior analysis engine); script accounts' contribution values are zeroed</td></tr>
+      <tr><td>Team lead pads with low-spec devices</td><td>Lv2/Lv3 bonuses apply only to genuine effective contributors; low-spec device contribution values are capped</td></tr>
+      <tr><td>Team dissolves but rewards continue</td><td>Continuous-activity check: 30 days of inactivity suspends reward eligibility; reactivation requires a 7-day re-evaluation</td></tr>
+      <tr><td>Team lead self-recruits for self-reward</td><td>Team members must complete KYC / device binding; the same natural person cannot be both team lead and team member</td></tr>
+    </tbody>
+  </table>
+  <p><strong>Core Logic Behind the Three Roles:</strong></p>
+  <ul>
+    <li><strong>Effective Traffic User</strong> — ensures the traffic pool consists of real humans, preserving pricing power for commercial monetization</li>
+    <li><strong>Effective Resource Contributor</strong> — ensures the physical resource pool meets quality standards, making commercial demand-side purchasing viable</li>
+    <li><strong>Market Promoter</strong> — replaces direct dividends with contribution-value bonuses, preserving PoR consensus fairness while incentivizing community growth</li>
+  </ul>
+</div>
+
 <!-- ========== Appendix ========== -->
 <div class="section">
   <h2>Appendix: Glossary</h2>
@@ -344,7 +503,7 @@ tr:hover td { background: #f7f9fc; }
       <tr><td>The Great Abyss</td><td>English definition of Guixu, referring to the deepest trench in the ocean</td></tr>
       <tr><td>PoR</td><td>Proof of Resource, resource-proof consensus mechanism</td></tr>
       <tr><td>Contribution Score</td><td>Quantified indicator of terminal resource contribution, determines token distribution ratio</td></tr>
-      <tr><td>Operations Reserve Fund</td><td>System operations fund pool formed by transaction tax and transfer tax</td></tr>
+      <tr><td>Operations Reserve Fund</td><td>System operations fund pool formed by the transaction tax</td></tr>
       <tr><td>Token</td><td>Guixu Consensus Network token, on-chain value exchange credential</td></tr>
       <tr><td>Node</td><td>Terminal device participating in the Guixu Consensus Network</td></tr>
     </tbody>
@@ -353,9 +512,9 @@ tr:hover td { background: #f7f9fc; }
 
 <!-- ========== Footer ========== -->
 <div class="footer">
-  <p><strong>Guixu Consensus Network Whitepaper v1.1</strong> · Foundational Concept</p>
-  <p>Document Version: 2026-09-20 v1.1</p>
-  <p>Copyright © 2026 Guixu Consensus Community</p>
+  <p><strong>Guixu Consensus Network Whitepaper v1.2</strong> · Foundational Concept</p>
+  <p>Document Version: First release 2026-09-20 / Revised 2026-10-02 · v1.2</p>
+  <p>Copyright © 2026 Guixu Consensus Community · Contact: <a href="mailto:guixu2026@gmail.com">guixu2026@gmail.com</a> · X (Twitter): <a href="https://x.com/Guixu2026" target="_blank" rel="noopener noreferrer">@Guixu2026</a></p>
 </div>
 
 </div>
